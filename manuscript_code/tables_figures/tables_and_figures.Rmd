@@ -1,0 +1,929 @@
+# Personal Microbial Cloud
+
+## Tables and Figures
+
+Load in data from pb_analysis.Rmd
+
+```{r}
+load('../data/pb_analysis_to_figures.RData')
+load('../data/taxon_analysis.RData')
+source('../data/pb_functions_for_manuscript.R')
+```
+
+
+
+
+
+Load packages
+
+```{r,message=FALSE}
+library(vegan)
+library(labdsv)
+library(ape)
+library(xtable)
+```
+
+
+
+
+Unpack list of groups.
+
+```{r}
+for (i in 1:length(names(groups))) {
+  assign(names(groups)[i], unlist(groups[[i]]))
+}
+```
+
+
+
+Info for manuscript: 
+
+* `r total.seqs` total sequences
+* `r total.otus` total OTUs
+* 300 total samples
+* `r rarefied.seqs` rarefied sequences (1000 per sample)
+* `r rarefied.otus` rarefied OTUs
+* `r rarefied.samples` rarefied samples
+
+What percentage were _Methylobacterium_ sp. sequences?
+```{r}
+sum(pb.1000[, '234992'])/sum(pb.1000)*100
+```
+
+
+How many samples were dominated by this OTU?
+```{r}
+meth <- 0
+for(i in 1:nrow(pb.1000)) {
+  if(names(rev(sort(pb.1000[i, ])))[1] == '234992') {meth <- meth+1}
+}
+meth/nrow(pb.1000)
+rm(meth, i)
+```
+
+
+
+Most dominant in occupied samples
+
+```{r}
+names(rev(sort(colSums(pb.1000[pb.map$location == 'occ', ]))))[1:3]
+sum(pb.1000[pb.map$location == 'occ', '25506'])/sum(pb.1000[pb.map$location == 'occ', ])
+sum(pb.1000[pb.map$location == 'unocc', '25506'])/sum(pb.1000[pb.map$location == 'unocc', ])
+```
+
+
+
+
+Create color shortcuts
+
+```{r,tidy=FALSE}
+s1.col <- "#91BFDB"
+s2.col <- "#FC8D59"
+s3.col <- "#FFFFBF"
+```
+
+
+Put plotting options in mapping table.
+
+```{r, cache=TRUE}
+# assign colors 
+pb.map$bg[pb.map$person == 's1'] <- "#91BFDB" # blue
+pb.map$bg[pb.map$person == 's2'] <- "#FC8D59" # orange
+pb.map$bg[pb.map$person == 's3'] <- "#FFFFBF" # yellow
+pb.map$bg2 <- pb.map$bg
+pb.map$bg2[pb.map$location == 'unocc'] <- "gray50"
+pb.map$bor <- "gray30"
+```
+
+
+
+------------------
+
+#### PERMANOVA
+
+All trials together, regardless of person or collection method. 
+
+```{r,cache=TRUE,results='asis'}
+all.occ.v.unocc <- adonis(pb.can ~ pb.map$location)
+dim(pb.map)
+print(xtable(all.occ.v.unocc$aov.tab), type='html')
+```
+
+All 4hr together regardless of person or method.
+
+```{r,cache=TRUE,results='asis'}
+all.4.occ.v.unocc <- adonis(as.dist(as.matrix(pb.can)[pb.map$duration == 4, 
+    pb.map$duration == 4]) ~ 
+  pb.map$location[pb.map$duration == 4])
+print(xtable(all.4.occ.v.unocc$aov.tab), type='html')
+```
+
+All 2hr together regardless of person or method.
+
+```{r,cache=TRUE,results='asis'}
+all.2.occ.v.unocc <- adonis(as.dist(as.matrix(pb.can)[pb.map$duration == 2, 
+    pb.map$duration == 2]) ~ 
+  pb.map$location[pb.map$duration == 2])
+print(xtable(all.2.occ.v.unocc$aov.tab), type='html')
+```
+
+
+All petris together regardless of person.
+
+```{r,cache=TRUE,results='asis'}
+all.p.occ.v.unocc <- adonis(as.dist(as.matrix(pb.can)[
+    pb.map$sampleType == 'petri.dish', 
+    pb.map$sampleType == 'petri.dish']) ~ 
+  pb.map$location[pb.map$sampleType == 'petri.dish'])
+print(xtable(all.p.occ.v.unocc$aov.tab), type='html')
+```
+
+All filters together regardless of person.
+
+```{r,cache=TRUE,results='asis'}
+all.f.occ.v.unocc <- adonis(as.dist(as.matrix(pb.can)[pb.map$sampleType != 'petri.dish', 
+    pb.map$sampleType != 'petri.dish']) ~ 
+  pb.map$location[pb.map$sampleType != 'petri.dish'])
+print(xtable(all.f.occ.v.unocc$aov.tab), type='html')
+```
+
+These are all for 4hr filters. 
+
+```{r, cache=TRUE}
+occ.v.unocc <- adonis(occ4f.can ~ occ4f.map$location)
+person.v.unocc <- adonis(occ4f.can ~ occ4f.map$occ.person2)
+person.v.eachother <- adonis(as.dist(as.matrix(occ4f.can)[occ4f.map$location == 'occ', occ4f.map$location == 'occ']) ~ 
+  subset(occ4f.map, occ4f.map$location == 'occ')$person)
+only.unocc <- adonis(as.dist(as.matrix(occ4f.can)[occ4f.map$location == 'unocc', occ4f.map$location == 'unocc']) ~
+  subset(occ4f.map, occ4f.map$location == 'unocc')$person)
+```
+
+
+These are all for 4hr settling dishes. 
+
+```{r, cache=TRUE}
+occ.v.unocc.p <- adonis(occ4p.can ~ occ4p.map$location)
+person.v.unocc.p <- adonis(occ4p.can ~ occ4p.map$occ.person2)
+person.v.eachother.p <- 
+  adonis(as.dist(as.matrix(occ4p.can)[occ4p.map$location == 'occ', occ4p.map$location == 'occ']) ~ 
+  subset(occ4p.map, occ4p.map$location == 'occ')$person)
+only.unocc.p <- 
+  adonis(as.dist(as.matrix(occ4p.can)[occ4p.map$location == 'unocc', occ4p.map$location == 'unocc']) ~
+  subset(occ4p.map, occ4p.map$location == 'unocc')$person)
+```
+
+
+
+
+
+```{r,results='asis'}
+print(xtable(occ.v.unocc$aov.tab), type='html')
+```
+
+Samples are significantly different when the room is occupied.
+
+```{r,results='asis'}
+print(xtable(person.v.unocc$aov.tab), type='html')
+```
+
+And there is a difference when you consider who was occupying the room.
+
+
+```{r,results='asis'}
+print(xtable(person.v.eachother$aov.tab), type='html')
+```
+
+And also a big difference when you compare the 3 people against one another. 
+
+How about if we only look at the unoccupied side of the room? There should be a temporal diff, but we would expect the variation explained to be less than that when only looking at person.v.eachother. 
+
+```{r,results='asis'}
+print(xtable(only.unocc$aov.tab), type='html')
+```
+
+While there is a difference in the right direction, this is a bit dissappointing. There is a pretty darn significant difference between three unoccupied trails, and only somewhat better than the occupied difference. 
+
+
+A dataframe with all pertinent adonis results.   REARRANGE FOR FINAL TABLE
+
+```{r,results='asis'}
+adonis.df <- data.frame(rbind(all.occ.v.unocc$aov.tab[1,4:6], 
+                 all.4.occ.v.unocc$aov.tab[1,4:6], 
+                 all.2.occ.v.unocc$aov.tab[1,4:6], 
+                 all.f.occ.v.unocc$aov.tab[1,4:6], 
+                 all.p.occ.v.unocc$aov.tab[1,4:6], 
+                 occ.v.unocc$aov.tab[1,4:6],
+                 person.v.unocc$aov.tab[1,4:6], 
+                 person.v.eachother$aov.tab[1,4:6], 
+                 only.unocc$aov.tab[1,4:6],
+                 occ.v.unocc.p$aov.tab[1,4:6],
+                 person.v.unocc.p$aov.tab[1,4:6], 
+                 person.v.eachother.p$aov.tab[1,4:6], 
+                 only.unocc.p$aov.tab[1,4:6]
+                 ))
+row.names(adonis.df) <- c('AllSamplesOccVsUnocc', 
+                          'All4hrOccVsUnocc',
+                          'All2hrOccVsUnocc',
+                          'AllFiltersOccVsUnocc',
+                          'AllPetrisOccVsUnocc',
+                          'OccVsUnocc4hrFilters',
+                          'UnoccVs3people4hrFilters',
+                          'OccupantsVsEachOtherFilters',
+                          'OnlyUnoccTestFilters',
+                          'OccVsUnocc4hrDishes',
+                          'UnoccVs3people4hrDishes',
+                          'OccupantsVsEachOtherDishes',
+                          'OnlyUnoccTestDishes')
+adonis.df$n <- c(nrow(pb.map), 
+                 nrow(pb.map[pb.map$duration == '4', ]), 
+                 nrow(pb.map[pb.map$duration == '2', ]), 
+                 nrow(pb.map[pb.map$sampleType == 'filter', ]), 
+                 nrow(pb.map[pb.map$sampleType == 'petri.dish', ]), 
+                 nrow(occ4f.map),
+                 nrow(occ4f.map), 
+                 nrow(occ4f.map[occ4f.map$location == 'occ', ]), 
+                 nrow(occ4f.map[occ4f.map$location == 'unocc', ]), 
+                 nrow(occ4p.map),
+                 nrow(occ4p.map), 
+                 nrow(occ4p.map[occ4p.map$location == 'occ', ]), 
+                 nrow(occ4p.map[occ4p.map$location == 'unocc', ])) 
+                 
+                 
+adonis.df <- adonis.df[, c(4,1,2,3)]
+names(adonis.df) <- c('n', 'F-statistic', 'R2', 'P-value')
+print(xtable(adonis.df, digits=c(0,0,2,3,3)), type='html')
+# write.table(adonis.df, '~/Dropbox/pb_shared_markdown/tables/adonisTable.txt', sep='\t', quote=FALSE)
+```
+
+
+
+```{r,cache=TRUE,results='asis'}
+s14f <- c(s14of, s14uf)
+s14p <- c(s14op, s14up)
+s24f <- c(s24of, s24uf)
+s24p <- c(s24op, s24up)
+s34f <- c(s34of, s34uf)
+s34p <- c(s34op, s34up)
+
+s12f <- c(s12of, s12uf)
+s12p <- c(s12op, s12up)
+s22f <- c(s22of, s22uf)
+s22p <- c(s22op, s22up)
+s32f <- c(s32of, s32uf)
+s32p <- c(s32op, s32up)
+
+adonis.groups <- c('s14f', 's24f', 's34f', 
+                   's12f', 's22f', 's32f', 
+                   's14p', 's24p', 's34p', 
+                   's12p', 's22p', 's32p')
+
+trial.adonis.table <- data.frame('n'=0, 'F-statistic'=0, 'R2'=0, 'P-value'=0)
+for (i in 1:length(adonis.groups)) {
+  these <- get(adonis.groups[i])
+  model <- adonis(vegdist(pb.1000[these, ], 'canberra') ~ pb.map$location[these])
+  model.name <- paste(adonis.groups[i], '.occ.v.unocc', sep='')
+  assign(model.name, model)
+  tab <- get(model.name)$aov.tab
+  trial.adonis.table[i, 1] <- length(these)
+  trial.adonis.table[i, 2:4] <- tab[1, 4:6]
+  row.names(trial.adonis.table)[i] <- adonis.groups[i]
+  }
+trial.adonis.table$person <- c(rep(c('s1', 's2', 's3'), 4))
+trial.adonis.table$duration <- c(rep(rep(c(4,2), each=3), 2))
+trial.adonis.table$sampleType <- c(rep(c('air filter', 'settling dish'), each=6))
+trial.adonis.table <- trial.adonis.table[, c(5,6,7,1,2,3,4)]
+print(xtable(trial.adonis.table, digits=c(0,0,0,0,0,2,3,3)), type='html')
+# write.table(trial.adonis.table, '~/Dropbox/pb_shared_markdown/tables/adonisTrialTable.txt', sep='\t', quote=FALSE)
+```
+
+
+
+Was _Staph. epideridis_ more common in occupied samples? - Not all of them. 
+```{r, eval=FALSE}
+for(i in 1:length(adonis.groups)) {
+  vect <- pb.1000[get(adonis.groups[i]), '25506']
+  loc <- pb.map$location[get(adonis.groups[i])]
+  print(t.test(vect ~ loc))
+  }
+```
+
+
+But it was very significant overall. 
+
+```{r}
+t.test(pb.1000[, '25506'] ~ pb.map$location)
+148.25 / 33.51
+```
+
+
+---------------
+
+### Beta-dispersion
+
+```{r, fig.height=5, fig.width=5, results='asis', warning=FALSE}
+titles <- c('4hr filters', '2hr filters', '4hr dishes', '2hr dishes')
+for (i in 1:4) {
+  print(xtable(betad.aov.list[[i]]), type='html', comment=FALSE)
+  boxplot(betad.table.list[[i]]$dists ~ betad.table.list[[i]]$person, col='gray', 
+          notch=TRUE, main=titles[i])
+}
+```
+
+
+
+
+
+
+-------------
+
+### Big ordination figure with cluster diagrams
+
+```{r,cache=TRUE, fig.height=8, fig.width=12}
+# pdf('../../figures/ordination_cluster.pdf', width=10, height=6.5)
+
+layout(matrix(c(1:3, 7,7,7, 4:6, 8,8,9), 3,4), widths=c(1, 1.4, 1, 1.4), heights=c(1.1, 1,1))
+
+#  4 hour filters
+ord <- nmds(vegdist(pb.1000[c(s14of, s14uf), ], 'canberra'))
+map <- pb.map[c(s14of, s14uf), ]
+cols <- s1.col
+
+par(mar=c(1,1,3,1))
+plot(ord$points, xaxt='n', yaxt='n', xlab='', ylab='', type='n', bty='n')
+rect(par()$usr[1], par()$usr[3], par()$usr[2], par()$usr[4], col='gray90', border='gray60')
+points(ord$points, 
+  cex=ifelse(map$location == 'occ', 2, 1.5), 
+	pch=ifelse(map$location == 'occ', 21, 24), 
+	bg=map$bg2, col='gray30')
+mtext('Air filters', line=.2)
+mtext('(a)', side=3, adj=0, font=2, col='gray30', line=1, cex=1.2)
+mtext(c('NMDS 1', 'NMDS 2'), side=c(1,2), adj=1, cex=.7, line=c(0.15, 0))
+
+
+ord <- nmds(vegdist(pb.1000[c(s24of, s24uf), ], 'canberra'))
+map <- pb.map[c(s24of, s24uf), ]
+cols <- s2.col
+
+par(mar=c(1,1,1,1))
+plot(ord$points[, 1], ord$points[, 2], xaxt='n', yaxt='n', xlab='', ylab='', type='n', bty='n')
+rect(par()$usr[1], par()$usr[3], par()$usr[2], par()$usr[4], col='gray90', border='gray60')
+points(ord$points, 
+	cex=ifelse(map$location == 'occ', 2, 1.5), 
+	pch=ifelse(map$location == 'occ', 21, 24), 
+	bg=map$bg2, col='gray30')
+
+
+ord <- nmds(vegdist(pb.1000[c(s34of, s34uf), ], 'canberra'))
+map <- pb.map[c(s34of, s34uf), ]
+cols <- s3.col
+
+par(mar=c(1,1,1,1))
+plot(ord$points[, 1], ord$points[, 2], xaxt='n', yaxt='n', xlab='', ylab='', type='n', bty='n')
+rect(par()$usr[1], par()$usr[3], par()$usr[2], par()$usr[4], col='gray90', border='gray60')
+points(ord$points[, 1], ord$points[, 2], 
+	cex=ifelse(map$location == 'occ', 2, 1.5), 
+	pch=ifelse(map$location == 'occ', 21, 24), 
+	bg=map$bg2, col='gray30')
+
+
+#  4hr petris
+
+ord <- nmds(vegdist(pb.1000[c(s14op, s14up), ], 'canberra'))
+map <- pb.map[c(s14op, s14up), ]
+cols <- s1.col
+
+par(mar=c(1,1,3,1))
+plot(ord$points, xaxt='n', yaxt='n', xlab='', ylab='', type='n', bty='n')
+rect(par()$usr[1], par()$usr[3], par()$usr[2], par()$usr[4], col='gray90', border='gray60')
+points(ord$points, 
+	cex=ifelse(map$location == 'occ', 2, 1.5), 
+	pch=ifelse(map$location == 'occ', 21, 24), 
+	bg=map$bg2, col='gray30')
+mtext('Settling dishes', line=.2)
+mtext('(c)', side=3, adj=0, font=2, col='gray30', line=1, cex=1.2)
+mtext(c('NMDS 1', 'NMDS 2'), side=c(1,2), adj=1, cex=.7, line=c(0.15, 0))
+
+
+ord <- nmds(vegdist(pb.1000[c(s24op, s24up), ], 'canberra'))
+map <- pb.map[c(s24op, s24up), ]
+cols <- s2.col
+
+par(mar=c(1,1,1,1))
+plot(ord$points, xaxt='n', yaxt='n', xlab='', ylab='', type='n', bty='n')
+rect(par()$usr[1], par()$usr[3], par()$usr[2], par()$usr[4], col='gray90', border='gray60')
+points(ord$points, 
+	cex=ifelse(map$location == 'occ', 2, 1.5), 
+	pch=ifelse(map$location == 'occ', 21, 24), 
+	bg=map$bg2, col='gray30')
+
+
+ord <- nmds(vegdist(pb.1000[c(s34op, s34up), ], 'canberra'))
+map <- pb.map[c(s34op, s34up), ]
+cols <- s3.col
+
+par(mar=c(1,1,1,1))
+plot(ord$points, xaxt='n', yaxt='n', xlab='', ylab='', type='n', bty='n')
+rect(par()$usr[1], par()$usr[3], par()$usr[2], par()$usr[4], col='gray90', border='gray60')
+points(ord$points, 
+	cex=ifelse(map$location == 'occ', 2, 1.5), 
+	pch=ifelse(map$location == 'occ', 21, 24), 
+	bg=map$bg2, col='gray30')
+
+
+# 4hr filters cluster
+
+comm <- occ4f.table
+dis <- occ4f.can
+map <- pb.map[row.names(occ4f.table), ]
+make.file <- FALSE
+off = -2.5
+edge = c(0,3)
+line = TRUE
+
+ave <- hclust(dis, 'average')
+phy <- ladderize(as.phylo(ave))
+map$pch <- ifelse(map$location == 'occ', 21, 24)
+map$bg2 <- map$bg
+map$bg2[map$pch == 24] <- 'gray50'
+map$bor <- 'gray30'
+
+par(mar=c(0,0,1,0))
+plot(phy, use.edge.length=FALSE, edge.color='gray30',
+	cex=.5, no.margin=FALSE, show.tip.label=FALSE, direction='leftwards')
+if(line){segments(rep(edge[1],nrow(comm)), 1:nrow(comm), 
+		rep(edge[2], nrow(comm)), 1:nrow(comm), 
+		col='gray30', lwd=1)}
+tiplabels(pch=map$pch, bg=map$bg2, adj=off, 
+	cex=ifelse(map$pch == 21, 1.8, 1.2), col='gray30')
+
+legend(38, 15, legend=c('occupied', 'unoccupied', 'Subject 1', 'Subject 2', 'Subject 3'), 
+       bty='n', pch=c(21,24,22,22,22), 
+       col=c(rep('gray40', 5)), text.col='gray30',
+       pt.bg=c('gray50', 'gray50', s1.col, s2.col, s3.col), 
+       cex=1.5, pt.cex=2.5, y.intersp=c(1,1,1.4,1.27,1.2))
+segments(44, 8, 63, 8, col='gray70')
+mtext('(b)', side=3, at=3, font=2, col='gray30', line=-1.0, cex=1.2)
+
+
+######## 4hr dishes cluster
+
+comm <- occ4p.table
+dis <- occ4p.can
+map <- pb.map[row.names(occ4p.table), ]
+make.file <- FALSE
+off = 0
+edge = c(0,3)
+line = FALSE
+
+ave <- hclust(dis, 'average')
+phy <- ladderize(as.phylo(ave))
+map$pch <- ifelse(map$location == 'occ', 21, 24)
+map$bg2 <- map$bg
+map$bg2[map$pch == 24] <- 'gray50'
+map$bor <- 'gray30'
+
+par(mar=c(5,0,2,0))
+plot(phy, use.edge.length=FALSE, edge.color='gray30',
+	cex=.5, no.margin=FALSE, show.tip.label=FALSE, direction='leftwards')
+if(line){segments(rep(edge[1],nrow(comm)), 1:nrow(comm), 
+		rep(edge[2], nrow(comm)), 1:nrow(comm), 
+		col='gray30', lwd=1)}
+tiplabels(pch=map$pch, bg=map$bg2, adj=off, 
+	cex=ifelse(map$pch == 21, 1.8, 1.2), col='gray30')
+par(xpd=TRUE)
+mtext('(d)', side=3, at=3, font=2, col='gray30', line=.1, cex=1.2)
+mtext('(e)', side=1, at=3, font=2, col='gray30', cex=1.2, line=3)
+
+#  set up for barplot in the corner
+pb.mat <- as.matrix(pb.can)
+pb.matl <- pb.mat 
+pb.matl[upper.tri(pb.matl)] <- 0
+
+s1 <- c(s14of, s14op)
+s2 <- c(s24of, s24op)
+s3 <- c(s34of, s34op)
+
+s1f <- s14of
+s2f <- s24of
+s3f <- s34of
+
+s1p <- s14op
+s2p <- s24op
+s3p <- s34op
+
+
+self <- c(pb.matl[s1, s1], pb.matl[s2, s2], pb.matl[s3, s3])
+other <- c(pb.mat[s1, c(s2, s3)], pb.mat[s2, c(s1, s3)], pb.mat[s3, c(s1, s2)])
+
+selff <- c(pb.matl[s1f, s1f], pb.matl[s2f, s2f], pb.matl[s3f, s3f])
+otherf <- c(pb.mat[s1f, c(s2f, s3f)], pb.mat[s2f, c(s1f, s3f)], pb.mat[s3f, c(s1f, s2f)])
+
+selfp <- c(pb.matl[s1p, s1p], pb.matl[s2p, s2p], pb.matl[s3p, s3p])
+otherp <- c(pb.mat[s1p, c(s2p, s3p)], pb.mat[s2p, c(s1p, s3p)], pb.mat[s3p, c(s1p, s2p)])
+
+self <- self[-c(which(self == 0))]
+selff <- selff[-c(which(selff == 0))]
+selfp <- selfp[-c(which(selfp == 0))]
+
+self <- 1-self
+selff <- 1-selff
+selfp <- 1-selfp
+other <- 1-other
+otherf <- 1-otherf
+otherp <- 1-otherp
+
+length(self); length(other)
+length(selff); length(otherf)
+length(selfp); length(otherp)
+
+means <- data.frame(self=c(mean(self), mean(selff), mean(selfp)), 
+					other=c(mean(other), mean(otherf), mean(otherp)),
+					row.names=c('all', 'filter', 'petri'))
+ses <- data.frame(self=c(se(self), se(selff), se(selfp)), 
+					other=c(se(other), se(otherf), se(otherp)),
+					row.names=c('all', 'filter', 'petri'))
+
+# barplot in the corner
+par(xpd=FALSE, las=1, mar=c(4, 4, 0, .5), fg='gray30', col.axis='gray30', col.lab='gray30')
+mids <- barplot(t(means), beside=TRUE, col='gray', border='white', 
+	ylim=c(0.03, 0.06), xpd=FALSE, axes=FALSE, xaxt='n')
+abline(h=seq(0.03, 0.06, 0.005), col='white')
+arrows(c(t(mids)), unlist(means-ses), c(t(mids)), unlist(means+ses), 
+	length=0.03, code=3, angle=90, col='gray40', lwd=2)
+par(las=1)
+axis(2, at=c(.03, .04, .05, .06), cex.axis=1, tck=.02, hadj=.5, col='gray30')
+par(las=0, lheight=.8, xpd=TRUE)
+segments(c(1, 4, 7), rep(0.03, 3), c(3, 6, 9), rep(0.03, 3), col='gray40') 
+mtext('Canberra Similarity', side=2, line=2.2, cex=.8)
+mtext(' self  other', side=1, at=mean(mids[c(1,2)]), cex=.7, line=-0)
+mtext(' self  other', side=1, at=mean(mids[c(3,4)]), cex=.7, line=-0)
+mtext(' self  other', side=1, at=mean(mids[c(5,6)]), cex=.7, line=-0)
+mtext('All\nSamples', side=1, at=mean(mids[c(1,2)]), cex=.8, line=2.2, font=2)
+mtext('Air\nFilters', side=1, at=mean(mids[c(3,4)]), cex=.8, line=2.2, font=2)
+mtext('Settling\nDishes', side=1, at=mean(mids[c(5,6)]), cex=.8, line=2.2, font=2)
+
+# dev.off()
+```
+
+
+### Separate barplots (supplemental figure)
+
+This does the same thing as the corner barplot above, but does it for both sets. 
+
+```{r, cache=TRUE, fig.height=6, fig.width=12}
+# pdf('../../figures/similarity_barplots.pdf', width=7, height=4)
+
+pb.mat <- as.matrix(pb.can)
+pb.matl <- pb.mat 
+pb.matl[upper.tri(pb.matl)] <- 0
+
+s1 <- c(s14of, s14op)
+s2 <- c(s24of, s24op)
+s3 <- c(s34of, s34op)
+
+s1f <- s14of
+s2f <- s24of
+s3f <- s34of
+
+s1p <- s14op
+s2p <- s24op
+s3p <- s34op
+
+
+self <- c(pb.matl[s1, s1], pb.matl[s2, s2], pb.matl[s3, s3])
+other <- c(pb.mat[s1, c(s2, s3)], pb.mat[s2, c(s1, s3)], pb.mat[s3, c(s1, s2)])
+
+selff <- c(pb.matl[s1f, s1f], pb.matl[s2f, s2f], pb.matl[s3f, s3f])
+otherf <- c(pb.mat[s1f, c(s2f, s3f)], pb.mat[s2f, c(s1f, s3f)], pb.mat[s3f, c(s1f, s2f)])
+
+selfp <- c(pb.matl[s1p, s1p], pb.matl[s2p, s2p], pb.matl[s3p, s3p])
+otherp <- c(pb.mat[s1p, c(s2p, s3p)], pb.mat[s2p, c(s1p, s3p)], pb.mat[s3p, c(s1p, s2p)])
+
+self <- self[-c(which(self == 0))]
+selff <- selff[-c(which(selff == 0))]
+selfp <- selfp[-c(which(selfp == 0))]
+
+self <- 1-self
+selff <- 1-selff
+selfp <- 1-selfp
+other <- 1-other
+otherf <- 1-otherf
+otherp <- 1-otherp
+
+
+length(self); length(other)
+length(selff); length(otherf)
+length(selfp); length(otherp)
+
+
+
+means <- data.frame(self=c(mean(self), mean(selff), mean(selfp)), 
+  				other=c(mean(other), mean(otherf), mean(otherp)),
+					row.names=c('all', 'filter', 'petri'))
+ses <- data.frame(self=c(se(self), se(selff), se(selfp)), 
+					other=c(se(other), se(otherf), se(otherp)),
+					row.names=c('all', 'filter', 'petri'))
+
+
+# barplot
+
+par(mfrow=c(1,2))
+
+par(xpd=FALSE, las=1, mar=c(3, 4, 3, .5), fg='gray30', col.axis='gray30', col.lab='gray30')
+mids <- barplot(t(means), beside=TRUE, col='gray', border='white', 
+	ylim=c(0.01, 0.06), xpd=FALSE, axes=FALSE, xaxt='n')
+abline(h=seq(0.01, 0.06, 0.005), col='white')
+arrows(c(t(mids)), unlist(means-ses), c(t(mids)), unlist(means+ses), 
+	length=0.03, code=3, angle=90, col='gray40', lwd=2)
+par(las=1)
+axis(2, at=c(.01, .02, .03, .04, .05, .06), cex.axis=1, tck=.02, hadj=.5, col='gray30')
+par(las=0, lheight=.8, xpd=TRUE)
+segments(c(1, 4, 7), rep(0.01, 3), c(3, 6, 9), rep(0.01, 3), col='gray40') 
+mtext('Canberra Similarity', side=2, line=2.2, cex=.8)
+mtext(' self  other', side=1, at=mean(mids[c(1,2)]), cex=.7, line=0)
+mtext(' self  other', side=1, at=mean(mids[c(3,4)]), cex=.7, line=0)
+mtext(' self  other', side=1, at=mean(mids[c(5,6)]), cex=.7, line=0)
+mtext('All\nSamples', side=1, at=mean(mids[c(1,2)]), cex=.8, line=1.7, font=2)
+mtext('Air\nFilters', side=1, at=mean(mids[c(3,4)]), cex=.8, line=1.7, font=2)
+mtext('Settling\nDishes', side=1, at=mean(mids[c(5,6)]), cex=.8, line=1.7, font=2)
+mtext('Occupied', font=2, line=1)
+
+
+
+
+pb.mat <- as.matrix(pb.can)
+pb.matl <- pb.mat 
+pb.matl[upper.tri(pb.matl)] <- 0
+
+s1 <- c(s14uf, s14up)
+s2 <- c(s24uf, s24up)
+s3 <- c(s34uf, s34up)
+
+s1f <- s14uf
+s2f <- s24uf
+s3f <- s34uf
+
+s1p <- s14up
+s2p <- s24up
+s3p <- s34up
+
+
+self <- c(pb.matl[s1, s1], pb.matl[s2, s2], pb.matl[s3, s3])
+other <- c(pb.mat[s1, c(s2, s3)], pb.mat[s2, c(s1, s3)], pb.mat[s3, c(s1, s2)])
+
+selff <- c(pb.matl[s1f, s1f], pb.matl[s2f, s2f], pb.matl[s3f, s3f])
+otherf <- c(pb.mat[s1f, c(s2f, s3f)], pb.mat[s2f, c(s1f, s3f)], pb.mat[s3f, c(s1f, s2f)])
+
+selfp <- c(pb.matl[s1p, s1p], pb.matl[s2p, s2p], pb.matl[s3p, s3p])
+otherp <- c(pb.mat[s1p, c(s2p, s3p)], pb.mat[s2p, c(s1p, s3p)], pb.mat[s3p, c(s1p, s2p)])
+
+self <- self[-c(which(self == 0))]
+selff <- selff[-c(which(selff == 0))]
+selfp <- selfp[-c(which(selfp == 0))]
+
+self <- 1-self
+selff <- 1-selff
+selfp <- 1-selfp
+other <- 1-other
+otherf <- 1-otherf
+otherp <- 1-otherp
+
+
+length(self); length(other)
+length(selff); length(otherf)
+length(selfp); length(otherp)
+
+means <- data.frame(self=c(mean(self), mean(selff), mean(selfp)), 
+					other=c(mean(other), mean(otherf), mean(otherp)),
+					row.names=c('all', 'filter', 'petri'))
+ses <- data.frame(self=c(se(self), se(selff), se(selfp)), 
+					other=c(se(other), se(otherf), se(otherp)),
+					row.names=c('all', 'filter', 'petri'))
+
+
+# barplot
+par(xpd=FALSE, las=1, mar=c(3, 4, 3, .5), fg='gray30', col.axis='gray30', col.lab='gray30')
+mids <- barplot(t(means), beside=TRUE, col='gray', border='white', 
+	ylim=c(0.01, 0.06), xpd=FALSE, axes=FALSE, xaxt='n')
+abline(h=seq(0.01, 0.06, 0.005), col='white')
+arrows(c(t(mids)), unlist(means-ses), c(t(mids)), unlist(means+ses), 
+	length=0.03, code=3, angle=90, col='gray40', lwd=2)
+par(las=1)
+axis(2, at=c(.01, .02, .03, .04, .05, .06), cex.axis=1, tck=.02, hadj=.5, col='gray30')
+par(las=0, lheight=.8, xpd=TRUE)
+segments(c(1, 4, 7), rep(0.01, 3), c(3, 6, 9), rep(0.01, 3), col='gray40') 
+#mtext('Canberra Similarity', side=2, line=2.2, cex=.8)
+mtext(' self  other', side=1, at=mean(mids[c(1,2)]), cex=.7, line=0)
+mtext(' self  other', side=1, at=mean(mids[c(3,4)]), cex=.7, line=0)
+mtext(' self  other', side=1, at=mean(mids[c(5,6)]), cex=.7, line=0)
+mtext('All\nSamples', side=1, at=mean(mids[c(1,2)]), cex=.8, line=1.7, font=2)
+mtext('Air\nFilters', side=1, at=mean(mids[c(3,4)]), cex=.8, line=1.7, font=2)
+mtext('Settling\nDishes', side=1, at=mean(mids[c(5,6)]), cex=.8, line=1.7, font=2)
+mtext('Unoccupied', font=2, line=1)
+
+# dev.off()
+```
+
+
+
+
+
+### OTU barplots  These objects come from `taxon_analysis.RData`.
+
+```{r}
+pb.order.abs <- pb.order[, c(2, 5:10, 1,3,4)]
+
+all.means <- aggregate(pb.order.abs, by=list(pb.order$gr.num), FUN='mean')
+all.ses <- aggregate(pb.order.abs, by=list(pb.order$gr.num), FUN=se)
+```
+
+
+```{r}
+# index of OTUs for table and rep_set blasting
+names(all.means)
+all.means$Group.1
+```
+
+
+
+```{r}
+occ.f <- rev(c(1,5,9))
+unocc.f <- rev(c(3,7,11))
+occ.p <- rev(c(2,6,10))
+unocc.p <- rev(c(4,8,12))
+```
+
+
+
+```{r}
+# make individual datasets of means and sterrors for barplots
+mean.f.names <- NULL
+se.f.names <- NULL
+mean.p.names <- NULL
+se.p.names <- NULL
+
+for(i in 2:ncol(all.means)) {
+  id <- names(all.means)[i]
+  mean.df.id <- paste('mean.f.', id, sep='')
+  mean.df <- data.frame(
+  	unocc = all.means[unocc.f, i],
+    occ = all.means[occ.f, i]) 
+  row.names(mean.df) <- c('s3', 's2', 's1')
+  assign(mean.df.id, mean.df)
+  mean.f.names <- c(mean.f.names, mean.df.id)
+
+  se.df.id <- paste('se.f.', id, sep='')
+  se.df <- data.frame(
+    unocc = all.ses[unocc.f, i],
+    occ = all.ses[occ.f, i]) 
+  row.names(se.df) <- c('s3', 's2', 's1')
+  assign(se.df.id, se.df)
+  se.f.names <- c(se.f.names, se.df.id)
+
+  mean.df.id <- paste('mean.p.', id, sep='')
+  mean.df <- data.frame(
+    unocc = all.means[unocc.p, i],
+    occ = all.means[occ.p, i]) 
+  row.names(mean.df) <- c('s3', 's2', 's1')
+  assign(mean.df.id, mean.df)
+  mean.p.names <- c(mean.p.names, mean.df.id)
+
+  se.df.id <- paste('se.p.', id, sep='')
+  se.df <- data.frame(
+    unocc = all.ses[unocc.p, i],
+    occ = all.ses[occ.p, i]) 
+  row.names(se.df) <- c('s3', 's2', 's1')
+  assign(se.df.id, se.df)
+  se.p.names <- c(se.p.names, se.df.id)
+}
+```
+
+
+text for left margin
+
+```{r}
+martext <- c('Staphylococcus epidermidis',
+             'Corynebacterium tuberculostearicum',
+             'Corynebacterium mucifaciens', 
+             'Corynebacterium amycolatum', 
+             'Corynebacterium jeikeium',
+             'Lactobacillus crispatus', 
+             'Dolosigranulum pigrum', 
+             'Methylobacterium jeotgali', 
+             'Tumebacillus flagellatus', 
+             'Stenotrophomonas maltophilia')
+martext2 <- c('NR_074995.1 (100% similar)',
+              'NR_028975.1 (100% similar)',
+              'NR_026396.1 (100% similar)', 
+              'NR_026215.1 (100% similar)', 
+              'NR_074706.1 (100% similar)',
+              'NR_074986.1 (100% similar)', 
+              'NR_026098.1 (99% similar)', 
+              'NR_043878.1 (100% similar)',
+              'NR_109600.1 (92% similar)',
+              'NR_074875.1 (100% similar)')
+```
+
+
+
+
+
+```{r}
+# order datasets top to bottom	
+mean.order <- mean.f.names
+se.order <- se.f.names
+len <- length(mean.order)
+lim <- c(0, .5)
+
+# pdf('../../figures/otu_boxplots.pdf', height=8, width=8.5)
+
+# first plot with filters
+layout(matrix(c(1:(2*len)), len, 2), heights=c(1.25, rep(1, len-2), 1.5), widths=c(1.8,1))
+for (i in 1:len) {
+	means <- get(mean.order[i])/1000
+	ses <- get(se.order[i])/1000
+	segoff <- 0
+	occcex <- .8
+	if(i==1) {par(mar=c(1, 20, 2.5, 1), xpd=TRUE)}
+	else if(i==len) {par(mar=c(4, 20, 1, 1), xpd=TRUE)}
+	else {par(mar=c(1, 20, 1, 1), xpd=TRUE)}
+	mids <- barplot(as.matrix(means), beside=TRUE, las=1, 
+		border='gray80', xlab = '', axisnames = FALSE, horiz=TRUE, 
+		col=c(s3.col, s2.col, s1.col), xlim=lim, xaxt='n')
+	abline(v=seq(.05, 1, .05), col='white')
+	arrows(unlist(c(means-ses)), unlist(c(mids)), 
+		unlist(c(means+ses)), unlist(c(mids)), 
+		code=3, angle=90, length=.01, col='gray50')
+	segments(rep(segoff, 2), c(1,5), 
+		rep(segoff, 2), c(4,8), 
+		col='gray60', lend='square', lwd=1)
+	mtext(c('Un', 'Occ'), side=2, at=mids[2, ], 
+		col='gray30', las=1, line=.2, cex=occcex)
+	mtext(c(martext[i], martext2[i]), side=2, line=3.5, las=1, cex=.7, 
+		at=c(mids[1,2], mids[3,1]), font=c(4,1), col='gray30')
+#   mtext(c(gsub('mean.f.', '', mean.order[i]), 
+#           consensus[gsub('mean.f.', '', mean.order[i])]), 
+#     side=2, line=3.5, las=1, cex=.7, 
+# 		at=c(mids[1,2], mids[3,1]), font=c(4,1), col='gray30')
+	segments(-.07, mids[1,1], -.07, mids[3,2], col='gray')
+	if(i==1) {
+		mtext('(a) Air Filters', side=3, adj=0, line=1.2, col='gray30', font=2)
+		}
+}
+par(col.axis='gray40')
+axis(1, at=c(seq(0, .5, .1)), col.ticks='gray40', col='gray40', 
+	tck=-0.08,
+	labels=c('0', '0.10', '0.20', '0.30', '0.40', '0.50'))
+axis(1, at=c(seq(0.05, .45, .1)), col.ticks='gray40', col='transparent',
+	tck=-0.03, labels=FALSE)
+mtext('Relative Abundance', side=1, line=2.5, cex=.8, col='gray30')
+
+
+
+##############  petris
+mean.order <- mean.p.names
+se.order <- se.p.names
+
+for (i in 1:len) {
+	means <- get(mean.order[i])/1000
+	ses <- get(se.order[i])/1000
+	segoff <- 0
+	occcex <- .8
+	if(i==1) {par(mar=c(1, 1, 2.5, 1), xpd=TRUE)}
+	else if(i==len) {par(mar=c(4, 1, 1, 1), xpd=TRUE)}
+	else {par(mar=c(1, 1, 1, 1), xpd=TRUE)}
+	mids <- barplot(as.matrix(means), beside=TRUE, las=1, 
+		border='gray80', xlab = '', axisnames = FALSE, horiz=TRUE, 
+		col=c(s3.col, s2.col, s1.col), xlim=lim, xaxt='n')
+	abline(v=seq(.05, 1, .05), col='white')
+	arrows(unlist(c(means-ses)), unlist(c(mids)), 
+		unlist(c(means+ses)), unlist(c(mids)), 
+		code=3, angle=90, length=.01, col='gray50')
+	segments(rep(segoff, 2), c(1,5), 
+		rep(segoff, 2), c(4,8), 
+		col='gray60', lend='square', lwd=1)
+	mtext(c('Un', 'Occ'), side=2, at=mids[2, ], 
+		col='gray30', las=1, line=.2, cex=occcex)
+	if(i==1) {
+		mtext('(b) Settling Dishes', side=3, adj=0, line=1.2, col='gray30', font=2)
+		}
+}
+par(col.axis='gray40')
+axis(1, at=c(seq(0, .5, .1)), col.ticks='gray40', col='gray40', 
+	tck=-0.08,
+	labels=c('0', '0.10', '0.20', '0.30', '0.40', '0.50'))
+axis(1, at=c(seq(0.05, .45, .1)), col.ticks='gray40', col='transparent',
+	tck=-0.03, labels=FALSE)
+mtext('Relative Abundance', side=1, line=2.5, cex=.8, col='gray30')
+par(fg='gray30')
+legend('right', legend=c('Subject 1', 'Subject 2', 'Subject 3'), 
+       bty='n', pch=c(22,22,22), 
+       col=c(rep('gray70', 3)),
+       pt.bg=c(s1.col, s2.col, s3.col), 
+       cex=1, pt.cex=2.3, y.intersp=.8)
+
+# dev.off()
+```
+
+
+

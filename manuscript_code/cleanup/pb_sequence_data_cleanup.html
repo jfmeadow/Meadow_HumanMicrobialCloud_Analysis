@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<!-- saved from url=(0014)about:internet -->
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+<title>Personal Microbial Cloud</title>
+
+<style type="text/css">
+body, td {
+   font-family: sans-serif;
+   background-color: white;
+   font-size: 12px;
+   margin: 8px;
+}
+
+tt, code, pre {
+   font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace;
+}
+
+h1 { 
+   font-size:2.2em; 
+}
+
+h2 { 
+   font-size:1.8em; 
+}
+
+h3 { 
+   font-size:1.4em; 
+}
+
+h4 { 
+   font-size:1.0em; 
+}
+
+h5 { 
+   font-size:0.9em; 
+}
+
+h6 { 
+   font-size:0.8em; 
+}
+
+a:visited {
+   color: rgb(50%, 0%, 50%);
+}
+
+pre {	
+   margin-top: 0;
+   max-width: 95%;
+   border: 1px solid #ccc;
+   white-space: pre-wrap;
+}
+
+pre code {
+   display: block; padding: 0.5em;
+}
+
+code.r, code.cpp {
+   background-color: #F8F8F8;
+}
+
+table, td, th {
+  border: none;
+}
+
+blockquote {
+   color:#666666;
+   margin:0;
+   padding-left: 1em;
+   border-left: 0.5em #EEE solid;
+}
+
+hr {
+   height: 0px;
+   border-bottom: none;
+   border-top-width: thin;
+   border-top-style: dotted;
+   border-top-color: #999999;
+}
+
+@media print {
+   * { 
+      background: transparent !important; 
+      color: black !important; 
+      filter:none !important; 
+      -ms-filter: none !important; 
+   }
+
+   body { 
+      font-size:12pt; 
+      max-width:100%; 
+   }
+       
+   a, a:visited { 
+      text-decoration: underline; 
+   }
+
+   hr { 
+      visibility: hidden;
+      page-break-before: always;
+   }
+
+   pre, blockquote { 
+      padding-right: 1em; 
+      page-break-inside: avoid; 
+   }
+
+   tr, img { 
+      page-break-inside: avoid; 
+   }
+
+   img { 
+      max-width: 100% !important; 
+   }
+
+   @page :left { 
+      margin: 15mm 20mm 15mm 10mm; 
+   }
+     
+   @page :right { 
+      margin: 15mm 10mm 15mm 20mm; 
+   }
+
+   p, h2, h3 { 
+      orphans: 3; widows: 3; 
+   }
+
+   h2, h3 { 
+      page-break-after: avoid; 
+   }
+}
+
+</style>
+
+<!-- Styles for R syntax highlighter -->
+<style type="text/css">
+   pre .operator,
+   pre .paren {
+     color: rgb(104, 118, 135)
+   }
+
+   pre .literal {
+     color: rgb(88, 72, 246)
+   }
+
+   pre .number {
+     color: rgb(0, 0, 205);
+   }
+
+   pre .comment {
+     color: rgb(76, 136, 107);
+   }
+
+   pre .keyword {
+     color: rgb(0, 0, 255);
+   }
+
+   pre .identifier {
+     color: rgb(0, 0, 0);
+   }
+
+   pre .string {
+     color: rgb(3, 106, 7);
+   }
+</style>
+
+<!-- R syntax highlighter -->
+<script type="text/javascript">
+var hljs=new function(){function m(p){return p.replace(/&/gm,"&amp;").replace(/</gm,"&lt;")}function f(r,q,p){return RegExp(q,"m"+(r.cI?"i":"")+(p?"g":""))}function b(r){for(var p=0;p<r.childNodes.length;p++){var q=r.childNodes[p];if(q.nodeName=="CODE"){return q}if(!(q.nodeType==3&&q.nodeValue.match(/\s+/))){break}}}function h(t,s){var p="";for(var r=0;r<t.childNodes.length;r++){if(t.childNodes[r].nodeType==3){var q=t.childNodes[r].nodeValue;if(s){q=q.replace(/\n/g,"")}p+=q}else{if(t.childNodes[r].nodeName=="BR"){p+="\n"}else{p+=h(t.childNodes[r])}}}if(/MSIE [678]/.test(navigator.userAgent)){p=p.replace(/\r/g,"\n")}return p}function a(s){var r=s.className.split(/\s+/);r=r.concat(s.parentNode.className.split(/\s+/));for(var q=0;q<r.length;q++){var p=r[q].replace(/^language-/,"");if(e[p]){return p}}}function c(q){var p=[];(function(s,t){for(var r=0;r<s.childNodes.length;r++){if(s.childNodes[r].nodeType==3){t+=s.childNodes[r].nodeValue.length}else{if(s.childNodes[r].nodeName=="BR"){t+=1}else{if(s.childNodes[r].nodeType==1){p.push({event:"start",offset:t,node:s.childNodes[r]});t=arguments.callee(s.childNodes[r],t);p.push({event:"stop",offset:t,node:s.childNodes[r]})}}}}return t})(q,0);return p}function k(y,w,x){var q=0;var z="";var s=[];function u(){if(y.length&&w.length){if(y[0].offset!=w[0].offset){return(y[0].offset<w[0].offset)?y:w}else{return w[0].event=="start"?y:w}}else{return y.length?y:w}}function t(D){var A="<"+D.nodeName.toLowerCase();for(var B=0;B<D.attributes.length;B++){var C=D.attributes[B];A+=" "+C.nodeName.toLowerCase();if(C.value!==undefined&&C.value!==false&&C.value!==null){A+='="'+m(C.value)+'"'}}return A+">"}while(y.length||w.length){var v=u().splice(0,1)[0];z+=m(x.substr(q,v.offset-q));q=v.offset;if(v.event=="start"){z+=t(v.node);s.push(v.node)}else{if(v.event=="stop"){var p,r=s.length;do{r--;p=s[r];z+=("</"+p.nodeName.toLowerCase()+">")}while(p!=v.node);s.splice(r,1);while(r<s.length){z+=t(s[r]);r++}}}}return z+m(x.substr(q))}function j(){function q(x,y,v){if(x.compiled){return}var u;var s=[];if(x.k){x.lR=f(y,x.l||hljs.IR,true);for(var w in x.k){if(!x.k.hasOwnProperty(w)){continue}if(x.k[w] instanceof Object){u=x.k[w]}else{u=x.k;w="keyword"}for(var r in u){if(!u.hasOwnProperty(r)){continue}x.k[r]=[w,u[r]];s.push(r)}}}if(!v){if(x.bWK){x.b="\\b("+s.join("|")+")\\s"}x.bR=f(y,x.b?x.b:"\\B|\\b");if(!x.e&&!x.eW){x.e="\\B|\\b"}if(x.e){x.eR=f(y,x.e)}}if(x.i){x.iR=f(y,x.i)}if(x.r===undefined){x.r=1}if(!x.c){x.c=[]}x.compiled=true;for(var t=0;t<x.c.length;t++){if(x.c[t]=="self"){x.c[t]=x}q(x.c[t],y,false)}if(x.starts){q(x.starts,y,false)}}for(var p in e){if(!e.hasOwnProperty(p)){continue}q(e[p].dM,e[p],true)}}function d(B,C){if(!j.called){j();j.called=true}function q(r,M){for(var L=0;L<M.c.length;L++){if((M.c[L].bR.exec(r)||[null])[0]==r){return M.c[L]}}}function v(L,r){if(D[L].e&&D[L].eR.test(r)){return 1}if(D[L].eW){var M=v(L-1,r);return M?M+1:0}return 0}function w(r,L){return L.i&&L.iR.test(r)}function K(N,O){var M=[];for(var L=0;L<N.c.length;L++){M.push(N.c[L].b)}var r=D.length-1;do{if(D[r].e){M.push(D[r].e)}r--}while(D[r+1].eW);if(N.i){M.push(N.i)}return f(O,M.join("|"),true)}function p(M,L){var N=D[D.length-1];if(!N.t){N.t=K(N,E)}N.t.lastIndex=L;var r=N.t.exec(M);return r?[M.substr(L,r.index-L),r[0],false]:[M.substr(L),"",true]}function z(N,r){var L=E.cI?r[0].toLowerCase():r[0];var M=N.k[L];if(M&&M instanceof Array){return M}return false}function F(L,P){L=m(L);if(!P.k){return L}var r="";var O=0;P.lR.lastIndex=0;var M=P.lR.exec(L);while(M){r+=L.substr(O,M.index-O);var N=z(P,M);if(N){x+=N[1];r+='<span class="'+N[0]+'">'+M[0]+"</span>"}else{r+=M[0]}O=P.lR.lastIndex;M=P.lR.exec(L)}return r+L.substr(O,L.length-O)}function J(L,M){if(M.sL&&e[M.sL]){var r=d(M.sL,L);x+=r.keyword_count;return r.value}else{return F(L,M)}}function I(M,r){var L=M.cN?'<span class="'+M.cN+'">':"";if(M.rB){y+=L;M.buffer=""}else{if(M.eB){y+=m(r)+L;M.buffer=""}else{y+=L;M.buffer=r}}D.push(M);A+=M.r}function G(N,M,Q){var R=D[D.length-1];if(Q){y+=J(R.buffer+N,R);return false}var P=q(M,R);if(P){y+=J(R.buffer+N,R);I(P,M);return P.rB}var L=v(D.length-1,M);if(L){var O=R.cN?"</span>":"";if(R.rE){y+=J(R.buffer+N,R)+O}else{if(R.eE){y+=J(R.buffer+N,R)+O+m(M)}else{y+=J(R.buffer+N+M,R)+O}}while(L>1){O=D[D.length-2].cN?"</span>":"";y+=O;L--;D.length--}var r=D[D.length-1];D.length--;D[D.length-1].buffer="";if(r.starts){I(r.starts,"")}return R.rE}if(w(M,R)){throw"Illegal"}}var E=e[B];var D=[E.dM];var A=0;var x=0;var y="";try{var s,u=0;E.dM.buffer="";do{s=p(C,u);var t=G(s[0],s[1],s[2]);u+=s[0].length;if(!t){u+=s[1].length}}while(!s[2]);if(D.length>1){throw"Illegal"}return{r:A,keyword_count:x,value:y}}catch(H){if(H=="Illegal"){return{r:0,keyword_count:0,value:m(C)}}else{throw H}}}function g(t){var p={keyword_count:0,r:0,value:m(t)};var r=p;for(var q in e){if(!e.hasOwnProperty(q)){continue}var s=d(q,t);s.language=q;if(s.keyword_count+s.r>r.keyword_count+r.r){r=s}if(s.keyword_count+s.r>p.keyword_count+p.r){r=p;p=s}}if(r.language){p.second_best=r}return p}function i(r,q,p){if(q){r=r.replace(/^((<[^>]+>|\t)+)/gm,function(t,w,v,u){return w.replace(/\t/g,q)})}if(p){r=r.replace(/\n/g,"<br>")}return r}function n(t,w,r){var x=h(t,r);var v=a(t);var y,s;if(v){y=d(v,x)}else{return}var q=c(t);if(q.length){s=document.createElement("pre");s.innerHTML=y.value;y.value=k(q,c(s),x)}y.value=i(y.value,w,r);var u=t.className;if(!u.match("(\\s|^)(language-)?"+v+"(\\s|$)")){u=u?(u+" "+v):v}if(/MSIE [678]/.test(navigator.userAgent)&&t.tagName=="CODE"&&t.parentNode.tagName=="PRE"){s=t.parentNode;var p=document.createElement("div");p.innerHTML="<pre><code>"+y.value+"</code></pre>";t=p.firstChild.firstChild;p.firstChild.cN=s.cN;s.parentNode.replaceChild(p.firstChild,s)}else{t.innerHTML=y.value}t.className=u;t.result={language:v,kw:y.keyword_count,re:y.r};if(y.second_best){t.second_best={language:y.second_best.language,kw:y.second_best.keyword_count,re:y.second_best.r}}}function o(){if(o.called){return}o.called=true;var r=document.getElementsByTagName("pre");for(var p=0;p<r.length;p++){var q=b(r[p]);if(q){n(q,hljs.tabReplace)}}}function l(){if(window.addEventListener){window.addEventListener("DOMContentLoaded",o,false);window.addEventListener("load",o,false)}else{if(window.attachEvent){window.attachEvent("onload",o)}else{window.onload=o}}}var e={};this.LANGUAGES=e;this.highlight=d;this.highlightAuto=g;this.fixMarkup=i;this.highlightBlock=n;this.initHighlighting=o;this.initHighlightingOnLoad=l;this.IR="[a-zA-Z][a-zA-Z0-9_]*";this.UIR="[a-zA-Z_][a-zA-Z0-9_]*";this.NR="\\b\\d+(\\.\\d+)?";this.CNR="\\b(0[xX][a-fA-F0-9]+|(\\d+(\\.\\d*)?|\\.\\d+)([eE][-+]?\\d+)?)";this.BNR="\\b(0b[01]+)";this.RSR="!|!=|!==|%|%=|&|&&|&=|\\*|\\*=|\\+|\\+=|,|\\.|-|-=|/|/=|:|;|<|<<|<<=|<=|=|==|===|>|>=|>>|>>=|>>>|>>>=|\\?|\\[|\\{|\\(|\\^|\\^=|\\||\\|=|\\|\\||~";this.ER="(?![\\s\\S])";this.BE={b:"\\\\.",r:0};this.ASM={cN:"string",b:"'",e:"'",i:"\\n",c:[this.BE],r:0};this.QSM={cN:"string",b:'"',e:'"',i:"\\n",c:[this.BE],r:0};this.CLCM={cN:"comment",b:"//",e:"$"};this.CBLCLM={cN:"comment",b:"/\\*",e:"\\*/"};this.HCM={cN:"comment",b:"#",e:"$"};this.NM={cN:"number",b:this.NR,r:0};this.CNM={cN:"number",b:this.CNR,r:0};this.BNM={cN:"number",b:this.BNR,r:0};this.inherit=function(r,s){var p={};for(var q in r){p[q]=r[q]}if(s){for(var q in s){p[q]=s[q]}}return p}}();hljs.LANGUAGES.cpp=function(){var a={keyword:{"false":1,"int":1,"float":1,"while":1,"private":1,"char":1,"catch":1,"export":1,virtual:1,operator:2,sizeof:2,dynamic_cast:2,typedef:2,const_cast:2,"const":1,struct:1,"for":1,static_cast:2,union:1,namespace:1,unsigned:1,"long":1,"throw":1,"volatile":2,"static":1,"protected":1,bool:1,template:1,mutable:1,"if":1,"public":1,friend:2,"do":1,"return":1,"goto":1,auto:1,"void":2,"enum":1,"else":1,"break":1,"new":1,extern:1,using:1,"true":1,"class":1,asm:1,"case":1,typeid:1,"short":1,reinterpret_cast:2,"default":1,"double":1,register:1,explicit:1,signed:1,typename:1,"try":1,"this":1,"switch":1,"continue":1,wchar_t:1,inline:1,"delete":1,alignof:1,char16_t:1,char32_t:1,constexpr:1,decltype:1,noexcept:1,nullptr:1,static_assert:1,thread_local:1,restrict:1,_Bool:1,complex:1},built_in:{std:1,string:1,cin:1,cout:1,cerr:1,clog:1,stringstream:1,istringstream:1,ostringstream:1,auto_ptr:1,deque:1,list:1,queue:1,stack:1,vector:1,map:1,set:1,bitset:1,multiset:1,multimap:1,unordered_set:1,unordered_map:1,unordered_multiset:1,unordered_multimap:1,array:1,shared_ptr:1}};return{dM:{k:a,i:"</",c:[hljs.CLCM,hljs.CBLCLM,hljs.QSM,{cN:"string",b:"'\\\\?.",e:"'",i:"."},{cN:"number",b:"\\b(\\d+(\\.\\d*)?|\\.\\d+)(u|U|l|L|ul|UL|f|F)"},hljs.CNM,{cN:"preprocessor",b:"#",e:"$"},{cN:"stl_container",b:"\\b(deque|list|queue|stack|vector|map|set|bitset|multiset|multimap|unordered_map|unordered_set|unordered_multiset|unordered_multimap|array)\\s*<",e:">",k:a,r:10,c:["self"]}]}}}();hljs.LANGUAGES.r={dM:{c:[hljs.HCM,{cN:"number",b:"\\b0[xX][0-9a-fA-F]+[Li]?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+(?:[eE][+\\-]?\\d*)?L\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+\\.(?!\\d)(?:i\\b)?",e:hljs.IMMEDIATE_RE,r:1},{cN:"number",b:"\\b\\d+(?:\\.\\d*)?(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\.\\d+(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"keyword",b:"(?:tryCatch|library|setGeneric|setGroupGeneric)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\.",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\d+(?![\\w.])",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\b(?:function)",e:hljs.IMMEDIATE_RE,r:2},{cN:"keyword",b:"(?:if|in|break|next|repeat|else|for|return|switch|while|try|stop|warning|require|attach|detach|source|setMethod|setClass)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"literal",b:"(?:NA|NA_integer_|NA_real_|NA_character_|NA_complex_)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"literal",b:"(?:NULL|TRUE|FALSE|T|F|Inf|NaN)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"identifier",b:"[a-zA-Z.][a-zA-Z0-9._]*\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"<\\-(?!\\s*\\d)",e:hljs.IMMEDIATE_RE,r:2},{cN:"operator",b:"\\->|<\\-",e:hljs.IMMEDIATE_RE,r:1},{cN:"operator",b:"%%|~",e:hljs.IMMEDIATE_RE},{cN:"operator",b:">=|<=|==|!=|\\|\\||&&|=|\\+|\\-|\\*|/|\\^|>|<|!|&|\\||\\$|:",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"%",e:"%",i:"\\n",r:1},{cN:"identifier",b:"`",e:"`",r:0},{cN:"string",b:'"',e:'"',c:[hljs.BE],r:0},{cN:"string",b:"'",e:"'",c:[hljs.BE],r:0},{cN:"paren",b:"[[({\\])}]",e:hljs.IMMEDIATE_RE,r:0}]}};
+hljs.initHighlightingOnLoad();
+</script>
+
+
+
+
+</head>
+
+<body>
+<h1>Personal Microbial Cloud</h1>
+
+<h2>Sequence Data Cleanup</h2>
+
+<ul>
+<li>load ecology packages</li>
+<li>read in a few functions that will be used later</li>
+</ul>
+
+<pre><code class="r">library(vegan)
+</code></pre>
+
+<pre><code>## Loading required package: permute This is vegan 2.0-8
+</code></pre>
+
+<pre><code class="r">library(labdsv)
+</code></pre>
+
+<pre><code>## Loading required package: mgcv This is mgcv 1.7-22. For overview type
+## &#39;help(&quot;mgcv-package&quot;)&#39;. Loading required package: MASS
+## 
+## Attaching package: &#39;labdsv&#39;
+## 
+## The following object is masked from &#39;package:stats&#39;:
+## 
+## density
+</code></pre>
+
+<pre><code class="r">library(ape)
+source(&quot;../data/pb_functions_for_manuscript.R&quot;)
+</code></pre>
+
+<p>Load data: </p>
+
+<ul>
+<li>Classic OTU table. Manually remove hash character from first line. This also has taxonomy from GreenGenes database as last field. </li>
+<li>Mapping file used in QIIME. Also removed hash from first line and removed comment line. </li>
+<li>And then jive the order of samples in the OTU table and mapping file.</li>
+</ul>
+
+<pre><code class="r">pb &lt;- read.delim(&quot;../data/otu_table_r.txt&quot;, head = TRUE, row.names = 1)
+pb.tax &lt;- pb[, ncol(pb)]
+pb &lt;- pb[, -ncol(pb)]
+pb &lt;- t(pb)
+
+pb.map &lt;- read.delim(&quot;../data/pb_map.txt&quot;, head = TRUE, row.names = 1)
+
+all(row.names(pb.map) %in% row.names(pb))
+</code></pre>
+
+<pre><code>## [1] TRUE
+</code></pre>
+
+<pre><code class="r">dim(pb.map)
+</code></pre>
+
+<pre><code>## [1] 300  12
+</code></pre>
+
+<pre><code class="r">dim(pb)
+</code></pre>
+
+<pre><code>## [1]    300 235688
+</code></pre>
+
+<pre><code class="r">
+pb.map &lt;- pb.map[row.names(pb), ]
+dim(pb)
+</code></pre>
+
+<pre><code>## [1]    300 235688
+</code></pre>
+
+<pre><code class="r">dim(pb.map)
+</code></pre>
+
+<pre><code>## [1] 300  12
+</code></pre>
+
+<pre><code class="r">length(pb.tax)
+</code></pre>
+
+<pre><code>## [1] 235688
+</code></pre>
+
+<pre><code class="r">identical(row.names(pb), row.names(pb.map))
+</code></pre>
+
+<pre><code>## [1] TRUE
+</code></pre>
+
+<p>Keep original copy before changing things. </p>
+
+<pre><code class="r">pb.original &lt;- pb
+pb.tax.original &lt;- pb.tax
+pb.map.original &lt;- pb.map
+</code></pre>
+
+<pre><code># saved just in case of screwup. 
+pb &lt;- pb.original
+pb.tax &lt;- pb.tax.original
+pb.map &lt;- pb.map.original
+</code></pre>
+
+<p>Take out plant sequences</p>
+
+<pre><code class="r">plants &lt;- grep(&quot;Streptophyt&quot;, pb.tax)
+pb &lt;- pb[, -plants]
+pb.tax &lt;- pb.tax[-plants]
+rm(plants)
+</code></pre>
+
+<p>Set up taxonomy table</p>
+
+<pre><code class="r">taxo &lt;- makeTaxo(taxo.in = pb.tax, otu.table = pb)
+</code></pre>
+
+<pre><code>## Warning: no non-missing arguments to max; returning -Inf
+</code></pre>
+
+<pre><code class="r">dim(taxo)
+</code></pre>
+
+<pre><code>## [1] 234213      7
+</code></pre>
+
+<pre><code class="r">dim(pb)
+</code></pre>
+
+<pre><code>## [1]    300 234213
+</code></pre>
+
+<p>The big dataset started with 1.0028 &times; 10<sup>7</sup> total sequences from 234213 OTUs and 300 samples.</p>
+
+<p>Identify those samples not used in the study. </p>
+
+<pre><code class="r">nonexp &lt;- which(pb.map$location == &quot;east&quot; | pb.map$location == &quot;west&quot; | pb.map$location == 
+    &quot;out&quot;)
+pb &lt;- pb[-nonexp, ]
+pb.map &lt;- pb.map[-nonexp, ]
+rm(nonexp)
+dim(pb)
+</code></pre>
+
+<pre><code>## [1]    243 234213
+</code></pre>
+
+<pre><code class="r">dim(pb.map)
+</code></pre>
+
+<pre><code>## [1] 243  12
+</code></pre>
+
+<p>Index for controls, and clean up mapping table. </p>
+
+<pre><code class="r">pb.map &lt;- pb.map[, c(&quot;person&quot;, &quot;location&quot;, &quot;duration&quot;, &quot;sampleType&quot;)]
+control &lt;- which(pb.map$location == &quot;control&quot;)
+pb &lt;- pb[-c(control), ]
+pb.map &lt;- pb.map[-c(control), ]
+dim(pb)
+</code></pre>
+
+<pre><code>## [1]    216 234213
+</code></pre>
+
+<pre><code class="r">dim(pb.map)
+</code></pre>
+
+<pre><code>## [1] 216   4
+</code></pre>
+
+<pre><code class="r">identical(row.names(pb), row.names(pb.map))
+</code></pre>
+
+<pre><code>## [1] TRUE
+</code></pre>
+
+<p>Remove 4 contaminants that were introduced by PCR reagents. 
+And remove control samples. 
+This is detailed in <code>pb_analysis_Redo.Rmd</code>. </p>
+
+<pre><code class="r">contaminants &lt;- c(&quot;190873&quot;, &quot;64285&quot;, &quot;96443&quot;, &quot;129992&quot;)
+contaminants.index &lt;- which(colnames(pb) %in% contaminants)
+dim(pb)
+</code></pre>
+
+<pre><code>## [1]    216 234213
+</code></pre>
+
+<pre><code class="r">dim(pb.map)
+</code></pre>
+
+<pre><code>## [1] 216   4
+</code></pre>
+
+<pre><code class="r">pb &lt;- pb[, -contaminants.index]
+taxo &lt;- taxo[-contaminants.index, ]  # pb
+rm(control, contaminants, contaminants.index)
+identical(row.names(pb.map), row.names(pb))
+</code></pre>
+
+<pre><code>## [1] TRUE
+</code></pre>
+
+<pre><code class="r">dim(pb.map)
+</code></pre>
+
+<pre><code>## [1] 216   4
+</code></pre>
+
+<pre><code class="r">dim(pb)
+</code></pre>
+
+<pre><code>## [1]    216 234209
+</code></pre>
+
+<pre><code class="r">dim(taxo)
+</code></pre>
+
+<pre><code>## [1] 234209      7
+</code></pre>
+
+<p>Rarefy to 1000 seqs per sample. </p>
+
+<pre><code class="r">sort(rowSums(pb))
+</code></pre>
+
+<pre><code>## uf04.2h.s3 uf05.2h.s3 uf09.2h.s2 uf05.4h.s2 up04.4h.s2 of04.4h.s2 
+##         14         30        319        445        622       1035 
+## uf07.2h.s1 uf08.2h.s2 up05.2h.s3 uf09.4h.s2 uf11.4h.s1 uf12.2h.s3 
+##       1168       1209       1264       1298       1509       1832 
+## of01.2h.s2 up05.2h.s2 uf05.2h.s1 of11.2h.s3 uf10.4h.s3 uf12.4h.s2 
+##       1981       2100       2132       2313       2361       2411 
+## up02.2h.s2 of04.4h.s1 uf03.4h.s3 uf03.2h.s1 up02.4h.s3 uf03.2h.s2 
+##       2414       2563       2577       2690       2725       2755 
+## op03.2h.s3 up06.4h.s3 of02.2h.s2 of03.4h.s2 up05.4h.s2 of11.2h.s1 
+##       2780       2896       3276       3339       3429       3544 
+## up04.2h.s1 uf02.2h.s3 of06.2h.s3 uf06.4h.s1 of05.2h.s2 uf09.2h.s1 
+##       3688       3716       3770       3813       3929       3956 
+## uf09.2h.s3 up04.4h.s3 uf08.4h.s2 up03.2h.s1 uf06.2h.s3 uf01.4h.s1 
+##       3974       4049       4254       4255       4340       4379 
+## of09.4h.s2 uf08.2h.s1 of09.2h.s2 up04.2h.s2 op06.4h.s1 op05.2h.s1 
+##       4398       4431       4633       4664       4743       4774 
+## uf03.4h.s2 uf07.2h.s3 uf12.4h.s3 uf06.4h.s2 uf10.4h.s2 uf02.4h.s1 
+##       4858       5012       5403       5463       5465       5507 
+## uf12.2h.s1 uf04.4h.s3 of07.4h.s2 op06.2h.s3 of02.2h.s3 up06.4h.s1 
+##       5553       5567       5695       5766       5859       6039 
+## uf01.2h.s3 uf12.4h.s1 of03.2h.s2 uf03.4h.s1 uf08.2h.s3 op05.2h.s2 
+##       6122       6242       6471       6544       6603       6699 
+## uf06.2h.s1 of12.4h.s2 uf03.2h.s3 up01.4h.s3 op04.4h.s2 uf10.2h.s3 
+##       6853       6966       7024       7045       7058       7083 
+## uf04.2h.s1 up03.4h.s3 uf11.4h.s2 up06.2h.s1 of03.2h.s3 uf01.2h.s1 
+##       7331       7417       7708       8239       8321       8341 
+## of12.2h.s3 of06.2h.s2 op05.2h.s3 uf09.4h.s1 up01.2h.s1 up06.4h.s2 
+##       8599       8667       8832       8924       8944       9123 
+## op05.4h.s3 op06.2h.s1 of10.2h.s3 uf11.2h.s1 of03.2h.s1 up05.4h.s3 
+##       9728       9836      10098      10105      10287      10455 
+## up03.2h.s2 of04.2h.s2 up03.4h.s1 uf07.4h.s2 of04.4h.s3 of03.4h.s3 
+##      10719      10737      10874      10982      11224      11229 
+## uf02.4h.s3 of03.4h.s1 up03.2h.s3 of10.4h.s3 of01.2h.s3 uf08.4h.s1 
+##      11361      11362      11409      11440      11496      11595 
+## uf07.4h.s1 up01.4h.s2 op04.4h.s3 uf01.4h.s2 uf04.2h.s2 of10.2h.s1 
+##      11680      11794      11943      12079      12268      12565 
+## of08.2h.s2 up02.4h.s2 uf04.4h.s1 op03.4h.s2 uf10.2h.s1 uf11.2h.s2 
+##      12570      12576      12827      12839      12993      13104 
+## op04.2h.s2 uf01.2h.s2 uf11.2h.s3 uf07.2h.s2 uf04.4h.s2 uf10.2h.s2 
+##      14264      14296      14360      14393      15082      15325 
+## of05.2h.s3 uf09.4h.s3 of04.2h.s3 uf02.2h.s2 uf06.4h.s3 of08.4h.s2 
+##      15617      15760      15851      15868      16233      16497 
+## up02.2h.s1 up01.4h.s1 op03.4h.s3 of11.4h.s2 of06.2h.s1 of09.2h.s3 
+##      16667      17823      17842      18619      18804      19083 
+## op04.2h.s1 of07.2h.s1 op03.2h.s1 of02.4h.s2 up04.4h.s1 uf02.2h.s1 
+##      19087      19664      19949      20004      20114      20435 
+## of05.4h.s1 of08.2h.s3 up06.2h.s3 uf05.4h.s1 op01.2h.s2 op02.2h.s1 
+##      20546      21763      21847      22022      22716      22824 
+## op01.4h.s3 of04.2h.s1 op01.2h.s3 uf05.2h.s2 uf10.4h.s1 of06.4h.s2 
+##      23185      23190      23312      23526      23916      24057 
+## of05.2h.s1 uf02.4h.s2 of09.4h.s3 op02.4h.s1 of05.4h.s2 of07.2h.s3 
+##      24064      24119      26054      26422      26816      27521 
+## of12.4h.s1 uf05.4h.s3 of11.4h.s3 up02.2h.s3 op01.4h.s1 up01.2h.s3 
+##      27893      27964      28939      29254      29271      29317 
+## of12.2h.s2 uf12.2h.s2 op04.4h.s1 of05.4h.s3 uf06.2h.s2 uf08.4h.s3 
+##      30192      30442      30820      30826      31470      33236 
+## of02.4h.s1 of12.2h.s1 of02.2h.s1 up02.4h.s1 of10.4h.s1 up05.4h.s1 
+##      34169      34801      36046      37192      37617      37713 
+## op02.2h.s2 of01.4h.s1 uf01.4h.s3 up05.2h.s1 of08.2h.s1 of11.4h.s1 
+##      38675      38721      39095      39258      40386      41980 
+## up04.2h.s3 of01.2h.s1 uf11.4h.s3 op06.2h.s2 of07.2h.s2 of10.4h.s2 
+##      43128      43367      44531      44663      44820      45242 
+## up01.2h.s2 up06.2h.s2 op02.4h.s2 up03.4h.s2 of06.4h.s1 of08.4h.s3 
+##      45419      45429      45633      45687      45882      47273 
+## of07.4h.s1 of09.2h.s1 op04.2h.s3 of11.2h.s2 of10.2h.s2 of02.4h.s3 
+##      47494      48523      48552      48748      49228      55685 
+## of12.4h.s3 op05.4h.s1 of09.4h.s1 op06.4h.s2 of08.4h.s1 op01.2h.s1 
+##      56417      58353      62013      64385      64649      69957 
+## uf07.4h.s3 of07.4h.s3 of01.4h.s2 op03.4h.s1 op03.2h.s2 op01.4h.s2 
+##      76818      78604      82810      87558      87843      90912 
+## op05.4h.s2 op06.4h.s3 op02.2h.s3 of06.4h.s3 of01.4h.s3 op02.4h.s3 
+##     100535     104632     113890     144827     173563     298953
+</code></pre>
+
+<pre><code class="r">pb &lt;- pb[-which(rowSums(pb) &lt; 1000), ]
+pb.1000 &lt;- rrarefy(pb, 1000)
+pb.1000 &lt;- pb.1000[, -which(colSums(pb.1000) == 0)]
+pb.map &lt;- pb.map[row.names(pb.1000), ]
+taxo &lt;- taxo[colnames(pb.1000), ]
+dim(pb.1000)
+</code></pre>
+
+<pre><code>## [1]   211 19226
+</code></pre>
+
+<pre><code class="r">dim(pb.map)
+</code></pre>
+
+<pre><code>## [1] 211   4
+</code></pre>
+
+<pre><code class="r">dim(taxo)
+</code></pre>
+
+<pre><code>## [1] 19226     7
+</code></pre>
+
+<p>Put them all in alphabetical order, since that gives nice groupings. 
+Yay for labelling schemes!</p>
+
+<pre><code class="r">pb.map &lt;- pb.map[order(row.names(pb.map)), ]
+pb.1000 &lt;- pb.1000[row.names(pb.map), ]
+</code></pre>
+
+<p>Fix the abundance column - it still has abundance from full dataset, but abundance from rarefied dataset more meaningful. </p>
+
+<pre><code class="r">identical(row.names(taxo), colnames(pb.1000))  # just to make sure
+</code></pre>
+
+<pre><code>## [1] TRUE
+</code></pre>
+
+<pre><code class="r">taxo$abundance &lt;- colSums(pb.1000)
+</code></pre>
+
+<p>A few metrics to reference later.</p>
+
+<pre><code class="r">total.seqs &lt;- sum(pb)
+total.samples &lt;- nrow(pb)
+total.otus &lt;- ncol(pb)
+
+rarefied.seqs &lt;- sum(pb.1000)
+rarefied.samples &lt;- nrow(pb.1000)
+rarefied.otus &lt;- ncol(pb.1000)
+</code></pre>
+
+<p>Clean up factor levels. </p>
+
+<pre><code class="r">pb.map$person &lt;- factor(pb.map$person)
+pb.map$location &lt;- factor(pb.map$location)
+pb.map$duration &lt;- factor(pb.map$duration)
+pb.map$sampleType &lt;- factor(pb.map$sampleType)
+pb.map$occ.person &lt;- factor(paste(pb.map$location, pb.map$person, sep = &quot;&quot;))
+
+pb.map$occ.person2 &lt;- as.character(pb.map$occ.person)
+pb.map$occ.person2[pb.map$location == &quot;unocc&quot;] &lt;- &quot;unocc&quot;
+pb.map$occ.person2 &lt;- factor(pb.map$occ.person2)
+</code></pre>
+
+<p>How do samples fall into groups? I.e., do we have balance in treatments?</p>
+
+<pre><code class="r">table(pb.map$person, pb.map$sampleType)
+</code></pre>
+
+<pre><code>##     
+##      filter petri.dish
+##   s1     48         24
+##   s2     46         23
+##   s3     46         24
+</code></pre>
+
+<pre><code class="r">table(pb.map$location)
+</code></pre>
+
+<pre><code>## 
+##   occ unocc 
+##   108   103
+</code></pre>
+
+<pre><code class="r">table(pb.map$duration)
+</code></pre>
+
+<pre><code>## 
+##   2   4 
+## 105 106
+</code></pre>
+
+<pre><code class="r">table(pb.map$sampleType)
+</code></pre>
+
+<pre><code>## 
+##     filter petri.dish 
+##        140         71
+</code></pre>
+
+<p>Indexing lists for quick parsing. </p>
+
+<pre><code class="r">s22of &lt;- c(1:nrow(pb.map))[pb.map$person == &quot;s2&quot; &amp; pb.map$duration == 2 &amp; pb.map$location == 
+    &quot;occ&quot; &amp; pb.map$sampleType == &quot;filter&quot;]
+s24of &lt;- c(1:nrow(pb.map))[pb.map$person == &quot;s2&quot; &amp; pb.map$duration == 4 &amp; pb.map$location == 
+    &quot;occ&quot; &amp; pb.map$sampleType == &quot;filter&quot;]
+s22op &lt;- c(1:nrow(pb.map))[pb.map$person == &quot;s2&quot; &amp; pb.map$duration == 2 &amp; pb.map$location == 
+    &quot;occ&quot; &amp; pb.map$sampleType == &quot;petri.dish&quot;]
+s24op &lt;- c(1:nrow(pb.map))[pb.map$person == &quot;s2&quot; &amp; pb.map$duration == 4 &amp; pb.map$location == 
+    &quot;occ&quot; &amp; pb.map$sampleType == &quot;petri.dish&quot;]
+s22uf &lt;- c(1:nrow(pb.map))[pb.map$person == &quot;s2&quot; &amp; pb.map$duration == 2 &amp; pb.map$location == 
+    &quot;unocc&quot; &amp; pb.map$sampleType == &quot;filter&quot;]
+s24uf &lt;- c(1:nrow(pb.map))[pb.map$person == &quot;s2&quot; &amp; pb.map$duration == 4 &amp; pb.map$location == 
+    &quot;unocc&quot; &amp; pb.map$sampleType == &quot;filter&quot;]
+s22up &lt;- c(1:nrow(pb.map))[pb.map$person == &quot;s2&quot; &amp; pb.map$duration == 2 &amp; pb.map$location == 
+    &quot;unocc&quot; &amp; pb.map$sampleType == &quot;petri.dish&quot;]
+s24up &lt;- c(1:nrow(pb.map))[pb.map$person == &quot;s2&quot; &amp; pb.map$duration == 4 &amp; pb.map$location == 
+    &quot;unocc&quot; &amp; pb.map$sampleType == &quot;petri.dish&quot;]
+
+##
+s32of &lt;- c(1:nrow(pb.map))[pb.map$person == &quot;s3&quot; &amp; pb.map$duration == 2 &amp; pb.map$location == 
+    &quot;occ&quot; &amp; pb.map$sampleType == &quot;filter&quot;]
+s34of &lt;- c(1:nrow(pb.map))[pb.map$person == &quot;s3&quot; &amp; pb.map$duration == 4 &amp; pb.map$location == 
+    &quot;occ&quot; &amp; pb.map$sampleType == &quot;filter&quot;]
+s32op &lt;- c(1:nrow(pb.map))[pb.map$person == &quot;s3&quot; &amp; pb.map$duration == 2 &amp; pb.map$location == 
+    &quot;occ&quot; &amp; pb.map$sampleType == &quot;petri.dish&quot;]
+s34op &lt;- c(1:nrow(pb.map))[pb.map$person == &quot;s3&quot; &amp; pb.map$duration == 4 &amp; pb.map$location == 
+    &quot;occ&quot; &amp; pb.map$sampleType == &quot;petri.dish&quot;]
+s32uf &lt;- c(1:nrow(pb.map))[pb.map$person == &quot;s3&quot; &amp; pb.map$duration == 2 &amp; pb.map$location == 
+    &quot;unocc&quot; &amp; pb.map$sampleType == &quot;filter&quot;]
+s34uf &lt;- c(1:nrow(pb.map))[pb.map$person == &quot;s3&quot; &amp; pb.map$duration == 4 &amp; pb.map$location == 
+    &quot;unocc&quot; &amp; pb.map$sampleType == &quot;filter&quot;]
+s32up &lt;- c(1:nrow(pb.map))[pb.map$person == &quot;s3&quot; &amp; pb.map$duration == 2 &amp; pb.map$location == 
+    &quot;unocc&quot; &amp; pb.map$sampleType == &quot;petri.dish&quot;]
+s34up &lt;- c(1:nrow(pb.map))[pb.map$person == &quot;s3&quot; &amp; pb.map$duration == 4 &amp; pb.map$location == 
+    &quot;unocc&quot; &amp; pb.map$sampleType == &quot;petri.dish&quot;]
+
+##
+s12of &lt;- c(1:nrow(pb.map))[pb.map$person == &quot;s1&quot; &amp; pb.map$duration == 2 &amp; pb.map$location == 
+    &quot;occ&quot; &amp; pb.map$sampleType == &quot;filter&quot;]
+s14of &lt;- c(1:nrow(pb.map))[pb.map$person == &quot;s1&quot; &amp; pb.map$duration == 4 &amp; pb.map$location == 
+    &quot;occ&quot; &amp; pb.map$sampleType == &quot;filter&quot;]
+s12op &lt;- c(1:nrow(pb.map))[pb.map$person == &quot;s1&quot; &amp; pb.map$duration == 2 &amp; pb.map$location == 
+    &quot;occ&quot; &amp; pb.map$sampleType == &quot;petri.dish&quot;]
+s14op &lt;- c(1:nrow(pb.map))[pb.map$person == &quot;s1&quot; &amp; pb.map$duration == 4 &amp; pb.map$location == 
+    &quot;occ&quot; &amp; pb.map$sampleType == &quot;petri.dish&quot;]
+s12uf &lt;- c(1:nrow(pb.map))[pb.map$person == &quot;s1&quot; &amp; pb.map$duration == 2 &amp; pb.map$location == 
+    &quot;unocc&quot; &amp; pb.map$sampleType == &quot;filter&quot;]
+s14uf &lt;- c(1:nrow(pb.map))[pb.map$person == &quot;s1&quot; &amp; pb.map$duration == 4 &amp; pb.map$location == 
+    &quot;unocc&quot; &amp; pb.map$sampleType == &quot;filter&quot;]
+s12up &lt;- c(1:nrow(pb.map))[pb.map$person == &quot;s1&quot; &amp; pb.map$duration == 2 &amp; pb.map$location == 
+    &quot;unocc&quot; &amp; pb.map$sampleType == &quot;petri.dish&quot;]
+s14up &lt;- c(1:nrow(pb.map))[pb.map$person == &quot;s1&quot; &amp; pb.map$duration == 4 &amp; pb.map$location == 
+    &quot;unocc&quot; &amp; pb.map$sampleType == &quot;petri.dish&quot;]
+
+
+## A few groupings to call up later
+
+groups &lt;- list(s22of, s32of, s12of, s22op, s32op, s12op, s22uf, s32uf, s12uf, 
+    s22up, s32up, s12up, s24of, s34of, s14of, s24op, s34op, s14op, s24uf, s34uf, 
+    s14uf, s24up, s34up, s14up)
+
+names(groups) &lt;- c(&quot;s22of&quot;, &quot;s32of&quot;, &quot;s12of&quot;, &quot;s22op&quot;, &quot;s32op&quot;, &quot;s12op&quot;, &quot;s22uf&quot;, 
+    &quot;s32uf&quot;, &quot;s12uf&quot;, &quot;s22up&quot;, &quot;s32up&quot;, &quot;s12up&quot;, &quot;s24of&quot;, &quot;s34of&quot;, &quot;s14of&quot;, 
+    &quot;s24op&quot;, &quot;s34op&quot;, &quot;s14op&quot;, &quot;s24uf&quot;, &quot;s34uf&quot;, &quot;s14uf&quot;, &quot;s24up&quot;, &quot;s34up&quot;, 
+    &quot;s14up&quot;)
+
+gr2 &lt;- list(s14of, s12of, s14op, s12op, s14uf, s12uf, s14up, s12up, s34of, s32of, 
+    s34op, s32op, s34uf, s32uf, s34up, s32up, s24of, s22of, s24op, s22op, s24uf, 
+    s22uf, s24up, s22up)
+
+gr.name &lt;- c(&quot;s14of&quot;, &quot;s12of&quot;, &quot;s14op&quot;, &quot;s12op&quot;, &quot;s14uf&quot;, &quot;s12uf&quot;, &quot;s14up&quot;, 
+    &quot;s12up&quot;, &quot;s34of&quot;, &quot;s32of&quot;, &quot;s34op&quot;, &quot;s32op&quot;, &quot;s34uf&quot;, &quot;s32uf&quot;, &quot;s34up&quot;, 
+    &quot;s32up&quot;, &quot;s24of&quot;, &quot;s22of&quot;, &quot;s24op&quot;, &quot;s22op&quot;, &quot;s24uf&quot;, &quot;s22uf&quot;, &quot;s24up&quot;, 
+    &quot;s22up&quot;)
+
+# clean up group names
+rm(list = ls()[which(ls() %in% names(groups))])
+</code></pre>
+
+<p>Now save the image that can be used for analysis and figures. </p>
+
+<pre><code class="r">rm(pb.original, pb.map.original, pb.tax.original, pb, pb.tax)
+save.image(&quot;../data/pb_data.RData&quot;)
+ls()
+</code></pre>
+
+<pre><code>##  [1] &quot;cons&quot;             &quot;Evenness&quot;         &quot;gr.name&quot;         
+##  [4] &quot;gr2&quot;              &quot;groups&quot;           &quot;makeTaxo&quot;        
+##  [7] &quot;pb.1000&quot;          &quot;pb.map&quot;           &quot;rarefied.otus&quot;   
+## [10] &quot;rarefied.samples&quot; &quot;rarefied.seqs&quot;    &quot;se&quot;              
+## [13] &quot;taxo&quot;             &quot;total.otus&quot;       &quot;total.samples&quot;   
+## [16] &quot;total.seqs&quot;
+</code></pre>
+
+</body>
+
+</html>
+

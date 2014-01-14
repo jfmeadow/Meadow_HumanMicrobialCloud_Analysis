@@ -1,0 +1,401 @@
+### Picklebox - look for contamination
+
+
+Load data. 
+
+```{r,cache=TRUE}
+setwd('~/Dropbox/pb_shared_markdown/manuscript_code/contamination/')
+
+library(vegan)
+library(labdsv)
+
+source('../data/pb_functions_for_manuscript.R')
+```
+
+
+
+```{r, cache=TRUE}
+pb <- read.delim('../data/otu_table_r.txt', head=TRUE, row.names=1)
+pb.tax <- pb[, ncol(pb)]
+pb <- pb[, -ncol(pb)]
+pb <- t(pb) 
+
+pb.map <- read.delim('../data/pb_map.txt', head=TRUE, row.names=1)
+
+all(row.names(pb.map) %in% row.names(pb))
+dim(pb.map); dim(pb)
+
+pb.map <- pb.map[row.names(pb), ]
+dim(pb); dim(pb.map); length(pb.tax)
+identical(row.names(pb), row.names(pb.map))
+```
+
+
+
+
+Identify those not used in the study. 
+
+```{r, cache=TRUE}
+nonexp <- which(pb.map$location == 'east' | 
+  pb.map$location == 'west' | 
+	pb.map$location == 'out')
+```
+
+
+Keep original copy
+
+```{r, cache=TRUE}
+pb.original <- pb
+pb.tax.original <- pb.tax
+```
+
+
+Take out plant sequences
+
+```{r, cache=TRUE}
+plants <- grep('Streptophyt', pb.tax)
+pb <- pb[, -plants]
+pb.tax <- pb.tax[-plants] # remove from taxonomy to line up
+```
+
+
+Make a full rarefied dataset including controls and contaminants. 
+
+```{r, cache=TRUE}
+sort(rowSums(pb.original))
+sort(rowSums(pb))
+pb.tmp <- pb[-nonexp, ]
+pb.tmp <- pb.tmp[-which(rowSums(pb.tmp) < 3000), ]
+pb.3500 <- rrarefy(pb.tmp, 3500)
+pb.map <- pb.map[row.names(pb.3500), 
+	c('person', 'location', 'duration', 'sampleType')]
+dim(pb.3500); dim(pb.map)
+identical(row.names(pb.3500), row.names(pb.map))
+```
+
+
+Make taxonomy data frame for indexing. 
+
+```{r, cache=TRUE}
+taxo <- makeTaxo(pb.tax, pb.3500)
+head(taxo)
+```
+
+
+Get rid of empty OTUs to reduce computing demand. 
+
+```{r, cache=TRUE}
+pb.3500 <- pb.3500[, -which(colSums(pb.3500) == 0)]
+taxo <- taxo[colnames(pb.3500), ]
+head(taxo)
+dim(taxo); dim(pb.3500)
+identical(row.names(taxo), colnames(pb.3500))
+pb.3500.ra <- pb.3500/35
+```
+
+
+Quick refrerence vector of names for figures and whatnot. Some genus, families, etc are empty, so search for the finest taxonomic level and use that name. 
+
+```{r, cache=TRUE}
+cons <- function(x) {
+	l <- length(x)
+	while(x[l] == '') {l = l-1}
+	name <- x[l]
+	}
+consensus <- apply(taxo[, 1:6], 1, cons)
+consensus[1:10]
+```
+
+
+Some indexing and metadata stuff for figures and such. 
+
+```{r, cache=TRUE}
+occ <- which(pb.map$location == 'occ')
+unocc <- which(pb.map$location == 'unocc')
+control <- which(pb.map$location == 'control')
+
+pb.map$pch <- 21
+table(pb.map$sampleType)
+pb.map$pch2 <- pb.map$pch
+pb.map$pch2[pb.map$sampleType == 'extraction.control'] <- 24
+pb.map$pch2[pb.map$sampleType == 'reagent.control'] <- 23
+pb.map$pch2[pb.map$sampleType == 'petri.dish' & pb.map$location == 'control'] <- 22
+
+pb.map$bg <- 'gray60'
+pb.map$bg[occ] <- 'cornflowerblue'
+pb.map$bg[unocc] <- 'darkorange'
+```
+
+
+Make dissimilarity matrix for big dataset - this takes a while. 
+Make with both Canberra and Bray-Curtis, and then make NMDS ordinations. 
+The Bray-Curtis will be more useful for identifying the influence of the most abundant taxa, 
+while Canberra is used for analysis. 
+Here, Canberra has high stress, so is not used much. 
+Also quick plot to make sure that BC captures differences between groups. 
+
+```{r, cache=TRUE}
+can <- vegdist(pb.3500, 'canberra')
+bc <- vegdist(pb.3500)
+
+nmds.can <- nmds(can)
+nmds.bc <- nmds(bc)
+```
+
+
+
+The BC ordination clearly shows that controls are tightly grouped (mostly), while occupied and unoccupied are defintely statistically different. Even with contaminants. Strong gradient along x-axis >> will be used for regression below. 
+
+```{r, cache=TRUE}
+# pdf('~/Desktop/contamination_ordination.pdf', useDingbats=TRUE)
+plot(nmds.bc$points, col=pb.map$location, type='n')
+points(nmds.bc$points[occ, ], pch=16, col=pb.map$bg[occ])
+points(nmds.bc$points[unocc, ], pch=16, col=pb.map$bg[unocc])
+points(nmds.bc$points[control, ], pch=21, bg=pb.map$bg[control])
+# dev.off()
+
+plot(nmds.bc$points, type='n', xlim=c(-0.5, -0.3), ylim=c(-0.2, 0.1))
+points(nmds.bc$points[occ, ], pch=16, col=pb.map$bg[occ])
+points(nmds.bc$points[unocc, ], pch=16, col=pb.map$bg[unocc])
+points(nmds.bc$points[control, ], pch=21, bg=pb.map$bg[control])
+```
+
+
+Find the most abundant taxa. This is done for 10, 100, 1000. Use 10 for plotting, and take out those contaminants, but use 1000 since some contaminants are really rare in actual samples. 
+
+```{r, cache=TRUE}
+control.taxa.10 <- rev(sort(colSums(pb.3500[control, ])))[1:10]/sum(pb.3500[control, ])
+occ.taxa.10 <- rev(sort(colSums(pb.3500[occ, ])))[1:10]/sum(pb.3500[occ, ])
+unocc.taxa.10 <- rev(sort(colSums(pb.3500[unocc, ])))[1:10]/sum(pb.3500[unocc, ])
+
+control.taxa.10['other'] <- 1-sum(control.taxa.10)
+occ.taxa.10['other'] <- 1-sum(occ.taxa.10)
+unocc.taxa.10['other'] <- 1-sum(unocc.taxa.10)
+
+top.10 <- cbind(rev(control.taxa.10), rev(unocc.taxa.10), rev(occ.taxa.10))
+#mids <- barplot(top.10, col=c('gray30', rep('gray70', 10)), border='gray30', space=1)
+
+con.cum <- cumsum(rev(control.taxa.10))
+occ.cum <- cumsum(rev(occ.taxa.10))
+unocc.cum <- cumsum(rev(unocc.taxa.10))
+
+control.taxa.100 <- rev(sort(colSums(pb.3500[control, ])))[1:100]/sum(pb.3500[control, ])
+occ.taxa.100 <- rev(sort(colSums(pb.3500[occ, ])))[1:100]/sum(pb.3500[occ, ])
+unocc.taxa.100 <- rev(sort(colSums(pb.3500[unocc, ])))[1:100]/sum(pb.3500[unocc, ])
+
+control.taxa.100['other'] <- 1-sum(control.taxa.100)
+occ.taxa.100['other'] <- 1-sum(occ.taxa.100)
+unocc.taxa.100['other'] <- 1-sum(unocc.taxa.100)
+
+con.cum.100 <- cumsum(rev(control.taxa.100))
+occ.cum.100 <- cumsum(rev(occ.taxa.100))
+unocc.cum.100 <- cumsum(rev(unocc.taxa.100))
+
+occ.taxa.1000 <- rev(sort(colSums(pb.3500[occ, ])))[1:1000]/sum(pb.3500[occ, ])
+unocc.taxa.1000 <- rev(sort(colSums(pb.3500[unocc, ])))[1:1000]/sum(pb.3500[unocc, ])
+
+occ.taxa.1000['other'] <- 1-sum(occ.taxa.1000)
+unocc.taxa.1000['other'] <- 1-sum(unocc.taxa.1000)
+
+occ.cum.1000 <- cumsum(rev(occ.taxa.1000))
+unocc.cum.1000 <- cumsum(rev(unocc.taxa.1000))
+```
+
+
+
+
+
+Halomonas is the most abundant across the board. It drives the BC NMDS. 
+
+```{r, cache=TRUE}
+rev(sort(colSums(pb.3500)))[1:10]
+rev(sort(colSums(pb.3500)))[1]/sum(pb.3500)  # 34%
+halo <- '190873'
+taxo['190873', ]
+pb.3500[, '190873']
+haloCol <- pb.3500[, halo]
+
+plot(haloCol ~ nmds.bc$points[, 1], type='n')
+points(haloCol[occ] ~ nmds.bc$points[occ, 1], pch=16, col=pb.map$bg[occ])
+points(haloCol[unocc] ~ nmds.bc$points[unocc, 1], pch=16, col=pb.map$bg[unocc])
+points(haloCol[control] ~ nmds.bc$points[control, 1], pch=21, bg=pb.map$bg[control], )
+# identify(haloCol[control] ~ nmds.bc$points[control, 1], labels=pb.map$sampleType[control])
+# the mixed group of controls are all extraction blanks
+```
+
+
+
+Big panel figure showing each top contaminant in the dataset, and its influence on NMDS1
+
+```{r, fig.height=10, fig.width=10, cache=TRUE}
+
+# pdf('~/Desktop/contaminationTop10.pdf', height=10, width=10, useDingbats=TRUE)
+layout(matrix(c(11:15, 1:10, 16:20), 5, 4), heights=c(1,1,1,1,1.5), widths=c(1,2,2,1))
+par(las=1, mar=c(0,4,0,0), fg='gray40', col.axis='gray40', col.lab='gray40')
+for (i in 1:10) {
+	id <- names(control.taxa.10)[i]
+	print(taxo[id, ])
+	idCol <- pb.3500.ra[, id]
+	print(sum(idCol)/sum(pb.3500.ra))
+	y.lim <- round(range(idCol), 2)
+	ybuff <- y.lim[2]/8
+	x.lim <- round(range(nmds.bc$points[, 1]), 2)
+	xbuff <- sum(abs(x.lim))/8
+	
+	if(i %in% c(1:4)) {par(las=1, mar=c(0,4,0,0))}
+	if(i %in% c(5:8)) {par(las=1, mar=c(0,0,0,4))}
+	if(i == 5) {par(las=1, mar=c(4,4,0,0))}
+	if(i == 10) {par(las=1, mar=c(4,0,0,4))}
+	plot(idCol ~ nmds.bc$points[, 1], 
+		ylim=c(y.lim + c(-ybuff, 2*ybuff)), xlim=c(x.lim + c(-xbuff, xbuff)),
+		type='n', xaxt='n', yaxt='n', xlab='', ylab='')
+	if(i %in% c(1:5)) {yax <- 2}
+	else {yax <- 4}
+	axis(side=yax, at=y.lim, labels=TRUE)
+	if(i %in% c(5,10)) {
+		axis(side=1, at=x.lim)
+		mtext('NMDS 1', side=1, line=1, cex=.7)
+		}
+	if(i == 1) {
+		mtext('relative\nabundance', side=2, cex=.7, line=.5)
+		}
+	if(i == 6) {
+		mtext('relative\nabundance', side=4, cex=.7, line=.5)
+    legend('right',
+      legend=c('extraction control', 'reagent control', 'petri control', 
+  		'dish control', 'occupied', 'unoccupied'), 
+	    pch=c(24, 23, 22, 21, 16, 16), 
+	    col=c(1,1,1,1, 'cornflowerblue', 'darkorange'), 
+	    pt.bg=rgb(0,0,0,.3))
+		}
+	points(idCol[occ] ~ nmds.bc$points[occ, 1], pch=16, col=pb.map$bg[occ])
+	points(idCol[unocc] ~ nmds.bc$points[unocc, 1], pch=16, col=pb.map$bg[unocc])
+	points(idCol[control] ~ nmds.bc$points[control, 1], pch=pb.map$pch2[control], 
+		col='black', bg=rgb(0,0,0,.3), cex=2)
+	mtext(paste(consensus[id], ' (', id, ')', sep=''), line=-1.5)
+	}
+
+for(i in 11:2) {
+	xup <- xdown <- yup <- ydown <- NULL
+	
+	yup <- rep(con.cum[i], 2)
+	ydown <- rep(con.cum[i-1], 2)
+	xup <- xdown <- c(1,2)
+	
+	if(names(con.cum)[i] %in% names(unocc.cum.1000)) {
+		ucu <- which(names(unocc.cum.1000) == names(con.cum)[i])
+		yup <- c(yup, rep(unocc.cum.1000[ucu], 2))
+		ydown <- c(ydown, rep(unocc.cum.1000[ucu-1], 2))
+		xup <- xdown <- c(xup, 3,4)
+		}
+	if(names(con.cum)[i] %in% names(occ.cum.1000)) {
+		ocu <- which(names(occ.cum.1000) == names(con.cum)[i])
+		yup <- c(yup, rep(occ.cum.1000[ocu], 2))
+		ydown <- c(ydown, rep(occ.cum.1000[ocu-1], 2))
+		xup <- xdown <- c(xup, 5,6)
+		}
+	par(mar=c(3,3,3,3))
+	if(i %in% c(7, 2)) {par(mar=c(8,3,3,3))}
+	barplot(top.10, col=c('gray30', rep('gray93', 10)), border='gray30', space=1, 
+		yaxt='n')	
+	if(i %in% c(7, 2)) {
+		par(las=2)
+		mtext(c('control', 'unoccupied', 'occupied'), side=1, at=c(1.5, 3.5, 5.5), 
+			cex=.8, line=.2)}
+		par(las=1)
+	if(!i %in% c(7, 2)) {
+		par(las=2)
+		mtext(c('c', 'u', 'o'), side=1, at=c(1.5, 3.5, 5.5), cex=.8, line=.2)}
+		par(las=1)
+	if(i %in% 11:7) {
+		axis(2, at=c(0, .5, 1), labels=c(0, 50, 100))
+		}
+	if(i %in% 2:6) {
+		axis(4, at=c(0, .5, 1), labels=c(0, 50, 100))
+		}
+	polygon(c(xup, rev(xdown)), c(yup, rev(ydown)), col=rgb(0,0,0,.3))
+	} 
+
+# dev.off()
+```
+
+
+
+Now take out those most abundant in pcr controls.
+
+```{r, cache=TRUE}
+dim(pb.tmp)
+pb.c <- pb.tmp[-c(control), ]
+pb.nc <- pb.tmp[-c(control), -which(colnames(pb.tmp) %in% names(control.taxa.10[c(1, 2, 6, 7)]))]
+pb.map.nc <- pb.map[-control, ]
+
+sort(rowSums(pb.nc))
+pb.nc.1000 <- rrarefy(pb.nc, 1000)
+pb.nc.1000 <- pb.nc.1000[, -which(colSums(pb.nc.1000) == 0)]
+pb.1000 <- rrarefy(pb.c, 1000)
+pb.1000 <- pb.1000[, -which(colSums(pb.1000) == 0)]
+```
+
+
+
+
+Make same NMDS objects to compare.
+
+```{r, cache=TRUE}
+can.nc <- vegdist(pb.nc.1000, 'canberra')
+bc.nc <- vegdist(pb.nc.1000)
+can.c <- vegdist(pb.1000, 'canberra')
+bc.c <- vegdist(pb.1000)
+
+nmds.can.nc <- nmds(can.nc)
+nmds.bc.nc <- nmds(bc.nc)
+nmds.can.c <- nmds(can.c)
+nmds.bc.c <- nmds(bc.c)
+```
+
+
+Still see really strong pattern, but dissimilarities are pretty different. So this says probably redo all analyses to see how big of a difference. 
+
+```{r, cache=TRUE}
+
+levels(pb.map$location)
+plot(nmds.can.nc$points, col=pb.map.nc$location) 
+plot(nmds.bc.nc$points, col=pb.map.nc$location) 
+plot(nmds.can.c$points, col=pb.map.nc$location) 
+plot(nmds.bc.c$points, col=pb.map.nc$location) 
+
+plot(can.nc, can.c)
+plot(bc.nc, bc.c)
+```
+
+
+
+Still a very big statistical difference. 
+
+```{r, cache=TRUE}
+
+adonis(can.nc ~ pb.map.nc$location)
+adonis(bc.nc ~ pb.map.nc$location)
+```
+
+```{r, cache=TRUE}
+
+plot(nmds.bc$points, col=pb.map$location, type='n')
+points(nmds.bc$points[occ, ], pch=16, col=pb.map$bg[occ])
+points(nmds.bc$points[unocc, ], pch=16, col=pb.map$bg[unocc])
+points(nmds.bc$points[control, ], pch=21, bg=pb.map$bg[control])
+
+plot(nmds.bc$points, type='n', xlim=c(-0.5, -0.3), ylim=c(-0.2, 0.1))
+points(nmds.bc$points[occ, ], pch=16, col=pb.map$bg[occ])
+points(nmds.bc$points[unocc, ], pch=16, col=pb.map$bg[unocc])
+points(nmds.bc$points[control, ], pch=21, bg=pb.map$bg[control])
+```
+
+
+
+
+
+
+
+
+

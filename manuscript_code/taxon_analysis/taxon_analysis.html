@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<!-- saved from url=(0014)about:internet -->
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+<title>Personal Microbial Cloud</title>
+
+<style type="text/css">
+body, td {
+   font-family: sans-serif;
+   background-color: white;
+   font-size: 12px;
+   margin: 8px;
+}
+
+tt, code, pre {
+   font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace;
+}
+
+h1 { 
+   font-size:2.2em; 
+}
+
+h2 { 
+   font-size:1.8em; 
+}
+
+h3 { 
+   font-size:1.4em; 
+}
+
+h4 { 
+   font-size:1.0em; 
+}
+
+h5 { 
+   font-size:0.9em; 
+}
+
+h6 { 
+   font-size:0.8em; 
+}
+
+a:visited {
+   color: rgb(50%, 0%, 50%);
+}
+
+pre {	
+   margin-top: 0;
+   max-width: 95%;
+   border: 1px solid #ccc;
+   white-space: pre-wrap;
+}
+
+pre code {
+   display: block; padding: 0.5em;
+}
+
+code.r, code.cpp {
+   background-color: #F8F8F8;
+}
+
+table, td, th {
+  border: none;
+}
+
+blockquote {
+   color:#666666;
+   margin:0;
+   padding-left: 1em;
+   border-left: 0.5em #EEE solid;
+}
+
+hr {
+   height: 0px;
+   border-bottom: none;
+   border-top-width: thin;
+   border-top-style: dotted;
+   border-top-color: #999999;
+}
+
+@media print {
+   * { 
+      background: transparent !important; 
+      color: black !important; 
+      filter:none !important; 
+      -ms-filter: none !important; 
+   }
+
+   body { 
+      font-size:12pt; 
+      max-width:100%; 
+   }
+       
+   a, a:visited { 
+      text-decoration: underline; 
+   }
+
+   hr { 
+      visibility: hidden;
+      page-break-before: always;
+   }
+
+   pre, blockquote { 
+      padding-right: 1em; 
+      page-break-inside: avoid; 
+   }
+
+   tr, img { 
+      page-break-inside: avoid; 
+   }
+
+   img { 
+      max-width: 100% !important; 
+   }
+
+   @page :left { 
+      margin: 15mm 20mm 15mm 10mm; 
+   }
+     
+   @page :right { 
+      margin: 15mm 10mm 15mm 20mm; 
+   }
+
+   p, h2, h3 { 
+      orphans: 3; widows: 3; 
+   }
+
+   h2, h3 { 
+      page-break-after: avoid; 
+   }
+}
+
+</style>
+
+<!-- Styles for R syntax highlighter -->
+<style type="text/css">
+   pre .operator,
+   pre .paren {
+     color: rgb(104, 118, 135)
+   }
+
+   pre .literal {
+     color: rgb(88, 72, 246)
+   }
+
+   pre .number {
+     color: rgb(0, 0, 205);
+   }
+
+   pre .comment {
+     color: rgb(76, 136, 107);
+   }
+
+   pre .keyword {
+     color: rgb(0, 0, 255);
+   }
+
+   pre .identifier {
+     color: rgb(0, 0, 0);
+   }
+
+   pre .string {
+     color: rgb(3, 106, 7);
+   }
+</style>
+
+<!-- R syntax highlighter -->
+<script type="text/javascript">
+var hljs=new function(){function m(p){return p.replace(/&/gm,"&amp;").replace(/</gm,"&lt;")}function f(r,q,p){return RegExp(q,"m"+(r.cI?"i":"")+(p?"g":""))}function b(r){for(var p=0;p<r.childNodes.length;p++){var q=r.childNodes[p];if(q.nodeName=="CODE"){return q}if(!(q.nodeType==3&&q.nodeValue.match(/\s+/))){break}}}function h(t,s){var p="";for(var r=0;r<t.childNodes.length;r++){if(t.childNodes[r].nodeType==3){var q=t.childNodes[r].nodeValue;if(s){q=q.replace(/\n/g,"")}p+=q}else{if(t.childNodes[r].nodeName=="BR"){p+="\n"}else{p+=h(t.childNodes[r])}}}if(/MSIE [678]/.test(navigator.userAgent)){p=p.replace(/\r/g,"\n")}return p}function a(s){var r=s.className.split(/\s+/);r=r.concat(s.parentNode.className.split(/\s+/));for(var q=0;q<r.length;q++){var p=r[q].replace(/^language-/,"");if(e[p]){return p}}}function c(q){var p=[];(function(s,t){for(var r=0;r<s.childNodes.length;r++){if(s.childNodes[r].nodeType==3){t+=s.childNodes[r].nodeValue.length}else{if(s.childNodes[r].nodeName=="BR"){t+=1}else{if(s.childNodes[r].nodeType==1){p.push({event:"start",offset:t,node:s.childNodes[r]});t=arguments.callee(s.childNodes[r],t);p.push({event:"stop",offset:t,node:s.childNodes[r]})}}}}return t})(q,0);return p}function k(y,w,x){var q=0;var z="";var s=[];function u(){if(y.length&&w.length){if(y[0].offset!=w[0].offset){return(y[0].offset<w[0].offset)?y:w}else{return w[0].event=="start"?y:w}}else{return y.length?y:w}}function t(D){var A="<"+D.nodeName.toLowerCase();for(var B=0;B<D.attributes.length;B++){var C=D.attributes[B];A+=" "+C.nodeName.toLowerCase();if(C.value!==undefined&&C.value!==false&&C.value!==null){A+='="'+m(C.value)+'"'}}return A+">"}while(y.length||w.length){var v=u().splice(0,1)[0];z+=m(x.substr(q,v.offset-q));q=v.offset;if(v.event=="start"){z+=t(v.node);s.push(v.node)}else{if(v.event=="stop"){var p,r=s.length;do{r--;p=s[r];z+=("</"+p.nodeName.toLowerCase()+">")}while(p!=v.node);s.splice(r,1);while(r<s.length){z+=t(s[r]);r++}}}}return z+m(x.substr(q))}function j(){function q(x,y,v){if(x.compiled){return}var u;var s=[];if(x.k){x.lR=f(y,x.l||hljs.IR,true);for(var w in x.k){if(!x.k.hasOwnProperty(w)){continue}if(x.k[w] instanceof Object){u=x.k[w]}else{u=x.k;w="keyword"}for(var r in u){if(!u.hasOwnProperty(r)){continue}x.k[r]=[w,u[r]];s.push(r)}}}if(!v){if(x.bWK){x.b="\\b("+s.join("|")+")\\s"}x.bR=f(y,x.b?x.b:"\\B|\\b");if(!x.e&&!x.eW){x.e="\\B|\\b"}if(x.e){x.eR=f(y,x.e)}}if(x.i){x.iR=f(y,x.i)}if(x.r===undefined){x.r=1}if(!x.c){x.c=[]}x.compiled=true;for(var t=0;t<x.c.length;t++){if(x.c[t]=="self"){x.c[t]=x}q(x.c[t],y,false)}if(x.starts){q(x.starts,y,false)}}for(var p in e){if(!e.hasOwnProperty(p)){continue}q(e[p].dM,e[p],true)}}function d(B,C){if(!j.called){j();j.called=true}function q(r,M){for(var L=0;L<M.c.length;L++){if((M.c[L].bR.exec(r)||[null])[0]==r){return M.c[L]}}}function v(L,r){if(D[L].e&&D[L].eR.test(r)){return 1}if(D[L].eW){var M=v(L-1,r);return M?M+1:0}return 0}function w(r,L){return L.i&&L.iR.test(r)}function K(N,O){var M=[];for(var L=0;L<N.c.length;L++){M.push(N.c[L].b)}var r=D.length-1;do{if(D[r].e){M.push(D[r].e)}r--}while(D[r+1].eW);if(N.i){M.push(N.i)}return f(O,M.join("|"),true)}function p(M,L){var N=D[D.length-1];if(!N.t){N.t=K(N,E)}N.t.lastIndex=L;var r=N.t.exec(M);return r?[M.substr(L,r.index-L),r[0],false]:[M.substr(L),"",true]}function z(N,r){var L=E.cI?r[0].toLowerCase():r[0];var M=N.k[L];if(M&&M instanceof Array){return M}return false}function F(L,P){L=m(L);if(!P.k){return L}var r="";var O=0;P.lR.lastIndex=0;var M=P.lR.exec(L);while(M){r+=L.substr(O,M.index-O);var N=z(P,M);if(N){x+=N[1];r+='<span class="'+N[0]+'">'+M[0]+"</span>"}else{r+=M[0]}O=P.lR.lastIndex;M=P.lR.exec(L)}return r+L.substr(O,L.length-O)}function J(L,M){if(M.sL&&e[M.sL]){var r=d(M.sL,L);x+=r.keyword_count;return r.value}else{return F(L,M)}}function I(M,r){var L=M.cN?'<span class="'+M.cN+'">':"";if(M.rB){y+=L;M.buffer=""}else{if(M.eB){y+=m(r)+L;M.buffer=""}else{y+=L;M.buffer=r}}D.push(M);A+=M.r}function G(N,M,Q){var R=D[D.length-1];if(Q){y+=J(R.buffer+N,R);return false}var P=q(M,R);if(P){y+=J(R.buffer+N,R);I(P,M);return P.rB}var L=v(D.length-1,M);if(L){var O=R.cN?"</span>":"";if(R.rE){y+=J(R.buffer+N,R)+O}else{if(R.eE){y+=J(R.buffer+N,R)+O+m(M)}else{y+=J(R.buffer+N+M,R)+O}}while(L>1){O=D[D.length-2].cN?"</span>":"";y+=O;L--;D.length--}var r=D[D.length-1];D.length--;D[D.length-1].buffer="";if(r.starts){I(r.starts,"")}return R.rE}if(w(M,R)){throw"Illegal"}}var E=e[B];var D=[E.dM];var A=0;var x=0;var y="";try{var s,u=0;E.dM.buffer="";do{s=p(C,u);var t=G(s[0],s[1],s[2]);u+=s[0].length;if(!t){u+=s[1].length}}while(!s[2]);if(D.length>1){throw"Illegal"}return{r:A,keyword_count:x,value:y}}catch(H){if(H=="Illegal"){return{r:0,keyword_count:0,value:m(C)}}else{throw H}}}function g(t){var p={keyword_count:0,r:0,value:m(t)};var r=p;for(var q in e){if(!e.hasOwnProperty(q)){continue}var s=d(q,t);s.language=q;if(s.keyword_count+s.r>r.keyword_count+r.r){r=s}if(s.keyword_count+s.r>p.keyword_count+p.r){r=p;p=s}}if(r.language){p.second_best=r}return p}function i(r,q,p){if(q){r=r.replace(/^((<[^>]+>|\t)+)/gm,function(t,w,v,u){return w.replace(/\t/g,q)})}if(p){r=r.replace(/\n/g,"<br>")}return r}function n(t,w,r){var x=h(t,r);var v=a(t);var y,s;if(v){y=d(v,x)}else{return}var q=c(t);if(q.length){s=document.createElement("pre");s.innerHTML=y.value;y.value=k(q,c(s),x)}y.value=i(y.value,w,r);var u=t.className;if(!u.match("(\\s|^)(language-)?"+v+"(\\s|$)")){u=u?(u+" "+v):v}if(/MSIE [678]/.test(navigator.userAgent)&&t.tagName=="CODE"&&t.parentNode.tagName=="PRE"){s=t.parentNode;var p=document.createElement("div");p.innerHTML="<pre><code>"+y.value+"</code></pre>";t=p.firstChild.firstChild;p.firstChild.cN=s.cN;s.parentNode.replaceChild(p.firstChild,s)}else{t.innerHTML=y.value}t.className=u;t.result={language:v,kw:y.keyword_count,re:y.r};if(y.second_best){t.second_best={language:y.second_best.language,kw:y.second_best.keyword_count,re:y.second_best.r}}}function o(){if(o.called){return}o.called=true;var r=document.getElementsByTagName("pre");for(var p=0;p<r.length;p++){var q=b(r[p]);if(q){n(q,hljs.tabReplace)}}}function l(){if(window.addEventListener){window.addEventListener("DOMContentLoaded",o,false);window.addEventListener("load",o,false)}else{if(window.attachEvent){window.attachEvent("onload",o)}else{window.onload=o}}}var e={};this.LANGUAGES=e;this.highlight=d;this.highlightAuto=g;this.fixMarkup=i;this.highlightBlock=n;this.initHighlighting=o;this.initHighlightingOnLoad=l;this.IR="[a-zA-Z][a-zA-Z0-9_]*";this.UIR="[a-zA-Z_][a-zA-Z0-9_]*";this.NR="\\b\\d+(\\.\\d+)?";this.CNR="\\b(0[xX][a-fA-F0-9]+|(\\d+(\\.\\d*)?|\\.\\d+)([eE][-+]?\\d+)?)";this.BNR="\\b(0b[01]+)";this.RSR="!|!=|!==|%|%=|&|&&|&=|\\*|\\*=|\\+|\\+=|,|\\.|-|-=|/|/=|:|;|<|<<|<<=|<=|=|==|===|>|>=|>>|>>=|>>>|>>>=|\\?|\\[|\\{|\\(|\\^|\\^=|\\||\\|=|\\|\\||~";this.ER="(?![\\s\\S])";this.BE={b:"\\\\.",r:0};this.ASM={cN:"string",b:"'",e:"'",i:"\\n",c:[this.BE],r:0};this.QSM={cN:"string",b:'"',e:'"',i:"\\n",c:[this.BE],r:0};this.CLCM={cN:"comment",b:"//",e:"$"};this.CBLCLM={cN:"comment",b:"/\\*",e:"\\*/"};this.HCM={cN:"comment",b:"#",e:"$"};this.NM={cN:"number",b:this.NR,r:0};this.CNM={cN:"number",b:this.CNR,r:0};this.BNM={cN:"number",b:this.BNR,r:0};this.inherit=function(r,s){var p={};for(var q in r){p[q]=r[q]}if(s){for(var q in s){p[q]=s[q]}}return p}}();hljs.LANGUAGES.cpp=function(){var a={keyword:{"false":1,"int":1,"float":1,"while":1,"private":1,"char":1,"catch":1,"export":1,virtual:1,operator:2,sizeof:2,dynamic_cast:2,typedef:2,const_cast:2,"const":1,struct:1,"for":1,static_cast:2,union:1,namespace:1,unsigned:1,"long":1,"throw":1,"volatile":2,"static":1,"protected":1,bool:1,template:1,mutable:1,"if":1,"public":1,friend:2,"do":1,"return":1,"goto":1,auto:1,"void":2,"enum":1,"else":1,"break":1,"new":1,extern:1,using:1,"true":1,"class":1,asm:1,"case":1,typeid:1,"short":1,reinterpret_cast:2,"default":1,"double":1,register:1,explicit:1,signed:1,typename:1,"try":1,"this":1,"switch":1,"continue":1,wchar_t:1,inline:1,"delete":1,alignof:1,char16_t:1,char32_t:1,constexpr:1,decltype:1,noexcept:1,nullptr:1,static_assert:1,thread_local:1,restrict:1,_Bool:1,complex:1},built_in:{std:1,string:1,cin:1,cout:1,cerr:1,clog:1,stringstream:1,istringstream:1,ostringstream:1,auto_ptr:1,deque:1,list:1,queue:1,stack:1,vector:1,map:1,set:1,bitset:1,multiset:1,multimap:1,unordered_set:1,unordered_map:1,unordered_multiset:1,unordered_multimap:1,array:1,shared_ptr:1}};return{dM:{k:a,i:"</",c:[hljs.CLCM,hljs.CBLCLM,hljs.QSM,{cN:"string",b:"'\\\\?.",e:"'",i:"."},{cN:"number",b:"\\b(\\d+(\\.\\d*)?|\\.\\d+)(u|U|l|L|ul|UL|f|F)"},hljs.CNM,{cN:"preprocessor",b:"#",e:"$"},{cN:"stl_container",b:"\\b(deque|list|queue|stack|vector|map|set|bitset|multiset|multimap|unordered_map|unordered_set|unordered_multiset|unordered_multimap|array)\\s*<",e:">",k:a,r:10,c:["self"]}]}}}();hljs.LANGUAGES.r={dM:{c:[hljs.HCM,{cN:"number",b:"\\b0[xX][0-9a-fA-F]+[Li]?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+(?:[eE][+\\-]?\\d*)?L\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+\\.(?!\\d)(?:i\\b)?",e:hljs.IMMEDIATE_RE,r:1},{cN:"number",b:"\\b\\d+(?:\\.\\d*)?(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\.\\d+(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"keyword",b:"(?:tryCatch|library|setGeneric|setGroupGeneric)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\.",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\d+(?![\\w.])",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\b(?:function)",e:hljs.IMMEDIATE_RE,r:2},{cN:"keyword",b:"(?:if|in|break|next|repeat|else|for|return|switch|while|try|stop|warning|require|attach|detach|source|setMethod|setClass)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"literal",b:"(?:NA|NA_integer_|NA_real_|NA_character_|NA_complex_)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"literal",b:"(?:NULL|TRUE|FALSE|T|F|Inf|NaN)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"identifier",b:"[a-zA-Z.][a-zA-Z0-9._]*\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"<\\-(?!\\s*\\d)",e:hljs.IMMEDIATE_RE,r:2},{cN:"operator",b:"\\->|<\\-",e:hljs.IMMEDIATE_RE,r:1},{cN:"operator",b:"%%|~",e:hljs.IMMEDIATE_RE},{cN:"operator",b:">=|<=|==|!=|\\|\\||&&|=|\\+|\\-|\\*|/|\\^|>|<|!|&|\\||\\$|:",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"%",e:"%",i:"\\n",r:1},{cN:"identifier",b:"`",e:"`",r:0},{cN:"string",b:'"',e:'"',c:[hljs.BE],r:0},{cN:"string",b:"'",e:"'",c:[hljs.BE],r:0},{cN:"paren",b:"[[({\\])}]",e:hljs.IMMEDIATE_RE,r:0}]}};
+hljs.initHighlightingOnLoad();
+</script>
+
+
+
+
+</head>
+
+<body>
+<h1>Personal Microbial Cloud</h1>
+
+<h2>Taxon Analysis</h2>
+
+<p>Read in prepared workspace and load packages.</p>
+
+<pre><code class="r">load(&quot;../data/pb_data.RData&quot;)
+library(vegan)
+</code></pre>
+
+<pre><code>## Loading required package: permute This is vegan 2.0-8
+</code></pre>
+
+<pre><code class="r">library(labdsv)
+</code></pre>
+
+<pre><code>## Loading required package: mgcv This is mgcv 1.7-22. For overview type
+## &#39;help(&quot;mgcv-package&quot;)&#39;. Loading required package: MASS
+## 
+## Attaching package: &#39;labdsv&#39;
+## 
+## The following object is masked from &#39;package:stats&#39;:
+## 
+## density
+</code></pre>
+
+<pre><code class="r">library(ape)
+library(xtable)
+source(&quot;../data/pb_functions_for_manuscript.R&quot;)
+</code></pre>
+
+<p>How do samples fall into groups? I.e., do we have balance in treatments?</p>
+
+<pre><code class="r">table(pb.map$person, pb.map$sampleType)
+</code></pre>
+
+<pre><code>##     
+##      filter petri.dish
+##   s1     48         24
+##   s2     46         23
+##   s3     46         24
+</code></pre>
+
+<pre><code class="r">table(pb.map$location)
+</code></pre>
+
+<pre><code>## 
+##   occ unocc 
+##   108   103
+</code></pre>
+
+<pre><code class="r">table(pb.map$duration)
+</code></pre>
+
+<pre><code>## 
+##   2   4 
+## 105 106
+</code></pre>
+
+<pre><code class="r">table(pb.map$sampleType)
+</code></pre>
+
+<pre><code>## 
+##     filter petri.dish 
+##        140         71
+</code></pre>
+
+<p>Quick refrerence vector of names for figures and whatnot. Some genus, families, etc are empty, so search for the finest taxonomic level and use that name. <code>cons</code> is in functions script sourced above. </p>
+
+<pre><code class="r">consensus &lt;- apply(taxo[, 1:6], 1, cons)
+consensus[1:10]
+</code></pre>
+
+<pre><code>##                     2                     6                    12 
+##      &quot;Halomonadaceae&quot; &quot;Solirubrobacterales&quot;         &quot;Rhizobiales&quot; 
+##                    21                    24                    25 
+##            &quot;Bacteria&quot; &quot;Gammaproteobacteria&quot;            &quot;Bacteria&quot; 
+##                    35                    73                   120 
+##          &quot;Bacillales&quot;  &quot;Betaproteobacteria&quot;            &quot;Bacteria&quot; 
+##                   122 
+##           &quot;Ralstonia&quot;
+</code></pre>
+
+<p>Generate a list of the 10 most abundant OTUs overall, but also tack on OTUs that are among the 10 most abundant in any particular group of samples. Then a matching version of the mapping table. </p>
+
+<pre><code class="r">tops &lt;- names(rev(sort(colSums(pb.1000))))[1:10]
+for (i in 1:length(gr2)) {
+    tops.plus &lt;- names(rev(sort(colSums(pb.1000[gr2[[i]], ]))))[1:10]
+    tops &lt;- unique(c(tops, tops.plus))
+}
+tops &lt;- tops[rev(order(taxo[tops, 7]))]
+taxo.tops &lt;- taxo[tops, ]
+length(tops)
+</code></pre>
+
+<pre><code>## [1] 36
+</code></pre>
+
+<pre><code class="r">consensus[tops]
+</code></pre>
+
+<pre><code>##               234992                25506               121358 
+##   &quot;Methylobacterium&quot;     &quot;Staphylococcus&quot;       &quot;Tumebacillus&quot; 
+##               201443                94008                80526 
+##   &quot;Stenotrophomonas&quot;    &quot;Corynebacterium&quot;    &quot;Corynebacterium&quot; 
+##               151122                72518               136033 
+## &quot;Enterobacteriaceae&quot;    &quot;Corynebacterium&quot;      &quot;Acinetobacter&quot; 
+##               129988               172108               199152 
+##    &quot;Corynebacterium&quot;        &quot;Pseudomonas&quot;      &quot;Lactobacillus&quot; 
+##               129498               134501               229364 
+##      &quot;Streptococcus&quot;          &quot;Comamonas&quot;        &quot;Micrococcus&quot; 
+##               204422                57760                41465 
+##       &quot;Sphingomonas&quot;  &quot;Sphingomonadaceae&quot;     &quot;Dolosigranulum&quot; 
+##                63496               235029               205036 
+##    &quot;Actinomycetales&quot;            &quot;Kocuria&quot;         &quot;Finegoldia&quot; 
+##               164584               189711                92831 
+##     &quot;Alcaligenaceae&quot;        &quot;Cupriavidus&quot;            &quot;Pantoea&quot; 
+##                  264               133239               196388 
+##   &quot;Methylobacterium&quot;            &quot;Gemella&quot;        &quot;Leuconostoc&quot; 
+##               100717               187238                58876 
+##          &quot;Neisseria&quot;           &quot;Bacteria&quot;          &quot;Aeromonas&quot; 
+##                 4557               200842               102650 
+##    &quot;Cloacibacterium&quot;  &quot;Flavobacteriaceae&quot;        &quot;Rhizobiales&quot; 
+##                55224               169608               102857 
+##        &quot;Rhizobiales&quot;         &quot;Inquilinus&quot;         &quot;Pedobacter&quot;
+</code></pre>
+
+<p>Create a reordered map and otu table. </p>
+
+<pre><code class="r">pb.order &lt;- data.frame(pb.1000[unlist(gr2), tops])
+pb.order$gr.num &lt;- c(rep(gr.name, c(unlist(lapply(gr2, length)))))
+map.order &lt;- pb.map[row.names(pb.order), ]
+pb.order$location &lt;- factor(map.order$location, levels = c(&quot;occ&quot;, &quot;unocc&quot;))
+</code></pre>
+
+<p>Make new trimmed OTU table and assess with boxplots. Then send the statistically interesting otus to figures and tables script. </p>
+
+<pre><code class="r">pb.order &lt;- pb.order[map.order$duration == &quot;4&quot;, ]
+# for (i in 1:(ncol(otus.to.barplot.tmp)-2)) {
+# boxplot(otus.to.barplot.tmp[, i] ~ factor(otus.to.barplot.tmp$gr.num),
+# las=2, main=consensus[gsub(&#39;X&#39;, &#39;&#39;, names(otus.to.barplot.tmp)[i])],
+# sub=i) readline(&#39;Press return for next plot&#39;) }
+pb.order &lt;- pb.order[, c(1, 2, 3, 4, 5, 6, 8, 10, 12, 18, 21, ncol(pb.order) - 
+    1, ncol(pb.order))]
+names(pb.order) &lt;- gsub(&quot;X&quot;, &quot;&quot;, names(pb.order))
+consensus[names(pb.order)]
+</code></pre>
+
+<pre><code>##             234992              25506             121358 
+## &quot;Methylobacterium&quot;   &quot;Staphylococcus&quot;     &quot;Tumebacillus&quot; 
+##             201443              94008              80526 
+## &quot;Stenotrophomonas&quot;  &quot;Corynebacterium&quot;  &quot;Corynebacterium&quot; 
+##              72518             129988             199152 
+##  &quot;Corynebacterium&quot;  &quot;Corynebacterium&quot;    &quot;Lactobacillus&quot; 
+##              41465             205036               &lt;NA&gt; 
+##   &quot;Dolosigranulum&quot;       &quot;Finegoldia&quot;                 NA 
+##               &lt;NA&gt; 
+##                 NA
+</code></pre>
+
+<pre><code class="r">rm(cons, Evenness, gr.name, gr2, tops.plus, makeTaxo)
+</code></pre>
+
+<p>Now for indicator analysis - this takes a long time and lots of memory! This uses the <code>indval()</code> function in the <code>labdsv</code> package. This gives output for all OTUs, the vast majority of which are unimportant to analysis. So there are a few steps to cut the output down to just the statistically salient OTUs. </p>
+
+<p>Unpack list of groups and pull out just 4 hour air filter dataset. </p>
+
+<pre><code class="r">for (i in 1:length(names(groups))) {
+    assign(names(groups)[i], unlist(groups[[i]]))
+}
+
+occ4f &lt;- c(s14of, s24of, s34of, s14uf, s24uf, s34uf)
+occ4f.table &lt;- pb.1000[occ4f, ]
+occ4f.table &lt;- occ4f.table[, -which(colSums(occ4f.table) == 0)]
+occ4f.map &lt;- pb.map[occ4f, ]
+</code></pre>
+
+<p>Split this into two chunks - each takes a long time. </p>
+
+<pre><code class="r">iv.location &lt;- indval(occ4f.table, occ4f.map$location)
+</code></pre>
+
+<pre><code class="r">iv.person &lt;- indval(occ4f.table, occ4f.map$occ.person2)
+</code></pre>
+
+<p>levels(occ4f.map$occ.person2)</p>
+
+<p>Keep those that are significant before p-value adjustment. </p>
+
+<pre><code class="r">p &lt;- 0.05
+
+these &lt;- which(iv.location$pval &lt;= p)
+iv.location.table &lt;- data.frame(iv.location$maxcls[these], round(iv.location$indcls[these], 
+    4), iv.location$pval[these])
+names(iv.location.table) &lt;- c(&quot;cluster&quot;, &quot;indicator_value&quot;, &quot;probability&quot;)
+iv.location.table$cluster[iv.location.table$cluster == &quot;1&quot;] &lt;- &quot;occupied&quot;
+iv.location.table$cluster[iv.location.table$cluster == &quot;2&quot;] &lt;- &quot;unoccupied&quot;
+
+these &lt;- which(iv.person$pval &lt;= p)
+iv.person.table &lt;- data.frame(iv.person$maxcls[these], round(iv.person$indcls[these], 
+    4), iv.person$pval[these])
+names(iv.person.table) &lt;- c(&quot;cluster&quot;, &quot;indicator_value&quot;, &quot;probability&quot;)
+iv.person.table$cluster[iv.person.table$cluster == &quot;1&quot;] &lt;- &quot;Subject1&quot;
+iv.person.table$cluster[iv.person.table$cluster == &quot;2&quot;] &lt;- &quot;Subject2&quot;
+iv.person.table$cluster[iv.person.table$cluster == &quot;3&quot;] &lt;- &quot;Subject3&quot;
+iv.person.table$cluster[iv.person.table$cluster == &quot;4&quot;] &lt;- &quot;unoccupied&quot;
+</code></pre>
+
+<p>Order by indicator value and tack on taxonomic information. </p>
+
+<pre><code class="r">ivL &lt;- iv.location.table[rev(order(iv.location.table$indicator_value)), ]
+ivP &lt;- iv.person.table[rev(order(iv.person.table$indicator_value)), ]
+
+head(ivP)
+</code></pre>
+
+<pre><code>##          cluster indicator_value probability
+## X41465  Subject1          0.9620       0.001
+## X199152 Subject3          0.8948       0.001
+## X154708 Subject3          0.8193       0.001
+## X63496  Subject1          0.7999       0.001
+## X172036 Subject1          0.7554       0.001
+## X186045 Subject3          0.7500       0.001
+</code></pre>
+
+<pre><code class="r">ivL.names &lt;- gsub(&quot;X&quot;, &quot;&quot;, row.names(ivL))
+ivL &lt;- data.frame(cbind(ivL[, ], taxo[ivL.names, ]))
+
+ivP.names &lt;- gsub(&quot;X&quot;, &quot;&quot;, row.names(ivP))
+ivP &lt;- cbind(ivP[, ], taxo[ivP.names, ])
+
+ivL &lt;- ivL[, c(2, 3, 10, 1, 9, 8, 7, 6, 5, 4)]
+ivP &lt;- ivP[, c(2, 3, 10, 1, 9, 8, 7, 6, 5, 4)]
+</code></pre>
+
+<p>Print out for later reference. </p>
+
+<pre><code class="r">print(xtable(head(ivL, 20), digits = 3), type = &quot;html&quot;)
+</code></pre>
+
+<!-- html table generated in R 3.0.1 by xtable 1.7-1 package -->
+
+<!-- Sun Jan  5 15:55:44 2014 -->
+
+<TABLE border=1>
+<TR> <TH>  </TH> <TH> indicator_value </TH> <TH> probability </TH> <TH> abundance </TH> <TH> cluster </TH> <TH> genus </TH> <TH> family </TH> <TH> order </TH> <TH> class </TH> <TH> phylum </TH> <TH> kingdom </TH>  </TR>
+  <TR> <TD align="right"> X94008 </TD> <TD align="right"> 0.830 </TD> <TD align="right"> 0.001 </TD> <TD align="right"> 10134.000 </TD> <TD> occupied </TD> <TD> Corynebacterium </TD> <TD> Corynebacteriaceae </TD> <TD> Actinomycetales </TD> <TD> Actinobacteria </TD> <TD> Actinobacteria </TD> <TD> Bacteria </TD> </TR>
+  <TR> <TD align="right"> X72518 </TD> <TD align="right"> 0.795 </TD> <TD align="right"> 0.001 </TD> <TD align="right"> 5093.000 </TD> <TD> occupied </TD> <TD> Corynebacterium </TD> <TD> Corynebacteriaceae </TD> <TD> Actinomycetales </TD> <TD> Actinobacteria </TD> <TD> Actinobacteria </TD> <TD> Bacteria </TD> </TR>
+  <TR> <TD align="right"> X25506 </TD> <TD align="right"> 0.770 </TD> <TD align="right"> 0.001 </TD> <TD align="right"> 19463.000 </TD> <TD> occupied </TD> <TD> Staphylococcus </TD> <TD> Staphylococcaceae </TD> <TD> Bacillales </TD> <TD> Bacilli </TD> <TD> Firmicutes </TD> <TD> Bacteria </TD> </TR>
+  <TR> <TD align="right"> X80526 </TD> <TD align="right"> 0.758 </TD> <TD align="right"> 0.001 </TD> <TD align="right"> 8760.000 </TD> <TD> occupied </TD> <TD> Corynebacterium </TD> <TD> Corynebacteriaceae </TD> <TD> Actinomycetales </TD> <TD> Actinobacteria </TD> <TD> Actinobacteria </TD> <TD> Bacteria </TD> </TR>
+  <TR> <TD align="right"> X201443 </TD> <TD align="right"> 0.751 </TD> <TD align="right"> 0.001 </TD> <TD align="right"> 12640.000 </TD> <TD> unoccupied </TD> <TD> Stenotrophomonas </TD> <TD> Xanthomonadaceae </TD> <TD> Xanthomonadales </TD> <TD> Gammaproteobacteria </TD> <TD> Proteobacteria </TD> <TD> Bacteria </TD> </TR>
+  <TR> <TD align="right"> X129498 </TD> <TD align="right"> 0.692 </TD> <TD align="right"> 0.001 </TD> <TD align="right"> 2393.000 </TD> <TD> occupied </TD> <TD> Streptococcus </TD> <TD> Streptococcaceae </TD> <TD> Lactobacillales </TD> <TD> Bacilli </TD> <TD> Firmicutes </TD> <TD> Bacteria </TD> </TR>
+  <TR> <TD align="right"> X129988 </TD> <TD align="right"> 0.650 </TD> <TD align="right"> 0.010 </TD> <TD align="right"> 2893.000 </TD> <TD> occupied </TD> <TD> Corynebacterium </TD> <TD> Corynebacteriaceae </TD> <TD> Actinomycetales </TD> <TD> Actinobacteria </TD> <TD> Actinobacteria </TD> <TD> Bacteria </TD> </TR>
+  <TR> <TD align="right"> X151122 </TD> <TD align="right"> 0.619 </TD> <TD align="right"> 0.006 </TD> <TD align="right"> 7579.000 </TD> <TD> unoccupied </TD> <TD>  </TD> <TD> Enterobacteriaceae </TD> <TD> Enterobacteriales </TD> <TD> Gammaproteobacteria </TD> <TD> Proteobacteria </TD> <TD> Bacteria </TD> </TR>
+  <TR> <TD align="right"> X121358 </TD> <TD align="right"> 0.604 </TD> <TD align="right"> 0.035 </TD> <TD align="right"> 16283.000 </TD> <TD> unoccupied </TD> <TD> Tumebacillus </TD> <TD> Bacillaceae </TD> <TD> Bacillales </TD> <TD> Bacilli </TD> <TD> Firmicutes </TD> <TD> Bacteria </TD> </TR>
+  <TR> <TD align="right"> X13338 </TD> <TD align="right"> 0.556 </TD> <TD align="right"> 0.001 </TD> <TD align="right"> 266.000 </TD> <TD> occupied </TD> <TD> Anaerococcus </TD> <TD> Incertae Sedis XI </TD> <TD> Clostridiales </TD> <TD> Clostridia </TD> <TD> Firmicutes </TD> <TD> Bacteria </TD> </TR>
+  <TR> <TD align="right"> X84956 </TD> <TD align="right"> 0.551 </TD> <TD align="right"> 0.001 </TD> <TD align="right"> 251.000 </TD> <TD> occupied </TD> <TD> Peptoniphilus </TD> <TD> Incertae Sedis XI </TD> <TD> Clostridiales </TD> <TD> Clostridia </TD> <TD> Firmicutes </TD> <TD> Bacteria </TD> </TR>
+  <TR> <TD align="right"> X172949 </TD> <TD align="right"> 0.546 </TD> <TD align="right"> 0.001 </TD> <TD align="right"> 242.000 </TD> <TD> occupied </TD> <TD> Corynebacterium </TD> <TD> Corynebacteriaceae </TD> <TD> Actinomycetales </TD> <TD> Actinobacteria </TD> <TD> Actinobacteria </TD> <TD> Bacteria </TD> </TR>
+  <TR> <TD align="right"> X234992 </TD> <TD align="right"> 0.544 </TD> <TD align="right"> 0.034 </TD> <TD align="right"> 28147.000 </TD> <TD> unoccupied </TD> <TD> Methylobacterium </TD> <TD> Methylobacteriaceae </TD> <TD> Rhizobiales </TD> <TD> Alphaproteobacteria </TD> <TD> Proteobacteria </TD> <TD> Bacteria </TD> </TR>
+  <TR> <TD align="right"> X205036 </TD> <TD align="right"> 0.540 </TD> <TD align="right"> 0.001 </TD> <TD align="right"> 793.000 </TD> <TD> occupied </TD> <TD> Finegoldia </TD> <TD> Incertae Sedis XI </TD> <TD> Clostridiales </TD> <TD> Clostridia </TD> <TD> Firmicutes </TD> <TD> Bacteria </TD> </TR>
+  <TR> <TD align="right"> X134501 </TD> <TD align="right"> 0.538 </TD> <TD align="right"> 0.003 </TD> <TD align="right"> 1560.000 </TD> <TD> unoccupied </TD> <TD> Comamonas </TD> <TD> Comamonadaceae </TD> <TD> Burkholderiales </TD> <TD> Betaproteobacteria </TD> <TD> Proteobacteria </TD> <TD> Bacteria </TD> </TR>
+  <TR> <TD align="right"> X233136 </TD> <TD align="right"> 0.532 </TD> <TD align="right"> 0.001 </TD> <TD align="right"> 277.000 </TD> <TD> unoccupied </TD> <TD> Halomonas </TD> <TD> Halomonadaceae </TD> <TD> Oceanospirillales </TD> <TD> Gammaproteobacteria </TD> <TD> Proteobacteria </TD> <TD> Bacteria </TD> </TR>
+  <TR> <TD align="right"> X230275 </TD> <TD align="right"> 0.519 </TD> <TD align="right"> 0.001 </TD> <TD align="right"> 322.000 </TD> <TD> occupied </TD> <TD> Anaerococcus </TD> <TD> Incertae Sedis XI </TD> <TD> Clostridiales </TD> <TD> Clostridia </TD> <TD> Firmicutes </TD> <TD> Bacteria </TD> </TR>
+  <TR> <TD align="right"> X8516 </TD> <TD align="right"> 0.505 </TD> <TD align="right"> 0.001 </TD> <TD align="right"> 337.000 </TD> <TD> occupied </TD> <TD> Anaerococcus </TD> <TD> Incertae Sedis XI </TD> <TD> Clostridiales </TD> <TD> Clostridia </TD> <TD> Firmicutes </TD> <TD> Bacteria </TD> </TR>
+  <TR> <TD align="right"> X63496 </TD> <TD align="right"> 0.500 </TD> <TD align="right"> 0.001 </TD> <TD align="right"> 1061.000 </TD> <TD> occupied </TD> <TD>  </TD> <TD>  </TD> <TD> Actinomycetales </TD> <TD> Actinobacteria </TD> <TD> Actinobacteria </TD> <TD> Bacteria </TD> </TR>
+  <TR> <TD align="right"> X199152 </TD> <TD align="right"> 0.489 </TD> <TD align="right"> 0.001 </TD> <TD align="right"> 2554.000 </TD> <TD> occupied </TD> <TD> Lactobacillus </TD> <TD> Lactobacillaceae </TD> <TD> Lactobacillales </TD> <TD> Bacilli </TD> <TD> Firmicutes </TD> <TD> Bacteria </TD> </TR>
+   </TABLE>
+
+<pre><code class="r">print(xtable(head(ivP, 20), digits = 3), type = &quot;html&quot;)
+</code></pre>
+
+<!-- html table generated in R 3.0.1 by xtable 1.7-1 package -->
+
+<!-- Sun Jan  5 15:55:44 2014 -->
+
+<TABLE border=1>
+<TR> <TH>  </TH> <TH> indicator_value </TH> <TH> probability </TH> <TH> abundance </TH> <TH> cluster </TH> <TH> genus </TH> <TH> family </TH> <TH> order </TH> <TH> class </TH> <TH> phylum </TH> <TH> kingdom </TH>  </TR>
+  <TR> <TD align="right"> X41465 </TD> <TD align="right"> 0.962 </TD> <TD align="right"> 0.001 </TD> <TD align="right"> 1089.000 </TD> <TD> Subject1 </TD> <TD> Dolosigranulum </TD> <TD> Carnobacteriaceae </TD> <TD> Lactobacillales </TD> <TD> Bacilli </TD> <TD> Firmicutes </TD> <TD> Bacteria </TD> </TR>
+  <TR> <TD align="right"> X199152 </TD> <TD align="right"> 0.895 </TD> <TD align="right"> 0.001 </TD> <TD align="right"> 2554.000 </TD> <TD> Subject3 </TD> <TD> Lactobacillus </TD> <TD> Lactobacillaceae </TD> <TD> Lactobacillales </TD> <TD> Bacilli </TD> <TD> Firmicutes </TD> <TD> Bacteria </TD> </TR>
+  <TR> <TD align="right"> X154708 </TD> <TD align="right"> 0.819 </TD> <TD align="right"> 0.001 </TD> <TD align="right"> 64.000 </TD> <TD> Subject3 </TD> <TD> Corynebacterium </TD> <TD> Corynebacteriaceae </TD> <TD> Actinomycetales </TD> <TD> Actinobacteria </TD> <TD> Actinobacteria </TD> <TD> Bacteria </TD> </TR>
+  <TR> <TD align="right"> X63496 </TD> <TD align="right"> 0.800 </TD> <TD align="right"> 0.001 </TD> <TD align="right"> 1061.000 </TD> <TD> Subject1 </TD> <TD>  </TD> <TD>  </TD> <TD> Actinomycetales </TD> <TD> Actinobacteria </TD> <TD> Actinobacteria </TD> <TD> Bacteria </TD> </TR>
+  <TR> <TD align="right"> X172036 </TD> <TD align="right"> 0.755 </TD> <TD align="right"> 0.001 </TD> <TD align="right"> 362.000 </TD> <TD> Subject1 </TD> <TD> Corynebacterium </TD> <TD> Corynebacteriaceae </TD> <TD> Actinomycetales </TD> <TD> Actinobacteria </TD> <TD> Actinobacteria </TD> <TD> Bacteria </TD> </TR>
+  <TR> <TD align="right"> X186045 </TD> <TD align="right"> 0.750 </TD> <TD align="right"> 0.001 </TD> <TD align="right"> 154.000 </TD> <TD> Subject3 </TD> <TD> Facklamia </TD> <TD> Aerococcaceae </TD> <TD> Lactobacillales </TD> <TD> Bacilli </TD> <TD> Firmicutes </TD> <TD> Bacteria </TD> </TR>
+  <TR> <TD align="right"> X8516 </TD> <TD align="right"> 0.744 </TD> <TD align="right"> 0.001 </TD> <TD align="right"> 337.000 </TD> <TD> Subject3 </TD> <TD> Anaerococcus </TD> <TD> Incertae Sedis XI </TD> <TD> Clostridiales </TD> <TD> Clostridia </TD> <TD> Firmicutes </TD> <TD> Bacteria </TD> </TR>
+  <TR> <TD align="right"> X9535 </TD> <TD align="right"> 0.667 </TD> <TD align="right"> 0.001 </TD> <TD align="right"> 133.000 </TD> <TD> Subject1 </TD> <TD> Corynebacterium </TD> <TD> Corynebacteriaceae </TD> <TD> Actinomycetales </TD> <TD> Actinobacteria </TD> <TD> Actinobacteria </TD> <TD> Bacteria </TD> </TR>
+  <TR> <TD align="right"> X175349 </TD> <TD align="right"> 0.665 </TD> <TD align="right"> 0.001 </TD> <TD align="right"> 99.000 </TD> <TD> Subject3 </TD> <TD> Peptoniphilus </TD> <TD> Incertae Sedis XI </TD> <TD> Clostridiales </TD> <TD> Clostridia </TD> <TD> Firmicutes </TD> <TD> Bacteria </TD> </TR>
+  <TR> <TD align="right"> X108686 </TD> <TD align="right"> 0.652 </TD> <TD align="right"> 0.001 </TD> <TD align="right"> 205.000 </TD> <TD> Subject1 </TD> <TD> Corynebacterium </TD> <TD> Corynebacteriaceae </TD> <TD> Actinomycetales </TD> <TD> Actinobacteria </TD> <TD> Actinobacteria </TD> <TD> Bacteria </TD> </TR>
+  <TR> <TD align="right"> X129988 </TD> <TD align="right"> 0.640 </TD> <TD align="right"> 0.001 </TD> <TD align="right"> 2893.000 </TD> <TD> Subject1 </TD> <TD> Corynebacterium </TD> <TD> Corynebacteriaceae </TD> <TD> Actinomycetales </TD> <TD> Actinobacteria </TD> <TD> Actinobacteria </TD> <TD> Bacteria </TD> </TR>
+  <TR> <TD align="right"> X196388 </TD> <TD align="right"> 0.589 </TD> <TD align="right"> 0.001 </TD> <TD align="right"> 253.000 </TD> <TD> Subject2 </TD> <TD> Leuconostoc </TD> <TD> Leuconostocaceae </TD> <TD> Lactobacillales </TD> <TD> Bacilli </TD> <TD> Firmicutes </TD> <TD> Bacteria </TD> </TR>
+  <TR> <TD align="right"> X205036 </TD> <TD align="right"> 0.583 </TD> <TD align="right"> 0.002 </TD> <TD align="right"> 793.000 </TD> <TD> Subject1 </TD> <TD> Finegoldia </TD> <TD> Incertae Sedis XI </TD> <TD> Clostridiales </TD> <TD> Clostridia </TD> <TD> Firmicutes </TD> <TD> Bacteria </TD> </TR>
+  <TR> <TD align="right"> X217189 </TD> <TD align="right"> 0.576 </TD> <TD align="right"> 0.001 </TD> <TD align="right"> 37.000 </TD> <TD> Subject3 </TD> <TD>  </TD> <TD> Incertae Sedis XI </TD> <TD> Clostridiales </TD> <TD> Clostridia </TD> <TD> Firmicutes </TD> <TD> Bacteria </TD> </TR>
+  <TR> <TD align="right"> X96641 </TD> <TD align="right"> 0.564 </TD> <TD align="right"> 0.001 </TD> <TD align="right"> 283.000 </TD> <TD> Subject1 </TD> <TD> Anaerococcus </TD> <TD> Incertae Sedis XI </TD> <TD> Clostridiales </TD> <TD> Clostridia </TD> <TD> Firmicutes </TD> <TD> Bacteria </TD> </TR>
+  <TR> <TD align="right"> X63291 </TD> <TD align="right"> 0.557 </TD> <TD align="right"> 0.001 </TD> <TD align="right"> 70.000 </TD> <TD> Subject1 </TD> <TD> Corynebacterium </TD> <TD> Corynebacteriaceae </TD> <TD> Actinomycetales </TD> <TD> Actinobacteria </TD> <TD> Actinobacteria </TD> <TD> Bacteria </TD> </TR>
+  <TR> <TD align="right"> X201443 </TD> <TD align="right"> 0.554 </TD> <TD align="right"> 0.002 </TD> <TD align="right"> 12640.000 </TD> <TD> unoccupied </TD> <TD> Stenotrophomonas </TD> <TD> Xanthomonadaceae </TD> <TD> Xanthomonadales </TD> <TD> Gammaproteobacteria </TD> <TD> Proteobacteria </TD> <TD> Bacteria </TD> </TR>
+  <TR> <TD align="right"> X9604 </TD> <TD align="right"> 0.540 </TD> <TD align="right"> 0.001 </TD> <TD align="right"> 260.000 </TD> <TD> Subject1 </TD> <TD>  </TD> <TD> Aerococcaceae </TD> <TD> Lactobacillales </TD> <TD> Bacilli </TD> <TD> Firmicutes </TD> <TD> Bacteria </TD> </TR>
+  <TR> <TD align="right"> X94008 </TD> <TD align="right"> 0.538 </TD> <TD align="right"> 0.001 </TD> <TD align="right"> 10134.000 </TD> <TD> Subject1 </TD> <TD> Corynebacterium </TD> <TD> Corynebacteriaceae </TD> <TD> Actinomycetales </TD> <TD> Actinobacteria </TD> <TD> Actinobacteria </TD> <TD> Bacteria </TD> </TR>
+  <TR> <TD align="right"> X72518 </TD> <TD align="right"> 0.532 </TD> <TD align="right"> 0.001 </TD> <TD align="right"> 5093.000 </TD> <TD> Subject3 </TD> <TD> Corynebacterium </TD> <TD> Corynebacteriaceae </TD> <TD> Actinomycetales </TD> <TD> Actinobacteria </TD> <TD> Actinobacteria </TD> <TD> Bacteria </TD> </TR>
+   </TABLE>
+
+<p>Clean up and save important bits to go to figures and tables script. </p>
+
+<pre><code class="r">rm(list = ls()[which(ls() %in% names(groups))])
+rm(occ4f, occ4f.table, occ4f.map, i, iv.location, iv.person, p, these, iv.location.table, 
+    iv.person.table, ivL.names, ivP.names)
+save(ivL, ivP, pb.order, taxo.tops, tops, consensus, file = &quot;../data/taxon_analysis.RData&quot;)
+</code></pre>
+
+</body>
+
+</html>
+

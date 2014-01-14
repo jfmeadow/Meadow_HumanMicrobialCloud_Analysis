@@ -1,0 +1,195 @@
+# Personal Microbial Cloud
+
+## Beta-diversity Data Analysis
+
+Read in prepared workspace and load packages.
+
+```{r}
+load('../data/pb_data.RData') 
+library(vegan)
+library(labdsv)
+library(ape)
+library(xtable)
+source('../data/pb_functions_for_manuscript.R')
+```
+
+
+Unpack list of groups.
+
+```{r}
+for (i in 1:length(names(groups))) {
+  assign(names(groups)[i], unlist(groups[[i]]))
+}
+rm(i)
+```
+
+
+How do samples fall into groups? I.e., do we have balance in treatments?
+
+```{r}
+table(pb.map$person, pb.map$sampleType)
+table(pb.map$location)
+table(pb.map$duration)
+table(pb.map$sampleType)
+```
+
+
+
+The canberra distance metric is used to calculate beta diversity. Then 2d NMDS objects are created for the whole experiment and for each treatment individually.
+
+```{r, cache=TRUE}
+pb.can <- vegdist(pb.1000, 'canberra')
+```
+
+
+Since most abundant taxa were removed as contaminants, try Bray-Curtis. 
+
+```{r, cache=TRUE}
+pb.bc <- vegdist(pb.1000, 'bray')
+```
+
+
+
+
+
+```{r, results='hide'}
+# Filters
+## 4h diff people
+occ4f <- c(s24of, s34of, s14of, s24uf, s34uf, s14uf)
+occ4f.table <- pb.1000[occ4f, ]
+occ4f.map <- pb.map[occ4f, ]
+occ4f.can <- as.dist(as.matrix(pb.can)[occ4f, occ4f]) 
+occ4f.nmds <- bestnmds(occ4f.can)
+occ <- which(occ4f.map$location == 'occ')
+unocc <- which(occ4f.map$location == 'unocc')
+
+## 2h diff people
+occ2f <- c(s22of, s32of, s12of, s22uf, s32uf, s12uf)
+occ2f.table <- pb.1000[occ2f, ]
+occ2f.map <- pb.map[occ2f, ]
+occ2f.can <- as.dist(as.matrix(pb.can)[occ2f, occ2f]) 
+occ2f.nmds <- bestnmds(occ2f.can)
+occ2 <- which(occ2f.map$location == 'occ')
+unocc2 <- which(occ2f.map$location == 'unocc')
+
+# Petri dishes
+## 4h diff people
+occ4p <- c(s24op, s34op, s14op, s24up, s34up, s14up)
+occ4p.table <- pb.1000[occ4p, ]
+occ4p.map <- pb.map[occ4p, ]
+occ4p.can <- as.dist(as.matrix(pb.can)[occ4p, occ4p]) 
+occ4p.nmds <- bestnmds(occ4p.can)
+occ.p <- which(occ4p.map$location == 'occ')
+unocc.p <- which(occ4p.map$location == 'unocc')
+
+## 2h diff people
+occ2p <- c(s22op, s32op, s12op, s22up, s32up, s12up)
+occ2p.table <- pb.1000[occ2p, ]
+occ2p.map <- pb.map[occ2p, ]
+occ2p.can <- as.dist(as.matrix(pb.can)[occ2p, occ2p]) 
+occ2p.nmds <- bestnmds(occ2p.can)
+occ2.p <- which(occ2p.map$location == 'occ')
+unocc2.p <- which(occ2p.map$location == 'unocc')
+```
+
+
+Pretty much all of these NMDS ordinations have high stress levels:
+
+```{r, results='asis'}
+
+nmds.stress <- data.frame(treatment = c('4hr filters', '2hr filters', '4hr petri dishes', '2hr petri dishes'), 
+           stress = c(occ4f.nmds$stress, occ2f.nmds$stress, occ4p.nmds$stress, occ2p.nmds$stress),
+           n = c(length(occ4f), length(occ2f), length(occ4p), length(occ2p)))
+print(xtable(nmds.stress), type = "html")
+```
+
+But since statistics back up the visible patterns, it doesn't present much of a problem. 
+
+
+The functions file (`pb_functions_for_mansucript.R`) contains a simple function to calculate richness, Shannon-Weiner diversity, and Evenness for each sample. 
+
+```{r}
+pb.hrj <- Evenness(pb.1000)
+
+occ4f.map$R <- pb.hrj[occ4f, 'R']
+occ4f.map$H1 <- pb.hrj[occ4f, 'H1']
+
+occ2f.map$R <- pb.hrj[occ2f, 'R']
+occ2f.map$H1 <- pb.hrj[occ2f, 'H1']
+
+occ4p.map$R <- pb.hrj[occ4p, 'R']
+occ4p.map$H1 <- pb.hrj[occ4p, 'H1']
+
+occ2p.map$R <- pb.hrj[occ2p, 'R']
+occ2p.map$H1 <- pb.hrj[occ2p, 'H1']
+```
+
+
+One last piece to assess the spread of points with beta-dispersion tests. It appears that s1 and s3 points are tightly grouped but s2 is not - this gives us a metric to report. 
+
+```{r}
+# 4of
+pb.onlyocc.can <- as.dist(as.matrix(pb.can)[c(s24of, s34of, s14of), c(s24of, s34of, s14of)])
+pb.onlyocc.map <- pb.map[c(s24of, s34of, s14of), ]
+occ4f.bd <- betadisper(pb.onlyocc.can, pb.onlyocc.map$person)
+occ4f.betad <- data.frame(dists = occ4f.bd$distances, person = pb.onlyocc.map$person)
+occ4f.betad.aov <- anova(occ4f.bd)
+#boxplot(occ4f.bd$distances~pb.onlyocc.map$person)
+
+# 2of
+pb.onlyocc2.can <- as.dist(as.matrix(pb.can)[c(s22of, s32of, s12of), c(s22of, s32of, s12of)])
+pb.onlyocc2.map <- pb.map[c(s22of, s32of, s12of), ]
+occ2f.bd <- betadisper(pb.onlyocc2.can, pb.onlyocc2.map$person)
+occ2f.betad <- data.frame(dists = occ2f.bd$distances, person = pb.onlyocc2.map$person)
+occ2f.betad.aov <- anova(occ2f.bd)
+#boxplot(occ2f.bd$distances~pb.onlyocc2.map$person)
+
+# 4op
+pb.onlyoccp.can <- as.dist(as.matrix(pb.can)[c(s24op, s34op, s14op), c(s24op, s34op, s14op)])
+pb.onlyoccp.map <- pb.map[c(s24op, s34op, s14op), ]
+occ4p.bd <- betadisper(pb.onlyoccp.can, pb.onlyoccp.map$person)
+occ4p.betad <- data.frame(dists = occ4p.bd$distances, person = pb.onlyoccp.map$person)
+occ4p.betad.aov <- anova(occ4p.bd)
+#boxplot(occ4p.bd$distances~pb.onlyoccp.map$person)
+
+# 2of
+pb.onlyocc2p.can <- as.dist(as.matrix(pb.can)[c(s22op, s32op, s12op), c(s22op, s32op, s12op)])
+pb.onlyocc2p.map <- pb.map[c(s22op, s32op, s12op), ]
+occ2p.bd <- betadisper(pb.onlyocc2p.can, pb.onlyocc2p.map$person)
+occ2p.betad <- data.frame(dists = occ2p.bd$distances, person = pb.onlyocc2p.map$person)
+occ2p.betad.aov <- anova(occ2p.bd)
+#boxplot(occ2p.bd$distances~pb.onlyocc2p.map$person)
+
+betad.aov.list <- list(occ4f.betad.aov, occ2f.betad.aov, occ4p.betad.aov, occ2p.betad.aov)
+betad.table.list <- list(occ4f.betad, occ2f.betad, occ4p.betad, occ2p.betad)
+
+rm(pb.onlyocc.can, pb.onlyocc.map, occ4f.bd,  
+  pb.onlyocc2.can, pb.onlyocc2.map, occ2f.bd, 
+  pb.onlyoccp.can, pb.onlyoccp.map, occ4p.bd,
+  pb.onlyocc2p.can, pb.onlyocc2p.map, occ2p.bd, 
+  occ4f.betad, occ4f.betad.aov, occ4p.betad, occ4p.betad.aov, 
+  occ2f.betad, occ2f.betad.aov, occ2p.betad, occ2p.betad.aov)
+```
+
+
+After all of these data manipulations, some of these objects now go to a new script to make figures.  
+
+```{r}
+ls()
+ 
+# clean groupings. 
+rm(list=ls()[which(ls() %in% names(groups))])
+rm(occ, unocc, occ.p, unocc.p, occ2, unocc2, occ2.p, unocc2.p, occ2f, occ2p, occ4f, occ4p)
+ls()
+# save the rest. 
+save.image(file='../data/pb_analysis_to_figures.RData')
+getwd()
+```
+
+
+
+
+
+
+
+

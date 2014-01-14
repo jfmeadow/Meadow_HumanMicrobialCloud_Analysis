@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<!-- saved from url=(0014)about:internet -->
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+<title>Personal Microbial Cloud</title>
+
+<style type="text/css">
+body, td {
+   font-family: sans-serif;
+   background-color: white;
+   font-size: 12px;
+   margin: 8px;
+}
+
+tt, code, pre {
+   font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace;
+}
+
+h1 { 
+   font-size:2.2em; 
+}
+
+h2 { 
+   font-size:1.8em; 
+}
+
+h3 { 
+   font-size:1.4em; 
+}
+
+h4 { 
+   font-size:1.0em; 
+}
+
+h5 { 
+   font-size:0.9em; 
+}
+
+h6 { 
+   font-size:0.8em; 
+}
+
+a:visited {
+   color: rgb(50%, 0%, 50%);
+}
+
+pre {	
+   margin-top: 0;
+   max-width: 95%;
+   border: 1px solid #ccc;
+   white-space: pre-wrap;
+}
+
+pre code {
+   display: block; padding: 0.5em;
+}
+
+code.r, code.cpp {
+   background-color: #F8F8F8;
+}
+
+table, td, th {
+  border: none;
+}
+
+blockquote {
+   color:#666666;
+   margin:0;
+   padding-left: 1em;
+   border-left: 0.5em #EEE solid;
+}
+
+hr {
+   height: 0px;
+   border-bottom: none;
+   border-top-width: thin;
+   border-top-style: dotted;
+   border-top-color: #999999;
+}
+
+@media print {
+   * { 
+      background: transparent !important; 
+      color: black !important; 
+      filter:none !important; 
+      -ms-filter: none !important; 
+   }
+
+   body { 
+      font-size:12pt; 
+      max-width:100%; 
+   }
+       
+   a, a:visited { 
+      text-decoration: underline; 
+   }
+
+   hr { 
+      visibility: hidden;
+      page-break-before: always;
+   }
+
+   pre, blockquote { 
+      padding-right: 1em; 
+      page-break-inside: avoid; 
+   }
+
+   tr, img { 
+      page-break-inside: avoid; 
+   }
+
+   img { 
+      max-width: 100% !important; 
+   }
+
+   @page :left { 
+      margin: 15mm 20mm 15mm 10mm; 
+   }
+     
+   @page :right { 
+      margin: 15mm 10mm 15mm 20mm; 
+   }
+
+   p, h2, h3 { 
+      orphans: 3; widows: 3; 
+   }
+
+   h2, h3 { 
+      page-break-after: avoid; 
+   }
+}
+
+</style>
+
+<!-- Styles for R syntax highlighter -->
+<style type="text/css">
+   pre .operator,
+   pre .paren {
+     color: rgb(104, 118, 135)
+   }
+
+   pre .literal {
+     color: rgb(88, 72, 246)
+   }
+
+   pre .number {
+     color: rgb(0, 0, 205);
+   }
+
+   pre .comment {
+     color: rgb(76, 136, 107);
+   }
+
+   pre .keyword {
+     color: rgb(0, 0, 255);
+   }
+
+   pre .identifier {
+     color: rgb(0, 0, 0);
+   }
+
+   pre .string {
+     color: rgb(3, 106, 7);
+   }
+</style>
+
+<!-- R syntax highlighter -->
+<script type="text/javascript">
+var hljs=new function(){function m(p){return p.replace(/&/gm,"&amp;").replace(/</gm,"&lt;")}function f(r,q,p){return RegExp(q,"m"+(r.cI?"i":"")+(p?"g":""))}function b(r){for(var p=0;p<r.childNodes.length;p++){var q=r.childNodes[p];if(q.nodeName=="CODE"){return q}if(!(q.nodeType==3&&q.nodeValue.match(/\s+/))){break}}}function h(t,s){var p="";for(var r=0;r<t.childNodes.length;r++){if(t.childNodes[r].nodeType==3){var q=t.childNodes[r].nodeValue;if(s){q=q.replace(/\n/g,"")}p+=q}else{if(t.childNodes[r].nodeName=="BR"){p+="\n"}else{p+=h(t.childNodes[r])}}}if(/MSIE [678]/.test(navigator.userAgent)){p=p.replace(/\r/g,"\n")}return p}function a(s){var r=s.className.split(/\s+/);r=r.concat(s.parentNode.className.split(/\s+/));for(var q=0;q<r.length;q++){var p=r[q].replace(/^language-/,"");if(e[p]){return p}}}function c(q){var p=[];(function(s,t){for(var r=0;r<s.childNodes.length;r++){if(s.childNodes[r].nodeType==3){t+=s.childNodes[r].nodeValue.length}else{if(s.childNodes[r].nodeName=="BR"){t+=1}else{if(s.childNodes[r].nodeType==1){p.push({event:"start",offset:t,node:s.childNodes[r]});t=arguments.callee(s.childNodes[r],t);p.push({event:"stop",offset:t,node:s.childNodes[r]})}}}}return t})(q,0);return p}function k(y,w,x){var q=0;var z="";var s=[];function u(){if(y.length&&w.length){if(y[0].offset!=w[0].offset){return(y[0].offset<w[0].offset)?y:w}else{return w[0].event=="start"?y:w}}else{return y.length?y:w}}function t(D){var A="<"+D.nodeName.toLowerCase();for(var B=0;B<D.attributes.length;B++){var C=D.attributes[B];A+=" "+C.nodeName.toLowerCase();if(C.value!==undefined&&C.value!==false&&C.value!==null){A+='="'+m(C.value)+'"'}}return A+">"}while(y.length||w.length){var v=u().splice(0,1)[0];z+=m(x.substr(q,v.offset-q));q=v.offset;if(v.event=="start"){z+=t(v.node);s.push(v.node)}else{if(v.event=="stop"){var p,r=s.length;do{r--;p=s[r];z+=("</"+p.nodeName.toLowerCase()+">")}while(p!=v.node);s.splice(r,1);while(r<s.length){z+=t(s[r]);r++}}}}return z+m(x.substr(q))}function j(){function q(x,y,v){if(x.compiled){return}var u;var s=[];if(x.k){x.lR=f(y,x.l||hljs.IR,true);for(var w in x.k){if(!x.k.hasOwnProperty(w)){continue}if(x.k[w] instanceof Object){u=x.k[w]}else{u=x.k;w="keyword"}for(var r in u){if(!u.hasOwnProperty(r)){continue}x.k[r]=[w,u[r]];s.push(r)}}}if(!v){if(x.bWK){x.b="\\b("+s.join("|")+")\\s"}x.bR=f(y,x.b?x.b:"\\B|\\b");if(!x.e&&!x.eW){x.e="\\B|\\b"}if(x.e){x.eR=f(y,x.e)}}if(x.i){x.iR=f(y,x.i)}if(x.r===undefined){x.r=1}if(!x.c){x.c=[]}x.compiled=true;for(var t=0;t<x.c.length;t++){if(x.c[t]=="self"){x.c[t]=x}q(x.c[t],y,false)}if(x.starts){q(x.starts,y,false)}}for(var p in e){if(!e.hasOwnProperty(p)){continue}q(e[p].dM,e[p],true)}}function d(B,C){if(!j.called){j();j.called=true}function q(r,M){for(var L=0;L<M.c.length;L++){if((M.c[L].bR.exec(r)||[null])[0]==r){return M.c[L]}}}function v(L,r){if(D[L].e&&D[L].eR.test(r)){return 1}if(D[L].eW){var M=v(L-1,r);return M?M+1:0}return 0}function w(r,L){return L.i&&L.iR.test(r)}function K(N,O){var M=[];for(var L=0;L<N.c.length;L++){M.push(N.c[L].b)}var r=D.length-1;do{if(D[r].e){M.push(D[r].e)}r--}while(D[r+1].eW);if(N.i){M.push(N.i)}return f(O,M.join("|"),true)}function p(M,L){var N=D[D.length-1];if(!N.t){N.t=K(N,E)}N.t.lastIndex=L;var r=N.t.exec(M);return r?[M.substr(L,r.index-L),r[0],false]:[M.substr(L),"",true]}function z(N,r){var L=E.cI?r[0].toLowerCase():r[0];var M=N.k[L];if(M&&M instanceof Array){return M}return false}function F(L,P){L=m(L);if(!P.k){return L}var r="";var O=0;P.lR.lastIndex=0;var M=P.lR.exec(L);while(M){r+=L.substr(O,M.index-O);var N=z(P,M);if(N){x+=N[1];r+='<span class="'+N[0]+'">'+M[0]+"</span>"}else{r+=M[0]}O=P.lR.lastIndex;M=P.lR.exec(L)}return r+L.substr(O,L.length-O)}function J(L,M){if(M.sL&&e[M.sL]){var r=d(M.sL,L);x+=r.keyword_count;return r.value}else{return F(L,M)}}function I(M,r){var L=M.cN?'<span class="'+M.cN+'">':"";if(M.rB){y+=L;M.buffer=""}else{if(M.eB){y+=m(r)+L;M.buffer=""}else{y+=L;M.buffer=r}}D.push(M);A+=M.r}function G(N,M,Q){var R=D[D.length-1];if(Q){y+=J(R.buffer+N,R);return false}var P=q(M,R);if(P){y+=J(R.buffer+N,R);I(P,M);return P.rB}var L=v(D.length-1,M);if(L){var O=R.cN?"</span>":"";if(R.rE){y+=J(R.buffer+N,R)+O}else{if(R.eE){y+=J(R.buffer+N,R)+O+m(M)}else{y+=J(R.buffer+N+M,R)+O}}while(L>1){O=D[D.length-2].cN?"</span>":"";y+=O;L--;D.length--}var r=D[D.length-1];D.length--;D[D.length-1].buffer="";if(r.starts){I(r.starts,"")}return R.rE}if(w(M,R)){throw"Illegal"}}var E=e[B];var D=[E.dM];var A=0;var x=0;var y="";try{var s,u=0;E.dM.buffer="";do{s=p(C,u);var t=G(s[0],s[1],s[2]);u+=s[0].length;if(!t){u+=s[1].length}}while(!s[2]);if(D.length>1){throw"Illegal"}return{r:A,keyword_count:x,value:y}}catch(H){if(H=="Illegal"){return{r:0,keyword_count:0,value:m(C)}}else{throw H}}}function g(t){var p={keyword_count:0,r:0,value:m(t)};var r=p;for(var q in e){if(!e.hasOwnProperty(q)){continue}var s=d(q,t);s.language=q;if(s.keyword_count+s.r>r.keyword_count+r.r){r=s}if(s.keyword_count+s.r>p.keyword_count+p.r){r=p;p=s}}if(r.language){p.second_best=r}return p}function i(r,q,p){if(q){r=r.replace(/^((<[^>]+>|\t)+)/gm,function(t,w,v,u){return w.replace(/\t/g,q)})}if(p){r=r.replace(/\n/g,"<br>")}return r}function n(t,w,r){var x=h(t,r);var v=a(t);var y,s;if(v){y=d(v,x)}else{return}var q=c(t);if(q.length){s=document.createElement("pre");s.innerHTML=y.value;y.value=k(q,c(s),x)}y.value=i(y.value,w,r);var u=t.className;if(!u.match("(\\s|^)(language-)?"+v+"(\\s|$)")){u=u?(u+" "+v):v}if(/MSIE [678]/.test(navigator.userAgent)&&t.tagName=="CODE"&&t.parentNode.tagName=="PRE"){s=t.parentNode;var p=document.createElement("div");p.innerHTML="<pre><code>"+y.value+"</code></pre>";t=p.firstChild.firstChild;p.firstChild.cN=s.cN;s.parentNode.replaceChild(p.firstChild,s)}else{t.innerHTML=y.value}t.className=u;t.result={language:v,kw:y.keyword_count,re:y.r};if(y.second_best){t.second_best={language:y.second_best.language,kw:y.second_best.keyword_count,re:y.second_best.r}}}function o(){if(o.called){return}o.called=true;var r=document.getElementsByTagName("pre");for(var p=0;p<r.length;p++){var q=b(r[p]);if(q){n(q,hljs.tabReplace)}}}function l(){if(window.addEventListener){window.addEventListener("DOMContentLoaded",o,false);window.addEventListener("load",o,false)}else{if(window.attachEvent){window.attachEvent("onload",o)}else{window.onload=o}}}var e={};this.LANGUAGES=e;this.highlight=d;this.highlightAuto=g;this.fixMarkup=i;this.highlightBlock=n;this.initHighlighting=o;this.initHighlightingOnLoad=l;this.IR="[a-zA-Z][a-zA-Z0-9_]*";this.UIR="[a-zA-Z_][a-zA-Z0-9_]*";this.NR="\\b\\d+(\\.\\d+)?";this.CNR="\\b(0[xX][a-fA-F0-9]+|(\\d+(\\.\\d*)?|\\.\\d+)([eE][-+]?\\d+)?)";this.BNR="\\b(0b[01]+)";this.RSR="!|!=|!==|%|%=|&|&&|&=|\\*|\\*=|\\+|\\+=|,|\\.|-|-=|/|/=|:|;|<|<<|<<=|<=|=|==|===|>|>=|>>|>>=|>>>|>>>=|\\?|\\[|\\{|\\(|\\^|\\^=|\\||\\|=|\\|\\||~";this.ER="(?![\\s\\S])";this.BE={b:"\\\\.",r:0};this.ASM={cN:"string",b:"'",e:"'",i:"\\n",c:[this.BE],r:0};this.QSM={cN:"string",b:'"',e:'"',i:"\\n",c:[this.BE],r:0};this.CLCM={cN:"comment",b:"//",e:"$"};this.CBLCLM={cN:"comment",b:"/\\*",e:"\\*/"};this.HCM={cN:"comment",b:"#",e:"$"};this.NM={cN:"number",b:this.NR,r:0};this.CNM={cN:"number",b:this.CNR,r:0};this.BNM={cN:"number",b:this.BNR,r:0};this.inherit=function(r,s){var p={};for(var q in r){p[q]=r[q]}if(s){for(var q in s){p[q]=s[q]}}return p}}();hljs.LANGUAGES.cpp=function(){var a={keyword:{"false":1,"int":1,"float":1,"while":1,"private":1,"char":1,"catch":1,"export":1,virtual:1,operator:2,sizeof:2,dynamic_cast:2,typedef:2,const_cast:2,"const":1,struct:1,"for":1,static_cast:2,union:1,namespace:1,unsigned:1,"long":1,"throw":1,"volatile":2,"static":1,"protected":1,bool:1,template:1,mutable:1,"if":1,"public":1,friend:2,"do":1,"return":1,"goto":1,auto:1,"void":2,"enum":1,"else":1,"break":1,"new":1,extern:1,using:1,"true":1,"class":1,asm:1,"case":1,typeid:1,"short":1,reinterpret_cast:2,"default":1,"double":1,register:1,explicit:1,signed:1,typename:1,"try":1,"this":1,"switch":1,"continue":1,wchar_t:1,inline:1,"delete":1,alignof:1,char16_t:1,char32_t:1,constexpr:1,decltype:1,noexcept:1,nullptr:1,static_assert:1,thread_local:1,restrict:1,_Bool:1,complex:1},built_in:{std:1,string:1,cin:1,cout:1,cerr:1,clog:1,stringstream:1,istringstream:1,ostringstream:1,auto_ptr:1,deque:1,list:1,queue:1,stack:1,vector:1,map:1,set:1,bitset:1,multiset:1,multimap:1,unordered_set:1,unordered_map:1,unordered_multiset:1,unordered_multimap:1,array:1,shared_ptr:1}};return{dM:{k:a,i:"</",c:[hljs.CLCM,hljs.CBLCLM,hljs.QSM,{cN:"string",b:"'\\\\?.",e:"'",i:"."},{cN:"number",b:"\\b(\\d+(\\.\\d*)?|\\.\\d+)(u|U|l|L|ul|UL|f|F)"},hljs.CNM,{cN:"preprocessor",b:"#",e:"$"},{cN:"stl_container",b:"\\b(deque|list|queue|stack|vector|map|set|bitset|multiset|multimap|unordered_map|unordered_set|unordered_multiset|unordered_multimap|array)\\s*<",e:">",k:a,r:10,c:["self"]}]}}}();hljs.LANGUAGES.r={dM:{c:[hljs.HCM,{cN:"number",b:"\\b0[xX][0-9a-fA-F]+[Li]?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+(?:[eE][+\\-]?\\d*)?L\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+\\.(?!\\d)(?:i\\b)?",e:hljs.IMMEDIATE_RE,r:1},{cN:"number",b:"\\b\\d+(?:\\.\\d*)?(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\.\\d+(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"keyword",b:"(?:tryCatch|library|setGeneric|setGroupGeneric)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\.",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\d+(?![\\w.])",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\b(?:function)",e:hljs.IMMEDIATE_RE,r:2},{cN:"keyword",b:"(?:if|in|break|next|repeat|else|for|return|switch|while|try|stop|warning|require|attach|detach|source|setMethod|setClass)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"literal",b:"(?:NA|NA_integer_|NA_real_|NA_character_|NA_complex_)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"literal",b:"(?:NULL|TRUE|FALSE|T|F|Inf|NaN)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"identifier",b:"[a-zA-Z.][a-zA-Z0-9._]*\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"<\\-(?!\\s*\\d)",e:hljs.IMMEDIATE_RE,r:2},{cN:"operator",b:"\\->|<\\-",e:hljs.IMMEDIATE_RE,r:1},{cN:"operator",b:"%%|~",e:hljs.IMMEDIATE_RE},{cN:"operator",b:">=|<=|==|!=|\\|\\||&&|=|\\+|\\-|\\*|/|\\^|>|<|!|&|\\||\\$|:",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"%",e:"%",i:"\\n",r:1},{cN:"identifier",b:"`",e:"`",r:0},{cN:"string",b:'"',e:'"',c:[hljs.BE],r:0},{cN:"string",b:"'",e:"'",c:[hljs.BE],r:0},{cN:"paren",b:"[[({\\])}]",e:hljs.IMMEDIATE_RE,r:0}]}};
+hljs.initHighlightingOnLoad();
+</script>
+
+
+
+
+</head>
+
+<body>
+<h1>Personal Microbial Cloud</h1>
+
+<h2>Beta-diversity Data Analysis</h2>
+
+<p>Read in prepared workspace and load packages.</p>
+
+<pre><code class="r">load(&quot;../data/pb_data.RData&quot;)
+library(vegan)
+</code></pre>
+
+<pre><code>## Loading required package: permute This is vegan 2.0-8
+</code></pre>
+
+<pre><code class="r">library(labdsv)
+</code></pre>
+
+<pre><code>## Loading required package: mgcv This is mgcv 1.7-22. For overview type
+## &#39;help(&quot;mgcv-package&quot;)&#39;. Loading required package: MASS
+## 
+## Attaching package: &#39;labdsv&#39;
+## 
+## The following object is masked from &#39;package:stats&#39;:
+## 
+## density
+</code></pre>
+
+<pre><code class="r">library(ape)
+library(xtable)
+source(&quot;../data/pb_functions_for_manuscript.R&quot;)
+</code></pre>
+
+<p>Unpack list of groups.</p>
+
+<pre><code class="r">for (i in 1:length(names(groups))) {
+    assign(names(groups)[i], unlist(groups[[i]]))
+}
+rm(i)
+</code></pre>
+
+<p>How do samples fall into groups? I.e., do we have balance in treatments?</p>
+
+<pre><code class="r">table(pb.map$person, pb.map$sampleType)
+</code></pre>
+
+<pre><code>##     
+##      filter petri.dish
+##   s1     48         24
+##   s2     46         23
+##   s3     46         24
+</code></pre>
+
+<pre><code class="r">table(pb.map$location)
+</code></pre>
+
+<pre><code>## 
+##   occ unocc 
+##   108   103
+</code></pre>
+
+<pre><code class="r">table(pb.map$duration)
+</code></pre>
+
+<pre><code>## 
+##   2   4 
+## 105 106
+</code></pre>
+
+<pre><code class="r">table(pb.map$sampleType)
+</code></pre>
+
+<pre><code>## 
+##     filter petri.dish 
+##        140         71
+</code></pre>
+
+<p>The canberra distance metric is used to calculate beta diversity. Then 2d NMDS objects are created for the whole experiment and for each treatment individually.</p>
+
+<pre><code class="r">pb.can &lt;- vegdist(pb.1000, &quot;canberra&quot;)
+</code></pre>
+
+<p>Since most abundant taxa were removed as contaminants, try Bray-Curtis. </p>
+
+<pre><code class="r">pb.bc &lt;- vegdist(pb.1000, &quot;bray&quot;)
+</code></pre>
+
+<pre><code class="r"># Filters 4h diff people
+occ4f &lt;- c(s24of, s34of, s14of, s24uf, s34uf, s14uf)
+occ4f.table &lt;- pb.1000[occ4f, ]
+occ4f.map &lt;- pb.map[occ4f, ]
+occ4f.can &lt;- as.dist(as.matrix(pb.can)[occ4f, occ4f])
+occ4f.nmds &lt;- bestnmds(occ4f.can)
+occ &lt;- which(occ4f.map$location == &quot;occ&quot;)
+unocc &lt;- which(occ4f.map$location == &quot;unocc&quot;)
+
+## 2h diff people
+occ2f &lt;- c(s22of, s32of, s12of, s22uf, s32uf, s12uf)
+occ2f.table &lt;- pb.1000[occ2f, ]
+occ2f.map &lt;- pb.map[occ2f, ]
+occ2f.can &lt;- as.dist(as.matrix(pb.can)[occ2f, occ2f])
+occ2f.nmds &lt;- bestnmds(occ2f.can)
+occ2 &lt;- which(occ2f.map$location == &quot;occ&quot;)
+unocc2 &lt;- which(occ2f.map$location == &quot;unocc&quot;)
+
+# Petri dishes 4h diff people
+occ4p &lt;- c(s24op, s34op, s14op, s24up, s34up, s14up)
+occ4p.table &lt;- pb.1000[occ4p, ]
+occ4p.map &lt;- pb.map[occ4p, ]
+occ4p.can &lt;- as.dist(as.matrix(pb.can)[occ4p, occ4p])
+occ4p.nmds &lt;- bestnmds(occ4p.can)
+occ.p &lt;- which(occ4p.map$location == &quot;occ&quot;)
+unocc.p &lt;- which(occ4p.map$location == &quot;unocc&quot;)
+
+## 2h diff people
+occ2p &lt;- c(s22op, s32op, s12op, s22up, s32up, s12up)
+occ2p.table &lt;- pb.1000[occ2p, ]
+occ2p.map &lt;- pb.map[occ2p, ]
+occ2p.can &lt;- as.dist(as.matrix(pb.can)[occ2p, occ2p])
+occ2p.nmds &lt;- bestnmds(occ2p.can)
+occ2.p &lt;- which(occ2p.map$location == &quot;occ&quot;)
+unocc2.p &lt;- which(occ2p.map$location == &quot;unocc&quot;)
+</code></pre>
+
+<p>Pretty much all of these NMDS ordinations have high stress levels:</p>
+
+<pre><code class="r">
+nmds.stress &lt;- data.frame(treatment = c(&quot;4hr filters&quot;, &quot;2hr filters&quot;, &quot;4hr petri dishes&quot;, 
+    &quot;2hr petri dishes&quot;), stress = c(occ4f.nmds$stress, occ2f.nmds$stress, occ4p.nmds$stress, 
+    occ2p.nmds$stress), n = c(length(occ4f), length(occ2f), length(occ4p), length(occ2p)))
+print(xtable(nmds.stress), type = &quot;html&quot;)
+</code></pre>
+
+<!-- html table generated in R 3.0.1 by xtable 1.7-1 package -->
+
+<!-- Sun Jan  5 15:30:25 2014 -->
+
+<TABLE border=1>
+<TR> <TH>  </TH> <TH> treatment </TH> <TH> stress </TH> <TH> n </TH>  </TR>
+  <TR> <TD align="right"> 1 </TD> <TD> 4hr filters </TD> <TD align="right"> 27.91 </TD> <TD align="right">  71 </TD> </TR>
+  <TR> <TD align="right"> 2 </TD> <TD> 2hr filters </TD> <TD align="right"> 30.94 </TD> <TD align="right">  69 </TD> </TR>
+  <TR> <TD align="right"> 3 </TD> <TD> 4hr petri dishes </TD> <TD align="right"> 26.00 </TD> <TD align="right">  35 </TD> </TR>
+  <TR> <TD align="right"> 4 </TD> <TD> 2hr petri dishes </TD> <TD align="right"> 25.73 </TD> <TD align="right">  36 </TD> </TR>
+   </TABLE>
+
+<p>But since statistics back up the visible patterns, it doesn&#39;t present much of a problem. </p>
+
+<p>The functions file (<code>pb_functions_for_mansucript.R</code>) contains a simple function to calculate richness, Shannon-Weiner diversity, and Evenness for each sample. </p>
+
+<pre><code class="r">pb.hrj &lt;- Evenness(pb.1000)
+
+occ4f.map$R &lt;- pb.hrj[occ4f, &quot;R&quot;]
+occ4f.map$H1 &lt;- pb.hrj[occ4f, &quot;H1&quot;]
+
+occ2f.map$R &lt;- pb.hrj[occ2f, &quot;R&quot;]
+occ2f.map$H1 &lt;- pb.hrj[occ2f, &quot;H1&quot;]
+
+occ4p.map$R &lt;- pb.hrj[occ4p, &quot;R&quot;]
+occ4p.map$H1 &lt;- pb.hrj[occ4p, &quot;H1&quot;]
+
+occ2p.map$R &lt;- pb.hrj[occ2p, &quot;R&quot;]
+occ2p.map$H1 &lt;- pb.hrj[occ2p, &quot;H1&quot;]
+</code></pre>
+
+<p>One last piece to assess the spread of points with beta-dispersion tests. It appears that s1 and s3 points are tightly grouped but s2 is not - this gives us a metric to report. </p>
+
+<pre><code class="r"># 4of
+pb.onlyocc.can &lt;- as.dist(as.matrix(pb.can)[c(s24of, s34of, s14of), c(s24of, 
+    s34of, s14of)])
+pb.onlyocc.map &lt;- pb.map[c(s24of, s34of, s14of), ]
+occ4f.bd &lt;- betadisper(pb.onlyocc.can, pb.onlyocc.map$person)
+occ4f.betad &lt;- data.frame(dists = occ4f.bd$distances, person = pb.onlyocc.map$person)
+occ4f.betad.aov &lt;- anova(occ4f.bd)
+# boxplot(occ4f.bd$distances~pb.onlyocc.map$person)
+
+# 2of
+pb.onlyocc2.can &lt;- as.dist(as.matrix(pb.can)[c(s22of, s32of, s12of), c(s22of, 
+    s32of, s12of)])
+pb.onlyocc2.map &lt;- pb.map[c(s22of, s32of, s12of), ]
+occ2f.bd &lt;- betadisper(pb.onlyocc2.can, pb.onlyocc2.map$person)
+occ2f.betad &lt;- data.frame(dists = occ2f.bd$distances, person = pb.onlyocc2.map$person)
+occ2f.betad.aov &lt;- anova(occ2f.bd)
+# boxplot(occ2f.bd$distances~pb.onlyocc2.map$person)
+
+# 4op
+pb.onlyoccp.can &lt;- as.dist(as.matrix(pb.can)[c(s24op, s34op, s14op), c(s24op, 
+    s34op, s14op)])
+pb.onlyoccp.map &lt;- pb.map[c(s24op, s34op, s14op), ]
+occ4p.bd &lt;- betadisper(pb.onlyoccp.can, pb.onlyoccp.map$person)
+occ4p.betad &lt;- data.frame(dists = occ4p.bd$distances, person = pb.onlyoccp.map$person)
+occ4p.betad.aov &lt;- anova(occ4p.bd)
+# boxplot(occ4p.bd$distances~pb.onlyoccp.map$person)
+
+# 2of
+pb.onlyocc2p.can &lt;- as.dist(as.matrix(pb.can)[c(s22op, s32op, s12op), c(s22op, 
+    s32op, s12op)])
+pb.onlyocc2p.map &lt;- pb.map[c(s22op, s32op, s12op), ]
+occ2p.bd &lt;- betadisper(pb.onlyocc2p.can, pb.onlyocc2p.map$person)
+occ2p.betad &lt;- data.frame(dists = occ2p.bd$distances, person = pb.onlyocc2p.map$person)
+occ2p.betad.aov &lt;- anova(occ2p.bd)
+# boxplot(occ2p.bd$distances~pb.onlyocc2p.map$person)
+
+betad.aov.list &lt;- list(occ4f.betad.aov, occ2f.betad.aov, occ4p.betad.aov, occ2p.betad.aov)
+betad.table.list &lt;- list(occ4f.betad, occ2f.betad, occ4p.betad, occ2p.betad)
+
+rm(pb.onlyocc.can, pb.onlyocc.map, occ4f.bd, pb.onlyocc2.can, pb.onlyocc2.map, 
+    occ2f.bd, pb.onlyoccp.can, pb.onlyoccp.map, occ4p.bd, pb.onlyocc2p.can, 
+    pb.onlyocc2p.map, occ2p.bd, occ4f.betad, occ4f.betad.aov, occ4p.betad, occ4p.betad.aov, 
+    occ2f.betad, occ2f.betad.aov, occ2p.betad, occ2p.betad.aov)
+</code></pre>
+
+<p>After all of these data manipulations, some of these objects now go to a new script to make figures.  </p>
+
+<pre><code class="r">ls()
+</code></pre>
+
+<pre><code>##  [1] &quot;betad.aov.list&quot;   &quot;betad.table.list&quot; &quot;cons&quot;            
+##  [4] &quot;Evenness&quot;         &quot;gr.name&quot;          &quot;gr2&quot;             
+##  [7] &quot;groups&quot;           &quot;makeTaxo&quot;         &quot;nmds.stress&quot;     
+## [10] &quot;occ&quot;              &quot;occ.p&quot;            &quot;occ2&quot;            
+## [13] &quot;occ2.p&quot;           &quot;occ2f&quot;            &quot;occ2f.can&quot;       
+## [16] &quot;occ2f.map&quot;        &quot;occ2f.nmds&quot;       &quot;occ2f.table&quot;     
+## [19] &quot;occ2p&quot;            &quot;occ2p.can&quot;        &quot;occ2p.map&quot;       
+## [22] &quot;occ2p.nmds&quot;       &quot;occ2p.table&quot;      &quot;occ4f&quot;           
+## [25] &quot;occ4f.can&quot;        &quot;occ4f.map&quot;        &quot;occ4f.nmds&quot;      
+## [28] &quot;occ4f.table&quot;      &quot;occ4p&quot;            &quot;occ4p.can&quot;       
+## [31] &quot;occ4p.map&quot;        &quot;occ4p.nmds&quot;       &quot;occ4p.table&quot;     
+## [34] &quot;pb.1000&quot;          &quot;pb.bc&quot;            &quot;pb.can&quot;          
+## [37] &quot;pb.hrj&quot;           &quot;pb.map&quot;           &quot;rarefied.otus&quot;   
+## [40] &quot;rarefied.samples&quot; &quot;rarefied.seqs&quot;    &quot;s12of&quot;           
+## [43] &quot;s12op&quot;            &quot;s12uf&quot;            &quot;s12up&quot;           
+## [46] &quot;s14of&quot;            &quot;s14op&quot;            &quot;s14uf&quot;           
+## [49] &quot;s14up&quot;            &quot;s22of&quot;            &quot;s22op&quot;           
+## [52] &quot;s22uf&quot;            &quot;s22up&quot;            &quot;s24of&quot;           
+## [55] &quot;s24op&quot;            &quot;s24uf&quot;            &quot;s24up&quot;           
+## [58] &quot;s32of&quot;            &quot;s32op&quot;            &quot;s32uf&quot;           
+## [61] &quot;s32up&quot;            &quot;s34of&quot;            &quot;s34op&quot;           
+## [64] &quot;s34uf&quot;            &quot;s34up&quot;            &quot;se&quot;              
+## [67] &quot;taxo&quot;             &quot;total.otus&quot;       &quot;total.samples&quot;   
+## [70] &quot;total.seqs&quot;       &quot;unocc&quot;            &quot;unocc.p&quot;         
+## [73] &quot;unocc2&quot;           &quot;unocc2.p&quot;
+</code></pre>
+
+<pre><code class="r">
+# clean groupings.
+rm(list = ls()[which(ls() %in% names(groups))])
+rm(occ, unocc, occ.p, unocc.p, occ2, unocc2, occ2.p, unocc2.p, occ2f, occ2p, 
+    occ4f, occ4p)
+ls()
+</code></pre>
+
+<pre><code>##  [1] &quot;betad.aov.list&quot;   &quot;betad.table.list&quot; &quot;cons&quot;            
+##  [4] &quot;Evenness&quot;         &quot;gr.name&quot;          &quot;gr2&quot;             
+##  [7] &quot;groups&quot;           &quot;makeTaxo&quot;         &quot;nmds.stress&quot;     
+## [10] &quot;occ2f.can&quot;        &quot;occ2f.map&quot;        &quot;occ2f.nmds&quot;      
+## [13] &quot;occ2f.table&quot;      &quot;occ2p.can&quot;        &quot;occ2p.map&quot;       
+## [16] &quot;occ2p.nmds&quot;       &quot;occ2p.table&quot;      &quot;occ4f.can&quot;       
+## [19] &quot;occ4f.map&quot;        &quot;occ4f.nmds&quot;       &quot;occ4f.table&quot;     
+## [22] &quot;occ4p.can&quot;        &quot;occ4p.map&quot;        &quot;occ4p.nmds&quot;      
+## [25] &quot;occ4p.table&quot;      &quot;pb.1000&quot;          &quot;pb.bc&quot;           
+## [28] &quot;pb.can&quot;           &quot;pb.hrj&quot;           &quot;pb.map&quot;          
+## [31] &quot;rarefied.otus&quot;    &quot;rarefied.samples&quot; &quot;rarefied.seqs&quot;   
+## [34] &quot;se&quot;               &quot;taxo&quot;             &quot;total.otus&quot;      
+## [37] &quot;total.samples&quot;    &quot;total.seqs&quot;
+</code></pre>
+
+<pre><code class="r"># save the rest.
+save.image(file = &quot;../data/pb_analysis_to_figures.RData&quot;)
+getwd()
+</code></pre>
+
+<pre><code>## [1] &quot;/Users/jfmeadow/Dropbox/pb_manuscript/manuscript_code/analysis&quot;
+</code></pre>
+
+</body>
+
+</html>
+

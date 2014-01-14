@@ -1,0 +1,361 @@
+# Personal Microbial Cloud
+
+## Sequence Data Cleanup
+
+* load ecology packages
+* read in a few functions that will be used later
+
+```{r}
+library(vegan)
+library(labdsv)
+library(ape) 
+source('../data/pb_functions_for_manuscript.R')
+```
+
+
+Load data: 
+
+* Classic OTU table. Manually remove hash character from first line. This also has taxonomy from GreenGenes database as last field. 
+* Mapping file used in QIIME. Also removed hash from first line and removed comment line. 
+* And then jive the order of samples in the OTU table and mapping file.
+
+
+```{r}
+pb <- read.delim('../data/otu_table_r.txt', head=TRUE, row.names=1)
+pb.tax <- pb[, ncol(pb)]
+pb <- pb[, -ncol(pb)]
+pb <- t(pb) 
+ 
+pb.map <- read.delim('../data/pb_map.txt', head=TRUE, row.names=1)
+
+all(row.names(pb.map) %in% row.names(pb))
+dim(pb.map); dim(pb)
+
+pb.map <- pb.map[row.names(pb), ]
+dim(pb); dim(pb.map); length(pb.tax)
+identical(row.names(pb), row.names(pb.map))
+```
+
+
+Keep original copy before changing things. 
+
+```{r}
+pb.original <- pb 
+pb.tax.original <- pb.tax
+pb.map.original <- pb.map
+```
+
+
+
+```
+# saved just in case of screwup. 
+pb <- pb.original
+pb.tax <- pb.tax.original
+pb.map <- pb.map.original
+```
+
+Take out plant sequences
+
+```{r}
+plants <- grep('Streptophyt', pb.tax)
+pb <- pb[, -plants]
+pb.tax <- pb.tax[-plants]
+rm(plants) 
+```
+
+
+
+Set up taxonomy table
+
+```{r}
+taxo <- makeTaxo(taxo.in=pb.tax, otu.table=pb)
+dim(taxo); dim(pb) 
+```
+
+The big dataset started with `r sum(pb)` total sequences from `r ncol(pb)` OTUs and `r nrow(pb)` samples.
+
+
+Identify those samples not used in the study. 
+
+```{r}
+nonexp <- which(pb.map$location == 'east' | 
+  pb.map$location == 'west' | 
+  pb.map$location == 'out')
+pb <- pb[-nonexp, ]
+pb.map <- pb.map[-nonexp, ]
+rm(nonexp) 
+dim(pb); dim(pb.map)
+```
+
+
+
+Index for controls, and clean up mapping table. 
+
+```{r}
+pb.map <- pb.map[, c('person', 'location', 'duration', 'sampleType')]
+control <- which(pb.map$location == 'control')
+pb <- pb[-c(control), ]
+pb.map <- pb.map[-c(control), ]
+dim(pb); dim(pb.map) 
+identical(row.names(pb), row.names(pb.map))
+```
+
+
+
+
+
+Remove 4 contaminants that were introduced by PCR reagents. 
+And remove control samples. 
+This is detailed in `pb_analysis_Redo.Rmd`. 
+
+```{r}
+contaminants <- c('190873', '64285', '96443', '129992')
+contaminants.index <- which(colnames(pb) %in% contaminants)
+dim(pb); dim(pb.map)
+pb <- pb[, -contaminants.index]
+taxo <- taxo[-contaminants.index, ]  # pb
+rm(control, contaminants, contaminants.index)
+identical(row.names(pb.map), row.names(pb))
+dim(pb.map); dim(pb); dim(taxo) 
+```
+
+
+
+Rarefy to 1000 seqs per sample. 
+
+```{r}
+sort(rowSums(pb))
+pb <- pb[-which(rowSums(pb) < 1000), ]
+pb.1000 <- rrarefy(pb, 1000)
+pb.1000 <- pb.1000[, -which(colSums(pb.1000) == 0)]
+pb.map <- pb.map[row.names(pb.1000), ]
+taxo <- taxo[colnames(pb.1000), ]
+dim(pb.1000); dim(pb.map); dim(taxo) 
+```
+
+
+
+Put them all in alphabetical order, since that gives nice groupings. 
+Yay for labelling schemes!
+
+```{r}
+pb.map <- pb.map[order(row.names(pb.map)), ]
+pb.1000 <- pb.1000[row.names(pb.map), ] 
+```
+
+
+Fix the abundance column - it still has abundance from full dataset, but abundance from rarefied dataset more meaningful. 
+
+```{r}
+identical(row.names(taxo), colnames(pb.1000))  # just to make sure
+taxo$abundance <- colSums(pb.1000)
+```
+
+
+A few metrics to reference later.
+
+```{r}
+total.seqs <- sum(pb)
+total.samples <- nrow(pb)
+total.otus <- ncol(pb) 
+
+rarefied.seqs <- sum(pb.1000)
+rarefied.samples <- nrow(pb.1000)
+rarefied.otus <- ncol(pb.1000)
+```
+
+
+
+
+Clean up factor levels. 
+
+```{r}
+pb.map$person <- factor(pb.map$person)
+pb.map$location <- factor(pb.map$location)
+pb.map$duration <- factor(pb.map$duration)
+pb.map$sampleType <- factor(pb.map$sampleType)
+pb.map$occ.person <- factor(paste(pb.map$location, pb.map$person, sep=''))  
+ 
+pb.map$occ.person2 <- as.character(pb.map$occ.person)
+pb.map$occ.person2[pb.map$location == "unocc"] <- "unocc"
+pb.map$occ.person2 <- factor(pb.map$occ.person2)
+```
+
+
+How do samples fall into groups? I.e., do we have balance in treatments?
+
+```{r}
+table(pb.map$person, pb.map$sampleType)
+table(pb.map$location)
+table(pb.map$duration)
+table(pb.map$sampleType) 
+```
+
+
+Indexing lists for quick parsing. 
+
+```{r}
+s22of <- c(1:nrow(pb.map))[pb.map$person == 's2' & 
+  pb.map$duration == 2 &
+	pb.map$location == 'occ' &
+	pb.map$sampleType == 'filter' 
+	] 
+s24of <- c(1:nrow(pb.map))[pb.map$person == 's2' & 
+	pb.map$duration == 4 &
+	pb.map$location == 'occ' &
+	pb.map$sampleType == 'filter'
+	]
+s22op <- c(1:nrow(pb.map))[pb.map$person == 's2' & 
+	pb.map$duration == 2 &
+	pb.map$location == 'occ' &
+	pb.map$sampleType == 'petri.dish'
+	]
+s24op <- c(1:nrow(pb.map))[pb.map$person == 's2' & 
+	pb.map$duration == 4 &
+	pb.map$location == 'occ' &
+	pb.map$sampleType == 'petri.dish'
+	]
+s22uf <- c(1:nrow(pb.map))[pb.map$person == 's2' & 
+	pb.map$duration == 2 &
+	pb.map$location == 'unocc' &
+	pb.map$sampleType == 'filter'
+	]
+s24uf <- c(1:nrow(pb.map))[pb.map$person == 's2' & 
+	pb.map$duration == 4 &
+	pb.map$location == 'unocc' &
+	pb.map$sampleType == 'filter'
+	]
+s22up <- c(1:nrow(pb.map))[pb.map$person == 's2' & 
+	pb.map$duration == 2 &
+	pb.map$location == 'unocc' &
+	pb.map$sampleType == 'petri.dish'
+	]
+s24up <- c(1:nrow(pb.map))[pb.map$person == 's2' & 
+	pb.map$duration == 4 &
+	pb.map$location == 'unocc' &
+	pb.map$sampleType == 'petri.dish'
+	]
+
+##
+s32of <- c(1:nrow(pb.map))[pb.map$person == 's3' & 
+	pb.map$duration == 2 &
+	pb.map$location == 'occ' &
+	pb.map$sampleType == 'filter'
+	]
+s34of <- c(1:nrow(pb.map))[pb.map$person == 's3' & 
+	pb.map$duration == 4 &
+	pb.map$location == 'occ' &
+	pb.map$sampleType == 'filter'
+	]
+s32op <- c(1:nrow(pb.map))[pb.map$person == 's3' & 
+	pb.map$duration == 2 &
+	pb.map$location == 'occ' &
+	pb.map$sampleType == 'petri.dish'
+	]
+s34op <- c(1:nrow(pb.map))[pb.map$person == 's3' & 
+	pb.map$duration == 4 &
+	pb.map$location == 'occ' &
+	pb.map$sampleType == 'petri.dish'
+	]
+s32uf <- c(1:nrow(pb.map))[pb.map$person == 's3' & 
+	pb.map$duration == 2 &
+	pb.map$location == 'unocc' &
+	pb.map$sampleType == 'filter'
+	]
+s34uf <- c(1:nrow(pb.map))[pb.map$person == 's3' & 
+	pb.map$duration == 4 &
+	pb.map$location == 'unocc' &
+	pb.map$sampleType == 'filter'
+	]
+s32up <- c(1:nrow(pb.map))[pb.map$person == 's3' & 
+	pb.map$duration == 2 &
+	pb.map$location == 'unocc' &
+	pb.map$sampleType == 'petri.dish'
+	]
+s34up <- c(1:nrow(pb.map))[pb.map$person == 's3' & 
+	pb.map$duration == 4 &
+	pb.map$location == 'unocc' &
+	pb.map$sampleType == 'petri.dish'
+	]
+
+## 
+s12of <- c(1:nrow(pb.map))[pb.map$person == 's1' & 
+	pb.map$duration == 2 &
+	pb.map$location == 'occ' &
+	pb.map$sampleType == 'filter'
+	]
+s14of <- c(1:nrow(pb.map))[pb.map$person == 's1' & 
+	pb.map$duration == 4 &
+	pb.map$location == 'occ' &
+	pb.map$sampleType == 'filter'
+	]
+s12op <- c(1:nrow(pb.map))[pb.map$person == 's1' & 
+	pb.map$duration == 2 &
+	pb.map$location == 'occ' &
+	pb.map$sampleType == 'petri.dish'
+	]
+s14op <- c(1:nrow(pb.map))[pb.map$person == 's1' & 
+	pb.map$duration == 4 &
+	pb.map$location == 'occ' &
+	pb.map$sampleType == 'petri.dish'
+	]
+s12uf <- c(1:nrow(pb.map))[pb.map$person == 's1' & 
+	pb.map$duration == 2 &
+	pb.map$location == 'unocc' &
+	pb.map$sampleType == 'filter'
+	]
+s14uf <- c(1:nrow(pb.map))[pb.map$person == 's1' & 
+	pb.map$duration == 4 &
+	pb.map$location == 'unocc' &
+	pb.map$sampleType == 'filter'
+	]
+s12up <- c(1:nrow(pb.map))[pb.map$person == 's1' & 
+	pb.map$duration == 2 &
+	pb.map$location == 'unocc' &
+	pb.map$sampleType == 'petri.dish'
+	]
+s14up <- c(1:nrow(pb.map))[pb.map$person == 's1' & 
+	pb.map$duration == 4 &
+	pb.map$location == 'unocc' &
+	pb.map$sampleType == 'petri.dish'
+	]
+
+
+## A few groupings to call up later
+
+groups <- list(s22of, s32of, s12of, s22op, s32op, s12op, 
+			   s22uf, s32uf, s12uf, s22up, s32up, s12up,
+			   s24of, s34of, s14of, s24op, s34op, s14op,
+			   s24uf, s34uf, s14uf, s24up, s34up, s14up)
+
+names(groups) <- c('s22of', 's32of', 's12of', 's22op', 's32op', 's12op', 
+			   's22uf', 's32uf', 's12uf', 's22up', 's32up', 's12up',
+			   's24of', 's34of', 's14of', 's24op', 's34op', 's14op',
+			   's24uf', 's34uf', 's14uf', 's24up', 's34up', 's14up')
+
+gr2 <- list(s14of, s12of, s14op, s12op, s14uf, s12uf, s14up, s12up, 
+			s34of, s32of, s34op, s32op, s34uf, s32uf, s34up, s32up, 
+			s24of, s22of, s24op, s22op, s24uf, s22uf, s24up, s22up)
+
+gr.name <- c('s14of', 's12of', 's14op', 's12op', 's14uf', 's12uf', 's14up', 's12up', 
+			's34of', 's32of', 's34op', 's32op', 's34uf', 's32uf', 's34up', 's32up', 
+			's24of', 's22of', 's24op', 's22op', 's24uf', 's22uf', 's24up', 's22up')
+
+# clean up group names
+rm(list=ls()[which(ls() %in% names(groups))])
+```
+
+
+
+
+Now save the image that can be used for analysis and figures. 
+
+```{r}
+rm(pb.original, pb.map.original, pb.tax.original, pb, pb.tax)
+save.image('../data/pb_data.RData')
+ls()  
+```
+
+
+
+

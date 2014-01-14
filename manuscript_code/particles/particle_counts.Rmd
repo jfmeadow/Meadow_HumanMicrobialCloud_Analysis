@@ -1,0 +1,118 @@
+Human Microbial Cloud Analysis
+
+## Particle Count Data Cleanup
+
+
+Load data. 
+
+```{r,echo=TRUE,cache=TRUE}
+setwd('~/Dropbox/pb_shared_markdown/manuscript_code/particles/')
+part <- read.delim('../data/particles.txt', head=TRUE)
+```
+
+
+Particle counts were taken every minute during each of the trials. They fluctuate with conditions outside of the climate chamber, so we are mostly interested in the difference between occupied and unoccupied, not the absolute values. The particle counts are also based on taking 2.83 L/min of air, so counts must be devided by that volume so we can discuss them in L/min. 
+
+```{r, cache=TRUE}
+part <- part[, c(2, 6, 9, 12, 15, 18, 21)]
+part[, 2:7] <- part[, 2:7]/2.83
+head(part)
+```
+
+
+Particles are broken into size classes. We are interested in those bacteria-sized or bigger. 
+
+* `ch4` = 3-5um
+* `ch5` = 5-10um
+* `ch6` = 10+um
+
+
+A few loops to split up the big data set into treatments.
+
+```{r, cache=TRUE}
+for (i in 1:nlevels(part$sample)) {
+  lev <- levels(part$sample)[i]
+  assign(lev, part[part$sample == lev, ][, -1])
+}
+
+list.4h <- ls(pattern = '.4h.')              
+
+for (i in 1:length(list.4h)) {
+  print(dim(get(list.4h)))
+}
+```
+
+
+Aggregate counts in 10 minute intervals to reduce noise. Particle counts are super freaking noisy. 
+
+```{r, cache=TRUE}
+agg24 <- rep(letters[1:24], each=10)
+for (i in 1:length(list.4h)) {
+  name <- paste('agg.', list.4h[i], sep='')
+  assign(name, aggregate(get(list.4h[i]), by=list(agg24), FUN='sum'))
+}
+
+aggs <- ls(pattern = 'agg.')
+for (i in 1:6) {
+  print(get(aggs[i]))
+}
+```
+
+
+Then create summary tables by getting a ratio of counts above unoccupied control counts. 
+
+```{r, cache=TRUE}
+part.summary.df <- data.frame(
+  mean.10 = c(
+    mean(agg.of.4h.s1$ch6dif / agg.uf.4h.s1$ch6dif),
+    mean(agg.of.4h.s2$ch6dif[-17] / agg.uf.4h.s2$ch6dif[-17]), # zero count
+    mean(agg.of.4h.s3$ch6dif / agg.uf.4h.s3$ch6dif)), 
+  mean.510 = c(  
+    mean(agg.of.4h.s1$ch5dif / agg.uf.4h.s1$ch5dif),
+    mean(agg.of.4h.s2$ch5dif / agg.uf.4h.s2$ch5dif),
+    mean(agg.of.4h.s3$ch5dif / agg.uf.4h.s3$ch5dif)),
+  mean.35 = c(  
+    mean(agg.of.4h.s1$ch4dif / agg.uf.4h.s1$ch4dif),
+    mean(agg.of.4h.s2$ch4dif / agg.uf.4h.s2$ch4dif),
+    mean(agg.of.4h.s3$ch4dif / agg.uf.4h.s3$ch4dif)),
+  mean.13 = c(  
+    mean(agg.of.4h.s1$ch3dif / agg.uf.4h.s1$ch3dif),
+    mean(agg.of.4h.s2$ch3dif / agg.uf.4h.s2$ch3dif),
+    mean(agg.of.4h.s3$ch3dif / agg.uf.4h.s3$ch3dif)),  
+  median.10 = c(  
+    median(agg.of.4h.s1$ch6dif / agg.uf.4h.s1$ch6dif),
+    median(agg.of.4h.s2$ch6dif[-17] / agg.uf.4h.s2$ch6dif[-17]),
+    median(agg.of.4h.s3$ch6dif / agg.uf.4h.s3$ch6dif)),
+  median.510 = c(  
+    median(agg.of.4h.s1$ch5dif / agg.uf.4h.s1$ch5dif),
+    median(agg.of.4h.s2$ch5dif / agg.uf.4h.s2$ch5dif),
+    median(agg.of.4h.s3$ch5dif / agg.uf.4h.s3$ch5dif)),
+  median.35 = c(  
+    median(agg.of.4h.s1$ch4dif / agg.uf.4h.s1$ch4dif),
+    median(agg.of.4h.s2$ch4dif / agg.uf.4h.s2$ch4dif),
+    median(agg.of.4h.s3$ch4dif / agg.uf.4h.s3$ch4dif)),
+  median.13 = c(  
+    median(agg.of.4h.s1$ch3dif / agg.uf.4h.s1$ch3dif),
+    median(agg.of.4h.s2$ch3dif / agg.uf.4h.s2$ch3dif),
+    median(agg.of.4h.s3$ch3dif / agg.uf.4h.s3$ch3dif)))
+
+row.names(part.summary.df) <- c('s1', 's2', 's3')
+
+part.summary.df
+```
+
+
+Add row of means. 
+
+```{r, cache=TRUE}
+part.summary <- rbind(part.summary.df, mean = apply(part.summary.df, 2, mean))
+part.summary 
+```
+
+
+Keep a text copy. 
+
+```{r,cache=TRUE}
+write.table(round(part.summary, digits=3), '../../tables/particleSummary.txt', sep='\t', quote=FALSE) 
+```
+

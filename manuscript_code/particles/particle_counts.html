@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<!-- saved from url=(0014)about:internet -->
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+<title>Particle Count Data Cleanup</title>
+
+<style type="text/css">
+body, td {
+   font-family: sans-serif;
+   background-color: white;
+   font-size: 12px;
+   margin: 8px;
+}
+
+tt, code, pre {
+   font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace;
+}
+
+h1 { 
+   font-size:2.2em; 
+}
+
+h2 { 
+   font-size:1.8em; 
+}
+
+h3 { 
+   font-size:1.4em; 
+}
+
+h4 { 
+   font-size:1.0em; 
+}
+
+h5 { 
+   font-size:0.9em; 
+}
+
+h6 { 
+   font-size:0.8em; 
+}
+
+a:visited {
+   color: rgb(50%, 0%, 50%);
+}
+
+pre {	
+   margin-top: 0;
+   max-width: 95%;
+   border: 1px solid #ccc;
+   white-space: pre-wrap;
+}
+
+pre code {
+   display: block; padding: 0.5em;
+}
+
+code.r, code.cpp {
+   background-color: #F8F8F8;
+}
+
+table, td, th {
+  border: none;
+}
+
+blockquote {
+   color:#666666;
+   margin:0;
+   padding-left: 1em;
+   border-left: 0.5em #EEE solid;
+}
+
+hr {
+   height: 0px;
+   border-bottom: none;
+   border-top-width: thin;
+   border-top-style: dotted;
+   border-top-color: #999999;
+}
+
+@media print {
+   * { 
+      background: transparent !important; 
+      color: black !important; 
+      filter:none !important; 
+      -ms-filter: none !important; 
+   }
+
+   body { 
+      font-size:12pt; 
+      max-width:100%; 
+   }
+       
+   a, a:visited { 
+      text-decoration: underline; 
+   }
+
+   hr { 
+      visibility: hidden;
+      page-break-before: always;
+   }
+
+   pre, blockquote { 
+      padding-right: 1em; 
+      page-break-inside: avoid; 
+   }
+
+   tr, img { 
+      page-break-inside: avoid; 
+   }
+
+   img { 
+      max-width: 100% !important; 
+   }
+
+   @page :left { 
+      margin: 15mm 20mm 15mm 10mm; 
+   }
+     
+   @page :right { 
+      margin: 15mm 10mm 15mm 20mm; 
+   }
+
+   p, h2, h3 { 
+      orphans: 3; widows: 3; 
+   }
+
+   h2, h3 { 
+      page-break-after: avoid; 
+   }
+}
+
+</style>
+
+<!-- Styles for R syntax highlighter -->
+<style type="text/css">
+   pre .operator,
+   pre .paren {
+     color: rgb(104, 118, 135)
+   }
+
+   pre .literal {
+     color: rgb(88, 72, 246)
+   }
+
+   pre .number {
+     color: rgb(0, 0, 205);
+   }
+
+   pre .comment {
+     color: rgb(76, 136, 107);
+   }
+
+   pre .keyword {
+     color: rgb(0, 0, 255);
+   }
+
+   pre .identifier {
+     color: rgb(0, 0, 0);
+   }
+
+   pre .string {
+     color: rgb(3, 106, 7);
+   }
+</style>
+
+<!-- R syntax highlighter -->
+<script type="text/javascript">
+var hljs=new function(){function m(p){return p.replace(/&/gm,"&amp;").replace(/</gm,"&lt;")}function f(r,q,p){return RegExp(q,"m"+(r.cI?"i":"")+(p?"g":""))}function b(r){for(var p=0;p<r.childNodes.length;p++){var q=r.childNodes[p];if(q.nodeName=="CODE"){return q}if(!(q.nodeType==3&&q.nodeValue.match(/\s+/))){break}}}function h(t,s){var p="";for(var r=0;r<t.childNodes.length;r++){if(t.childNodes[r].nodeType==3){var q=t.childNodes[r].nodeValue;if(s){q=q.replace(/\n/g,"")}p+=q}else{if(t.childNodes[r].nodeName=="BR"){p+="\n"}else{p+=h(t.childNodes[r])}}}if(/MSIE [678]/.test(navigator.userAgent)){p=p.replace(/\r/g,"\n")}return p}function a(s){var r=s.className.split(/\s+/);r=r.concat(s.parentNode.className.split(/\s+/));for(var q=0;q<r.length;q++){var p=r[q].replace(/^language-/,"");if(e[p]){return p}}}function c(q){var p=[];(function(s,t){for(var r=0;r<s.childNodes.length;r++){if(s.childNodes[r].nodeType==3){t+=s.childNodes[r].nodeValue.length}else{if(s.childNodes[r].nodeName=="BR"){t+=1}else{if(s.childNodes[r].nodeType==1){p.push({event:"start",offset:t,node:s.childNodes[r]});t=arguments.callee(s.childNodes[r],t);p.push({event:"stop",offset:t,node:s.childNodes[r]})}}}}return t})(q,0);return p}function k(y,w,x){var q=0;var z="";var s=[];function u(){if(y.length&&w.length){if(y[0].offset!=w[0].offset){return(y[0].offset<w[0].offset)?y:w}else{return w[0].event=="start"?y:w}}else{return y.length?y:w}}function t(D){var A="<"+D.nodeName.toLowerCase();for(var B=0;B<D.attributes.length;B++){var C=D.attributes[B];A+=" "+C.nodeName.toLowerCase();if(C.value!==undefined&&C.value!==false&&C.value!==null){A+='="'+m(C.value)+'"'}}return A+">"}while(y.length||w.length){var v=u().splice(0,1)[0];z+=m(x.substr(q,v.offset-q));q=v.offset;if(v.event=="start"){z+=t(v.node);s.push(v.node)}else{if(v.event=="stop"){var p,r=s.length;do{r--;p=s[r];z+=("</"+p.nodeName.toLowerCase()+">")}while(p!=v.node);s.splice(r,1);while(r<s.length){z+=t(s[r]);r++}}}}return z+m(x.substr(q))}function j(){function q(x,y,v){if(x.compiled){return}var u;var s=[];if(x.k){x.lR=f(y,x.l||hljs.IR,true);for(var w in x.k){if(!x.k.hasOwnProperty(w)){continue}if(x.k[w] instanceof Object){u=x.k[w]}else{u=x.k;w="keyword"}for(var r in u){if(!u.hasOwnProperty(r)){continue}x.k[r]=[w,u[r]];s.push(r)}}}if(!v){if(x.bWK){x.b="\\b("+s.join("|")+")\\s"}x.bR=f(y,x.b?x.b:"\\B|\\b");if(!x.e&&!x.eW){x.e="\\B|\\b"}if(x.e){x.eR=f(y,x.e)}}if(x.i){x.iR=f(y,x.i)}if(x.r===undefined){x.r=1}if(!x.c){x.c=[]}x.compiled=true;for(var t=0;t<x.c.length;t++){if(x.c[t]=="self"){x.c[t]=x}q(x.c[t],y,false)}if(x.starts){q(x.starts,y,false)}}for(var p in e){if(!e.hasOwnProperty(p)){continue}q(e[p].dM,e[p],true)}}function d(B,C){if(!j.called){j();j.called=true}function q(r,M){for(var L=0;L<M.c.length;L++){if((M.c[L].bR.exec(r)||[null])[0]==r){return M.c[L]}}}function v(L,r){if(D[L].e&&D[L].eR.test(r)){return 1}if(D[L].eW){var M=v(L-1,r);return M?M+1:0}return 0}function w(r,L){return L.i&&L.iR.test(r)}function K(N,O){var M=[];for(var L=0;L<N.c.length;L++){M.push(N.c[L].b)}var r=D.length-1;do{if(D[r].e){M.push(D[r].e)}r--}while(D[r+1].eW);if(N.i){M.push(N.i)}return f(O,M.join("|"),true)}function p(M,L){var N=D[D.length-1];if(!N.t){N.t=K(N,E)}N.t.lastIndex=L;var r=N.t.exec(M);return r?[M.substr(L,r.index-L),r[0],false]:[M.substr(L),"",true]}function z(N,r){var L=E.cI?r[0].toLowerCase():r[0];var M=N.k[L];if(M&&M instanceof Array){return M}return false}function F(L,P){L=m(L);if(!P.k){return L}var r="";var O=0;P.lR.lastIndex=0;var M=P.lR.exec(L);while(M){r+=L.substr(O,M.index-O);var N=z(P,M);if(N){x+=N[1];r+='<span class="'+N[0]+'">'+M[0]+"</span>"}else{r+=M[0]}O=P.lR.lastIndex;M=P.lR.exec(L)}return r+L.substr(O,L.length-O)}function J(L,M){if(M.sL&&e[M.sL]){var r=d(M.sL,L);x+=r.keyword_count;return r.value}else{return F(L,M)}}function I(M,r){var L=M.cN?'<span class="'+M.cN+'">':"";if(M.rB){y+=L;M.buffer=""}else{if(M.eB){y+=m(r)+L;M.buffer=""}else{y+=L;M.buffer=r}}D.push(M);A+=M.r}function G(N,M,Q){var R=D[D.length-1];if(Q){y+=J(R.buffer+N,R);return false}var P=q(M,R);if(P){y+=J(R.buffer+N,R);I(P,M);return P.rB}var L=v(D.length-1,M);if(L){var O=R.cN?"</span>":"";if(R.rE){y+=J(R.buffer+N,R)+O}else{if(R.eE){y+=J(R.buffer+N,R)+O+m(M)}else{y+=J(R.buffer+N+M,R)+O}}while(L>1){O=D[D.length-2].cN?"</span>":"";y+=O;L--;D.length--}var r=D[D.length-1];D.length--;D[D.length-1].buffer="";if(r.starts){I(r.starts,"")}return R.rE}if(w(M,R)){throw"Illegal"}}var E=e[B];var D=[E.dM];var A=0;var x=0;var y="";try{var s,u=0;E.dM.buffer="";do{s=p(C,u);var t=G(s[0],s[1],s[2]);u+=s[0].length;if(!t){u+=s[1].length}}while(!s[2]);if(D.length>1){throw"Illegal"}return{r:A,keyword_count:x,value:y}}catch(H){if(H=="Illegal"){return{r:0,keyword_count:0,value:m(C)}}else{throw H}}}function g(t){var p={keyword_count:0,r:0,value:m(t)};var r=p;for(var q in e){if(!e.hasOwnProperty(q)){continue}var s=d(q,t);s.language=q;if(s.keyword_count+s.r>r.keyword_count+r.r){r=s}if(s.keyword_count+s.r>p.keyword_count+p.r){r=p;p=s}}if(r.language){p.second_best=r}return p}function i(r,q,p){if(q){r=r.replace(/^((<[^>]+>|\t)+)/gm,function(t,w,v,u){return w.replace(/\t/g,q)})}if(p){r=r.replace(/\n/g,"<br>")}return r}function n(t,w,r){var x=h(t,r);var v=a(t);var y,s;if(v){y=d(v,x)}else{return}var q=c(t);if(q.length){s=document.createElement("pre");s.innerHTML=y.value;y.value=k(q,c(s),x)}y.value=i(y.value,w,r);var u=t.className;if(!u.match("(\\s|^)(language-)?"+v+"(\\s|$)")){u=u?(u+" "+v):v}if(/MSIE [678]/.test(navigator.userAgent)&&t.tagName=="CODE"&&t.parentNode.tagName=="PRE"){s=t.parentNode;var p=document.createElement("div");p.innerHTML="<pre><code>"+y.value+"</code></pre>";t=p.firstChild.firstChild;p.firstChild.cN=s.cN;s.parentNode.replaceChild(p.firstChild,s)}else{t.innerHTML=y.value}t.className=u;t.result={language:v,kw:y.keyword_count,re:y.r};if(y.second_best){t.second_best={language:y.second_best.language,kw:y.second_best.keyword_count,re:y.second_best.r}}}function o(){if(o.called){return}o.called=true;var r=document.getElementsByTagName("pre");for(var p=0;p<r.length;p++){var q=b(r[p]);if(q){n(q,hljs.tabReplace)}}}function l(){if(window.addEventListener){window.addEventListener("DOMContentLoaded",o,false);window.addEventListener("load",o,false)}else{if(window.attachEvent){window.attachEvent("onload",o)}else{window.onload=o}}}var e={};this.LANGUAGES=e;this.highlight=d;this.highlightAuto=g;this.fixMarkup=i;this.highlightBlock=n;this.initHighlighting=o;this.initHighlightingOnLoad=l;this.IR="[a-zA-Z][a-zA-Z0-9_]*";this.UIR="[a-zA-Z_][a-zA-Z0-9_]*";this.NR="\\b\\d+(\\.\\d+)?";this.CNR="\\b(0[xX][a-fA-F0-9]+|(\\d+(\\.\\d*)?|\\.\\d+)([eE][-+]?\\d+)?)";this.BNR="\\b(0b[01]+)";this.RSR="!|!=|!==|%|%=|&|&&|&=|\\*|\\*=|\\+|\\+=|,|\\.|-|-=|/|/=|:|;|<|<<|<<=|<=|=|==|===|>|>=|>>|>>=|>>>|>>>=|\\?|\\[|\\{|\\(|\\^|\\^=|\\||\\|=|\\|\\||~";this.ER="(?![\\s\\S])";this.BE={b:"\\\\.",r:0};this.ASM={cN:"string",b:"'",e:"'",i:"\\n",c:[this.BE],r:0};this.QSM={cN:"string",b:'"',e:'"',i:"\\n",c:[this.BE],r:0};this.CLCM={cN:"comment",b:"//",e:"$"};this.CBLCLM={cN:"comment",b:"/\\*",e:"\\*/"};this.HCM={cN:"comment",b:"#",e:"$"};this.NM={cN:"number",b:this.NR,r:0};this.CNM={cN:"number",b:this.CNR,r:0};this.BNM={cN:"number",b:this.BNR,r:0};this.inherit=function(r,s){var p={};for(var q in r){p[q]=r[q]}if(s){for(var q in s){p[q]=s[q]}}return p}}();hljs.LANGUAGES.cpp=function(){var a={keyword:{"false":1,"int":1,"float":1,"while":1,"private":1,"char":1,"catch":1,"export":1,virtual:1,operator:2,sizeof:2,dynamic_cast:2,typedef:2,const_cast:2,"const":1,struct:1,"for":1,static_cast:2,union:1,namespace:1,unsigned:1,"long":1,"throw":1,"volatile":2,"static":1,"protected":1,bool:1,template:1,mutable:1,"if":1,"public":1,friend:2,"do":1,"return":1,"goto":1,auto:1,"void":2,"enum":1,"else":1,"break":1,"new":1,extern:1,using:1,"true":1,"class":1,asm:1,"case":1,typeid:1,"short":1,reinterpret_cast:2,"default":1,"double":1,register:1,explicit:1,signed:1,typename:1,"try":1,"this":1,"switch":1,"continue":1,wchar_t:1,inline:1,"delete":1,alignof:1,char16_t:1,char32_t:1,constexpr:1,decltype:1,noexcept:1,nullptr:1,static_assert:1,thread_local:1,restrict:1,_Bool:1,complex:1},built_in:{std:1,string:1,cin:1,cout:1,cerr:1,clog:1,stringstream:1,istringstream:1,ostringstream:1,auto_ptr:1,deque:1,list:1,queue:1,stack:1,vector:1,map:1,set:1,bitset:1,multiset:1,multimap:1,unordered_set:1,unordered_map:1,unordered_multiset:1,unordered_multimap:1,array:1,shared_ptr:1}};return{dM:{k:a,i:"</",c:[hljs.CLCM,hljs.CBLCLM,hljs.QSM,{cN:"string",b:"'\\\\?.",e:"'",i:"."},{cN:"number",b:"\\b(\\d+(\\.\\d*)?|\\.\\d+)(u|U|l|L|ul|UL|f|F)"},hljs.CNM,{cN:"preprocessor",b:"#",e:"$"},{cN:"stl_container",b:"\\b(deque|list|queue|stack|vector|map|set|bitset|multiset|multimap|unordered_map|unordered_set|unordered_multiset|unordered_multimap|array)\\s*<",e:">",k:a,r:10,c:["self"]}]}}}();hljs.LANGUAGES.r={dM:{c:[hljs.HCM,{cN:"number",b:"\\b0[xX][0-9a-fA-F]+[Li]?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+(?:[eE][+\\-]?\\d*)?L\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+\\.(?!\\d)(?:i\\b)?",e:hljs.IMMEDIATE_RE,r:1},{cN:"number",b:"\\b\\d+(?:\\.\\d*)?(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\.\\d+(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"keyword",b:"(?:tryCatch|library|setGeneric|setGroupGeneric)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\.",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\d+(?![\\w.])",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\b(?:function)",e:hljs.IMMEDIATE_RE,r:2},{cN:"keyword",b:"(?:if|in|break|next|repeat|else|for|return|switch|while|try|stop|warning|require|attach|detach|source|setMethod|setClass)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"literal",b:"(?:NA|NA_integer_|NA_real_|NA_character_|NA_complex_)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"literal",b:"(?:NULL|TRUE|FALSE|T|F|Inf|NaN)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"identifier",b:"[a-zA-Z.][a-zA-Z0-9._]*\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"<\\-(?!\\s*\\d)",e:hljs.IMMEDIATE_RE,r:2},{cN:"operator",b:"\\->|<\\-",e:hljs.IMMEDIATE_RE,r:1},{cN:"operator",b:"%%|~",e:hljs.IMMEDIATE_RE},{cN:"operator",b:">=|<=|==|!=|\\|\\||&&|=|\\+|\\-|\\*|/|\\^|>|<|!|&|\\||\\$|:",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"%",e:"%",i:"\\n",r:1},{cN:"identifier",b:"`",e:"`",r:0},{cN:"string",b:'"',e:'"',c:[hljs.BE],r:0},{cN:"string",b:"'",e:"'",c:[hljs.BE],r:0},{cN:"paren",b:"[[({\\])}]",e:hljs.IMMEDIATE_RE,r:0}]}};
+hljs.initHighlightingOnLoad();
+</script>
+
+
+
+
+</head>
+
+<body>
+<p>Human Microbial Cloud Analysis</p>
+
+<h2>Particle Count Data Cleanup</h2>
+
+<p>Load data. </p>
+
+<pre><code class="r">setwd(&quot;~/Dropbox/pb_shared_markdown/manuscript_code/particles/&quot;)
+part &lt;- read.delim(&quot;../data/particles.txt&quot;, head = TRUE)
+</code></pre>
+
+<p>Particle counts were taken every minute during each of the trials. They fluctuate with conditions outside of the climate chamber, so we are mostly interested in the difference between occupied and unoccupied, not the absolute values. The particle counts are also based on taking 2.83 L/min of air, so counts must be devided by that volume so we can discuss them in L/min. </p>
+
+<pre><code class="r">part &lt;- part[, c(2, 6, 9, 12, 15, 18, 21)]
+part[, 2:7] &lt;- part[, 2:7]/2.83
+head(part)
+</code></pre>
+
+<pre><code>##   sample ch1dif ch2dif ch3dif ch4dif ch5dif ch6dif
+## 1 outbox   8690   1475  444.9  74.20  53.71 17.314
+## 2 outbox   8769   1493  476.7  90.46  55.12 18.728
+## 3 outbox   8834   1470  499.6 114.84  73.14 26.502
+## 4 outbox   9094   1467  475.3 103.53  62.19 25.442
+## 5 outbox   8463   1317  395.1  75.62  49.47 14.134
+## 6 outbox   8061   1325  375.6  70.32  38.87  9.187
+</code></pre>
+
+<p>Particles are broken into size classes. We are interested in those bacteria-sized or bigger. </p>
+
+<ul>
+<li><code>ch4</code> = 3-5um</li>
+<li><code>ch5</code> = 5-10um</li>
+<li><code>ch6</code> = 10+um</li>
+</ul>
+
+<p>A few loops to split up the big data set into treatments.</p>
+
+<pre><code class="r">for (i in 1:nlevels(part$sample)) {
+    lev &lt;- levels(part$sample)[i]
+    assign(lev, part[part$sample == lev, ][, -1])
+}
+
+list.4h &lt;- ls(pattern = &quot;.4h.&quot;)
+
+for (i in 1:length(list.4h)) {
+    print(dim(get(list.4h)))
+}
+</code></pre>
+
+<pre><code>## [1] 240   6
+## [1] 240   6
+## [1] 240   6
+## [1] 240   6
+## [1] 240   6
+## [1] 240   6
+</code></pre>
+
+<p>Aggregate counts in 10 minute intervals to reduce noise. Particle counts are super freaking noisy. </p>
+
+<pre><code class="r">agg24 &lt;- rep(letters[1:24], each = 10)
+for (i in 1:length(list.4h)) {
+    name &lt;- paste(&quot;agg.&quot;, list.4h[i], sep = &quot;&quot;)
+    assign(name, aggregate(get(list.4h[i]), by = list(agg24), FUN = &quot;sum&quot;))
+}
+
+aggs &lt;- ls(pattern = &quot;agg.&quot;)
+for (i in 1:6) {
+    print(get(aggs[i]))
+}
+</code></pre>
+
+<pre><code>##    Group.1 ch1dif ch2dif ch3dif ch4dif ch5dif ch6dif
+## 1        a  47631   4787  736.7 110.95  84.45  54.42
+## 2        b  47411   4709  645.9 113.43  65.37  34.28
+## 3        c  47831   4737  605.3  89.75  39.58  18.37
+## 4        d  47101   4584  583.0  79.15  36.75  32.16
+## 5        e  46457   4500  535.7  83.04  43.11  31.10
+## 6        f  46200   4525  532.2  78.45  41.34  21.91
+## 7        g  45837   4512  526.1  77.39  39.58  24.03
+## 8        h  44358   4407  527.2  76.68  43.82  27.56
+## 9        i  42827   4253  474.2  71.73  39.58  24.38
+## 10       j  41501   4190  479.9  71.02  36.04  28.62
+## 11       k  40137   4100  463.3  71.38  35.34  31.80
+## 12       l  37630   3888  440.6  59.72  28.27  28.27
+## 13       m  35662   3757  425.8  72.08  55.12  47.70
+## 14       n  33982   3592  458.7  73.85  59.72  62.90
+## 15       o  32129   3460  410.6  55.83  48.41  35.34
+## 16       p  30128   3327  397.2  51.94  32.16  28.27
+## 17       q  29066   3259  415.5  43.11  36.40  40.99
+## 18       r  28308   3202  388.0  48.76  27.92  27.56
+## 19       s  27167   3128  412.7  44.88  32.86  30.74
+## 20       t  26109   2969  409.9  50.53  38.16  31.10
+## 21       u  25297   2942  406.0  56.18  40.28  39.58
+## 22       v  24823   2945  472.4  91.17  62.54  78.09
+## 23       w  24837   2920  480.6  73.85  54.77  54.06
+## 24       x  24362   2898  459.7  68.55  39.93  29.68
+##    Group.1 ch1dif ch2dif ch3dif ch4dif ch5dif ch6dif
+## 1        a  44575   5114 1117.0 206.71 135.34  76.33
+## 2        b  45940   5055 1088.3 195.05 116.96  63.96
+## 3        c  46099   5060  999.6 161.13  95.41  47.70
+## 4        d  45747   5009  904.9 128.62  57.95  30.39
+## 5        e  43929   4865  925.4 124.73  57.60  39.22
+## 6        f  42210   4853  939.2 120.85  65.37  34.28
+## 7        g  42438   4875  919.8 119.08  71.02  45.58
+## 8        h  41318   4736  867.1  94.35  47.70  32.16
+## 9        i  39919   4640  898.2 120.49  72.08  56.18
+## 10       j  38127   4499  801.8  94.70  61.48  50.18
+## 11       k  38322   4443  843.5 102.12  68.55  59.01
+## 12       l  38004   4502  839.6 118.37  67.84  57.95
+## 13       m  37077   4327  798.2  93.29  53.00  43.46
+## 14       n  36905   4245  743.8  85.87  45.23  36.75
+## 15       o  36171   4307  717.7  87.63  47.00  48.76
+## 16       p  36572   4290  725.8  72.79  45.23  33.92
+## 17       q  35016   4079  677.0  60.07  36.04  33.57
+## 18       r  35257   4225  677.4  73.50  38.87  33.57
+## 19       s  35557   4260  706.4  75.27  45.58  35.69
+## 20       t  35841   4267  700.4  82.33  34.63  32.51
+## 21       u  35895   4306  738.5  78.45  40.28  23.32
+## 22       v  36190   4269  844.5  98.94  53.00  39.22
+## 23       w  35482   4300  855.5 119.08  53.36  31.10
+## 24       x  35507   4363  833.9  96.47  43.11  31.80
+##    Group.1 ch1dif ch2dif ch3dif ch4dif ch5dif ch6dif
+## 1        a  35773   5658 1091.2 110.95  66.43 24.028
+## 2        b  35886   5652 1043.8  94.70  48.06 11.661
+## 3        c  34827   5445  981.6  94.70  37.46 13.074
+## 4        d  34839   5487  963.3  86.57  35.69  7.067
+## 5        e  35253   5436  966.4  82.33  40.64 14.134
+## 6        f  35073   5347  919.4  85.16  33.92 12.014
+## 7        g  35118   5212  909.5  81.63  32.16  9.541
+## 8        h  34620   5153  854.4  77.03  30.74 17.668
+## 9        i  34550   5017  843.8  79.86  39.22 17.314
+## 10       j  34564   4996  828.3  66.43  32.51  7.067
+## 11       k  34614   4964  832.2  61.84  39.93 16.254
+## 12       l  34373   4812  797.5  63.60  26.15 10.954
+## 13       m  34425   4845  801.8  67.49  30.74 12.014
+## 14       n  35198   4823  830.7  68.55  27.92 14.134
+## 15       o  35875   4952  825.8  60.07  36.04  8.481
+## 16       p  37618   5063  811.0  77.03  38.52 10.247
+## 17       q  39591   5345  887.6 126.15  61.84 22.261
+## 18       r  41866   5450  980.6 140.99  67.84 11.307
+## 19       s  43034   5689  959.0 131.80  57.95 18.375
+## 20       t  44464   5601  933.6 114.49  48.76 10.601
+## 21       u  45313   5743  921.6 107.42  43.46 10.954
+## 22       v  46389   5718  861.5  93.64  38.52  7.774
+## 23       w  48109   5867  868.6  80.92  29.33  7.067
+## 24       x  49528   5942  894.0  92.93  41.70  8.481
+##    Group.1 ch1dif ch2dif ch3dif ch4dif ch5dif  ch6dif
+## 1        a  50310   5394  743.8  90.46 43.463 14.8410
+## 2        b  51740   5401  691.9  90.46 41.343 10.2473
+## 3        c  52470   5305  657.6  78.80 31.449  9.5406
+## 4        d  52982   5314  600.4  57.95 24.382  5.6537
+## 5        e  53107   5152  567.5  61.84 28.975  4.9470
+## 6        f  52890   5219  528.3  53.71 30.035  3.8869
+## 7        g  52721   5199  523.3  65.02 33.216  5.6537
+## 8        h  52408   5068  517.0  67.84 34.629  8.8339
+## 9        i  51013   4883  529.0  59.72 35.689  2.4735
+## 10       j  49680   4838  479.9  57.60 25.442  4.9470
+## 11       k  48910   4716  459.4  50.88 21.201  2.1201
+## 12       l  47859   4665  436.7  45.58 15.548  2.1201
+## 13       m  46520   4616  434.3  43.82 17.314  2.1201
+## 14       n  45447   4539  403.2  40.64 13.428  3.8869
+## 15       o  44248   4451  395.8  39.58 15.194  4.2403
+## 16       p  43304   4280  391.2  26.15 14.134  1.4134
+## 17       q  42232   4178  367.5  27.56 14.841  2.1201
+## 18       r  40984   4039  366.1  21.20  8.481  1.4134
+## 19       s  39767   3894  350.5  26.86  8.481  0.7067
+## 20       t  38996   3675  373.9  24.38 10.601  1.7668
+## 21       u  38710   3683  370.0  29.68 10.247  3.5336
+## 22       v  38591   3640  396.5  29.68 15.901  1.7668
+## 23       w  38887   3575  383.7  29.33  9.541  2.1201
+## 24       x  40007   3599  398.2  26.50  9.187  1.0601
+##    Group.1 ch1dif ch2dif ch3dif ch4dif ch5dif  ch6dif
+## 1        a  41451   4616 1079.5 149.82 86.926 23.6749
+## 2        b  42378   4578  963.3 154.42 75.618 15.9011
+## 3        c  42688   4488  830.4 108.83 54.064  9.8940
+## 4        d  42357   4484  812.4 100.71 40.283  9.8940
+## 5        e  42610   4480  741.0  88.34 27.562  7.0671
+## 6        f  42243   4367  714.1  77.39 23.675  3.8869
+## 7        g  42445   4303  644.9  57.60 20.848  3.8869
+## 8        h  42304   4229  608.1  55.48 21.555  3.5336
+## 9        i  42393   4105  589.0  51.94 13.428  2.4735
+## 10       j  42017   4137  560.8  47.35 14.134  1.4134
+## 11       k  41654   4057  562.5  45.58 10.601  1.7668
+## 12       l  40822   3970  523.0  38.52 15.194  2.4735
+## 13       m  40680   3912  523.0  44.88  8.127  1.7668
+## 14       n  40969   3866  530.0  35.34 13.781  0.7067
+## 15       o  40699   3781  473.9  34.63 10.954  0.7067
+## 16       p  40472   3740  491.9  29.33  7.067  0.7067
+## 17       q  40699   3710  482.3  30.39  9.894  0.0000
+## 18       r  40894   3788  468.2  23.32  8.127  1.0601
+## 19       s  41061   3785  438.5  29.33  5.654  1.0601
+## 20       t  41760   3863  458.7  28.27  8.127  0.7067
+## 21       u  42051   3795  452.7  24.03  7.067  0.7067
+## 22       v  41949   3812  437.8  27.56  8.834  0.3534
+## 23       w  40960   3720  439.2  28.62  8.127  1.0601
+## 24       x  39999   3631  417.7  37.10  6.714  1.0601
+##    Group.1 ch1dif ch2dif ch3dif ch4dif ch5dif ch6dif
+## 1        a  36791   6916 1358.3 150.53  95.41 31.802
+## 2        b  36892   6696 1262.5 118.02  59.72 19.435
+## 3        c  37691   6676 1179.5 113.07  55.83 12.367
+## 4        d  38160   6399 1130.7 115.19  47.35 10.601
+## 5        e  38811   6267 1090.5 102.12  44.17  7.420
+## 6        f  39887   6131 1040.3  92.93  38.52  7.774
+## 7        g  39999   6065 1016.3  88.69  32.16  7.067
+## 8        h  40361   6041  962.5  70.67  27.92  4.594
+## 9        i  41532   5938  908.8  58.30  31.10  3.534
+## 10       j  42210   5816  858.7  75.97  23.32  3.534
+## 11       k  42545   5646  845.2  56.89  21.20  3.180
+## 12       l  43964   5600  848.4  55.83  21.55  3.180
+## 13       m  44824   5682  806.4  55.12  28.27  6.007
+## 14       n  46510   5755  848.8  58.30  22.26  6.360
+## 15       o  48165   5768  823.3  69.61  27.92  5.654
+## 16       p  50380   6142  891.2  65.72  33.57  7.774
+## 17       q  53795   6409 1014.8 134.28  72.08 18.375
+## 18       r  54996   6572 1060.8 150.88  92.23 12.014
+## 19       s  57277   6602 1019.4 148.76  83.04  9.894
+## 20       t  59439   6733  986.2 126.15  62.54 12.367
+## 21       u  61567   6968  981.3 115.90  60.07  7.774
+## 22       v  63525   6933  914.8  99.29  43.82  7.420
+## 23       w  66571   7094  876.0  89.40  39.93  5.300
+## 24       x  70452   7261  894.7 106.71  39.93  6.714
+</code></pre>
+
+<p>Then create summary tables by getting a ratio of counts above unoccupied control counts. </p>
+
+<pre><code class="r">part.summary.df &lt;- data.frame(
+  mean.10 = c(
+    mean(agg.of.4h.s1$ch6dif / agg.uf.4h.s1$ch6dif),
+    mean(agg.of.4h.s2$ch6dif[-17] / agg.uf.4h.s2$ch6dif[-17]), # zero count
+    mean(agg.of.4h.s3$ch6dif / agg.uf.4h.s3$ch6dif)), 
+  mean.510 = c(  
+    mean(agg.of.4h.s1$ch5dif / agg.uf.4h.s1$ch5dif),
+    mean(agg.of.4h.s2$ch5dif / agg.uf.4h.s2$ch5dif),
+    mean(agg.of.4h.s3$ch5dif / agg.uf.4h.s3$ch5dif)),
+  mean.35 = c(  
+    mean(agg.of.4h.s1$ch4dif / agg.uf.4h.s1$ch4dif),
+    mean(agg.of.4h.s2$ch4dif / agg.uf.4h.s2$ch4dif),
+    mean(agg.of.4h.s3$ch4dif / agg.uf.4h.s3$ch4dif)),
+  mean.13 = c(  
+    mean(agg.of.4h.s1$ch3dif / agg.uf.4h.s1$ch3dif),
+    mean(agg.of.4h.s2$ch3dif / agg.uf.4h.s2$ch3dif),
+    mean(agg.of.4h.s3$ch3dif / agg.uf.4h.s3$ch3dif)),  
+  median.10 = c(  
+    median(agg.of.4h.s1$ch6dif / agg.uf.4h.s1$ch6dif),
+    median(agg.of.4h.s2$ch6dif[-17] / agg.uf.4h.s2$ch6dif[-17]),
+    median(agg.of.4h.s3$ch6dif / agg.uf.4h.s3$ch6dif)),
+  median.510 = c(  
+    median(agg.of.4h.s1$ch5dif / agg.uf.4h.s1$ch5dif),
+    median(agg.of.4h.s2$ch5dif / agg.uf.4h.s2$ch5dif),
+    median(agg.of.4h.s3$ch5dif / agg.uf.4h.s3$ch5dif)),
+  median.35 = c(  
+    median(agg.of.4h.s1$ch4dif / agg.uf.4h.s1$ch4dif),
+    median(agg.of.4h.s2$ch4dif / agg.uf.4h.s2$ch4dif),
+    median(agg.of.4h.s3$ch4dif / agg.uf.4h.s3$ch4dif)),
+  median.13 = c(  
+    median(agg.of.4h.s1$ch3dif / agg.uf.4h.s1$ch3dif),
+    median(agg.of.4h.s2$ch3dif / agg.uf.4h.s2$ch3dif),
+    median(agg.of.4h.s3$ch3dif / agg.uf.4h.s3$ch3dif)))
+
+row.names(part.summary.df) &lt;- c(&#39;s1&#39;, &#39;s2&#39;, &#39;s3&#39;)
+
+part.summary.df
+</code></pre>
+
+<pre><code>##    mean.10 mean.510 mean.35 mean.13 median.10 median.510 median.35
+## s1  14.739   2.5785  1.6580   1.043     12.27     2.1090    1.4356
+## s2  29.289   4.3065  2.3133   1.474     29.33     4.3202    2.2800
+## s3   1.839   0.9922  0.9617   0.922      1.38     0.9004    0.9183
+##    median.13
+## s1    1.0121
+## s2    1.4612
+## s3    0.9338
+</code></pre>
+
+<p>Add row of means. </p>
+
+<pre><code class="r">part.summary &lt;- rbind(part.summary.df, mean = apply(part.summary.df, 2, mean))
+part.summary
+</code></pre>
+
+<pre><code>##      mean.10 mean.510 mean.35 mean.13 median.10 median.510 median.35
+## s1    14.739   2.5785  1.6580   1.043     12.27     2.1090    1.4356
+## s2    29.289   4.3065  2.3133   1.474     29.33     4.3202    2.2800
+## s3     1.839   0.9922  0.9617   0.922      1.38     0.9004    0.9183
+## mean  15.289   2.6257  1.6443   1.146     14.33     2.4432    1.5447
+##      median.13
+## s1      1.0121
+## s2      1.4612
+## s3      0.9338
+## mean    1.1357
+</code></pre>
+
+<p>Keep a text copy. </p>
+
+<pre><code class="r">write.table(round(part.summary, digits = 3), &quot;../../tables/particleSummary.txt&quot;, 
+    sep = &quot;\t&quot;, quote = FALSE)
+</code></pre>
+
+</body>
+
+</html>
+
