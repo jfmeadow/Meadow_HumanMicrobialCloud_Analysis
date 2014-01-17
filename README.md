@@ -22,3 +22,5 @@ here. Some raw data had to move to figshare (
 http://dx.doi.org/10.6084/m9.figshare.900389)
  because the main OTU table was way too big. 
 So download `otu_table_r.txt.gz` from there and unzip it into the `data` folder. 
+
+This study is currently in review. 
