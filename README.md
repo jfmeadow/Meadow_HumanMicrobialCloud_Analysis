@@ -17,7 +17,7 @@ own script.
 from this script.
 * `particles`: particle count data was analyzed separately, all within
 this script.
-* `data`: ~~~raw data as well as~~~ R output from individual scripts lives
+* `data`: R output from individual scripts lives
 here. Some raw data had to move to figshare (
 http://dx.doi.org/10.6084/m9.figshare.900389)
  because the main OTU table was way too big. 

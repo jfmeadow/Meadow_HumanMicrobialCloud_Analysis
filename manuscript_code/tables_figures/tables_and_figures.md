@@ -165,7 +165,7 @@ print(xtable(all.occ.v.unocc$aov.tab), type = "html")
 ```
 
 <!-- html table generated in R 3.0.1 by xtable 1.7-1 package -->
-<!-- Sun Jan  5 21:52:11 2014 -->
+<!-- Fri Jan 17 14:10:52 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> Df </TH> <TH> SumsOfSqs </TH> <TH> MeanSqs </TH> <TH> F.Model </TH> <TH> R2 </TH> <TH> Pr(&gt F) </TH>  </TR>
   <TR> <TD> pb.map$location </TD> <TD align="right"> 1 </TD> <TD align="right"> 1.04 </TD> <TD align="right"> 1.04 </TD> <TD align="right"> 2.20 </TD> <TD align="right"> 0.01 </TD> <TD align="right"> 0.0010 </TD> </TR>
@@ -184,7 +184,7 @@ print(xtable(all.4.occ.v.unocc$aov.tab), type = "html")
 ```
 
 <!-- html table generated in R 3.0.1 by xtable 1.7-1 package -->
-<!-- Sun Jan  5 21:52:12 2014 -->
+<!-- Fri Jan 17 14:10:52 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> Df </TH> <TH> SumsOfSqs </TH> <TH> MeanSqs </TH> <TH> F.Model </TH> <TH> R2 </TH> <TH> Pr(&gt F) </TH>  </TR>
   <TR> <TD> pb.map$location[pb.map$duration == 4] </TD> <TD align="right"> 1 </TD> <TD align="right"> 0.88 </TD> <TD align="right"> 0.88 </TD> <TD align="right"> 1.88 </TD> <TD align="right"> 0.02 </TD> <TD align="right"> 0.0010 </TD> </TR>
@@ -203,7 +203,7 @@ print(xtable(all.2.occ.v.unocc$aov.tab), type = "html")
 ```
 
 <!-- html table generated in R 3.0.1 by xtable 1.7-1 package -->
-<!-- Sun Jan  5 21:52:12 2014 -->
+<!-- Fri Jan 17 14:10:53 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> Df </TH> <TH> SumsOfSqs </TH> <TH> MeanSqs </TH> <TH> F.Model </TH> <TH> R2 </TH> <TH> Pr(&gt F) </TH>  </TR>
   <TR> <TD> pb.map$location[pb.map$duration == 2] </TD> <TD align="right"> 1 </TD> <TD align="right"> 0.67 </TD> <TD align="right"> 0.67 </TD> <TD align="right"> 1.41 </TD> <TD align="right"> 0.01 </TD> <TD align="right"> 0.0010 </TD> </TR>
@@ -224,7 +224,7 @@ print(xtable(all.p.occ.v.unocc$aov.tab), type = "html")
 ```
 
 <!-- html table generated in R 3.0.1 by xtable 1.7-1 package -->
-<!-- Sun Jan  5 21:52:12 2014 -->
+<!-- Fri Jan 17 14:10:53 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> Df </TH> <TH> SumsOfSqs </TH> <TH> MeanSqs </TH> <TH> F.Model </TH> <TH> R2 </TH> <TH> Pr(&gt F) </TH>  </TR>
   <TR> <TD> pb.map$location[pb.map$sampleType == "petri.dish"] </TD> <TD align="right"> 1 </TD> <TD align="right"> 0.63 </TD> <TD align="right"> 0.63 </TD> <TD align="right"> 1.32 </TD> <TD align="right"> 0.02 </TD> <TD align="right"> 0.0010 </TD> </TR>
@@ -244,7 +244,7 @@ print(xtable(all.f.occ.v.unocc$aov.tab), type = "html")
 ```
 
 <!-- html table generated in R 3.0.1 by xtable 1.7-1 package -->
-<!-- Sun Jan  5 21:52:13 2014 -->
+<!-- Fri Jan 17 14:10:53 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> Df </TH> <TH> SumsOfSqs </TH> <TH> MeanSqs </TH> <TH> F.Model </TH> <TH> R2 </TH> <TH> Pr(&gt F) </TH>  </TR>
   <TR> <TD> pb.map$location[pb.map$sampleType != "petri.dish"] </TD> <TD align="right"> 1 </TD> <TD align="right"> 0.90 </TD> <TD align="right"> 0.90 </TD> <TD align="right"> 1.92 </TD> <TD align="right"> 0.01 </TD> <TD align="right"> 0.0010 </TD> </TR>
@@ -294,7 +294,7 @@ print(xtable(occ.v.unocc$aov.tab), type = "html")
 ```
 
 <!-- html table generated in R 3.0.1 by xtable 1.7-1 package -->
-<!-- Mon Jan  6 15:02:48 2014 -->
+<!-- Fri Jan 17 14:10:54 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> Df </TH> <TH> SumsOfSqs </TH> <TH> MeanSqs </TH> <TH> F.Model </TH> <TH> R2 </TH> <TH> Pr(&gt F) </TH>  </TR>
   <TR> <TD> occ4f.map$location </TD> <TD align="right"> 1 </TD> <TD align="right"> 0.79 </TD> <TD align="right"> 0.79 </TD> <TD align="right"> 1.69 </TD> <TD align="right"> 0.02 </TD> <TD align="right"> 0.0010 </TD> </TR>
@@ -311,7 +311,7 @@ print(xtable(person.v.unocc$aov.tab), type = "html")
 ```
 
 <!-- html table generated in R 3.0.1 by xtable 1.7-1 package -->
-<!-- Mon Jan  6 15:02:48 2014 -->
+<!-- Fri Jan 17 14:10:54 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> Df </TH> <TH> SumsOfSqs </TH> <TH> MeanSqs </TH> <TH> F.Model </TH> <TH> R2 </TH> <TH> Pr(&gt F) </TH>  </TR>
   <TR> <TD> occ4f.map$occ.person2 </TD> <TD align="right"> 3 </TD> <TD align="right"> 2.06 </TD> <TD align="right"> 0.69 </TD> <TD align="right"> 1.49 </TD> <TD align="right"> 0.06 </TD> <TD align="right"> 0.0010 </TD> </TR>
@@ -329,7 +329,7 @@ print(xtable(person.v.eachother$aov.tab), type = "html")
 ```
 
 <!-- html table generated in R 3.0.1 by xtable 1.7-1 package -->
-<!-- Mon Jan  6 15:02:48 2014 -->
+<!-- Fri Jan 17 14:10:54 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> Df </TH> <TH> SumsOfSqs </TH> <TH> MeanSqs </TH> <TH> F.Model </TH> <TH> R2 </TH> <TH> Pr(&gt F) </TH>  </TR>
   <TR> <TD> subset(occ4f.map, occ4f.map$location == "occ")$person </TD> <TD align="right"> 2 </TD> <TD align="right"> 1.28 </TD> <TD align="right"> 0.64 </TD> <TD align="right"> 1.43 </TD> <TD align="right"> 0.08 </TD> <TD align="right"> 0.0010 </TD> </TR>
@@ -348,7 +348,7 @@ print(xtable(only.unocc$aov.tab), type = "html")
 ```
 
 <!-- html table generated in R 3.0.1 by xtable 1.7-1 package -->
-<!-- Mon Jan  6 15:02:48 2014 -->
+<!-- Fri Jan 17 14:10:54 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> Df </TH> <TH> SumsOfSqs </TH> <TH> MeanSqs </TH> <TH> F.Model </TH> <TH> R2 </TH> <TH> Pr(&gt F) </TH>  </TR>
   <TR> <TD> subset(occ4f.map, occ4f.map$location == "unocc")$person </TD> <TD align="right"> 2 </TD> <TD align="right"> 0.96 </TD> <TD align="right"> 0.48 </TD> <TD align="right"> 1.02 </TD> <TD align="right"> 0.06 </TD> <TD align="right"> 0.1420 </TD> </TR>
@@ -388,7 +388,7 @@ print(xtable(adonis.df, digits = c(0, 0, 2, 3, 3)), type = "html")
 ```
 
 <!-- html table generated in R 3.0.1 by xtable 1.7-1 package -->
-<!-- Mon Jan  6 15:02:48 2014 -->
+<!-- Fri Jan 17 14:10:54 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> n </TH> <TH> F-statistic </TH> <TH> R2 </TH> <TH> P-value </TH>  </TR>
   <TR> <TD align="right"> AllSamplesOccVsUnocc </TD> <TD align="right"> 211 </TD> <TD align="right"> 2.20 </TD> <TD align="right"> 0.010 </TD> <TD align="right"> 0.001 </TD> </TR>
@@ -453,7 +453,7 @@ print(xtable(trial.adonis.table, digits = c(0, 0, 0, 0, 0, 2, 3, 3)), type = "ht
 ```
 
 <!-- html table generated in R 3.0.1 by xtable 1.7-1 package -->
-<!-- Sun Jan  5 21:52:14 2014 -->
+<!-- Fri Jan 17 14:10:55 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> person </TH> <TH> duration </TH> <TH> sampleType </TH> <TH> n </TH> <TH> F.statistic </TH> <TH> R2 </TH> <TH> P.value </TH>  </TR>
   <TR> <TD align="right"> s14f </TD> <TD> s1 </TD> <TD align="right"> 4 </TD> <TD> air filter </TD> <TD align="right"> 24 </TD> <TD align="right"> 1.48 </TD> <TD align="right"> 0.063 </TD> <TD align="right"> 0.001 </TD> </TR>
@@ -490,6 +490,8 @@ for (i in 1:length(adonis.groups)) {
 ```
 
 
+
+But it was very significant overall. 
 
 
 ```r
@@ -559,87 +561,6 @@ for (i in 1:4) {
 
 
 
--------------
-
-### Shannon Weiner Diversity
-
-Differences between people?
-
-
-```r
-titles <- c("4hr filters", "2hr filters", "4hr dishes", "2hr dishes")
-set <- c("occ4f.map", "occ2f.map", "occ4p.map", "occ2p.map")
-for (i in 1:4) {
-    map <- get(set[i])
-    map <- map[map$location == "occ", ]
-    hrj <- pb.hrj[row.names(map), ]
-    print(xtable(summary(lm(hrj$H1 ~ map$person))), type = "html", comment = FALSE)
-    boxplot(hrj$H1 ~ map$person, col = "gray", notch = TRUE, main = titles[i])
-}
-```
-
-<TABLE border=1>
-<TR> <TH>  </TH> <TH> Estimate </TH> <TH> Std. Error </TH> <TH> t value </TH> <TH> Pr(&gt |t|) </TH>  </TR>
-  <TR> <TD align="right"> (Intercept) </TD> <TD align="right"> 3.6197 </TD> <TD align="right"> 0.1639 </TD> <TD align="right"> 22.08 </TD> <TD align="right"> 0.0000 </TD> </TR>
-  <TR> <TD align="right"> map$persons2 </TD> <TD align="right"> -0.3490 </TD> <TD align="right"> 0.2319 </TD> <TD align="right"> -1.51 </TD> <TD align="right"> 0.1417 </TD> </TR>
-  <TR> <TD align="right"> map$persons3 </TD> <TD align="right"> -0.1614 </TD> <TD align="right"> 0.2319 </TD> <TD align="right"> -0.70 </TD> <TD align="right"> 0.4912 </TD> </TR>
-   </TABLE>
-![plot of chunk unnamed-chunk-25](figure/unnamed-chunk-251.png) <TABLE border=1>
-<TR> <TH>  </TH> <TH> Estimate </TH> <TH> Std. Error </TH> <TH> t value </TH> <TH> Pr(&gt |t|) </TH>  </TR>
-  <TR> <TD align="right"> (Intercept) </TD> <TD align="right"> 3.6358 </TD> <TD align="right"> 0.1324 </TD> <TD align="right"> 27.46 </TD> <TD align="right"> 0.0000 </TD> </TR>
-  <TR> <TD align="right"> map$persons2 </TD> <TD align="right"> -0.3675 </TD> <TD align="right"> 0.1872 </TD> <TD align="right"> -1.96 </TD> <TD align="right"> 0.0582 </TD> </TR>
-  <TR> <TD align="right"> map$persons3 </TD> <TD align="right"> 0.1825 </TD> <TD align="right"> 0.1872 </TD> <TD align="right"> 0.97 </TD> <TD align="right"> 0.3369 </TD> </TR>
-   </TABLE>
-![plot of chunk unnamed-chunk-25](figure/unnamed-chunk-252.png) <TABLE border=1>
-<TR> <TH>  </TH> <TH> Estimate </TH> <TH> Std. Error </TH> <TH> t value </TH> <TH> Pr(&gt |t|) </TH>  </TR>
-  <TR> <TD align="right"> (Intercept) </TD> <TD align="right"> 3.0293 </TD> <TD align="right"> 0.1848 </TD> <TD align="right"> 16.39 </TD> <TD align="right"> 0.0000 </TD> </TR>
-  <TR> <TD align="right"> map$persons2 </TD> <TD align="right"> -0.5483 </TD> <TD align="right"> 0.2614 </TD> <TD align="right"> -2.10 </TD> <TD align="right"> 0.0533 </TD> </TR>
-  <TR> <TD align="right"> map$persons3 </TD> <TD align="right"> -0.2512 </TD> <TD align="right"> 0.2614 </TD> <TD align="right"> -0.96 </TD> <TD align="right"> 0.3517 </TD> </TR>
-   </TABLE>
-![plot of chunk unnamed-chunk-25](figure/unnamed-chunk-253.png) <TABLE border=1>
-<TR> <TH>  </TH> <TH> Estimate </TH> <TH> Std. Error </TH> <TH> t value </TH> <TH> Pr(&gt |t|) </TH>  </TR>
-  <TR> <TD align="right"> (Intercept) </TD> <TD align="right"> 3.4810 </TD> <TD align="right"> 0.3374 </TD> <TD align="right"> 10.32 </TD> <TD align="right"> 0.0000 </TD> </TR>
-  <TR> <TD align="right"> map$persons2 </TD> <TD align="right"> -0.7081 </TD> <TD align="right"> 0.4772 </TD> <TD align="right"> -1.48 </TD> <TD align="right"> 0.1585 </TD> </TR>
-  <TR> <TD align="right"> map$persons3 </TD> <TD align="right"> -0.4549 </TD> <TD align="right"> 0.4772 </TD> <TD align="right"> -0.95 </TD> <TD align="right"> 0.3556 </TD> </TR>
-   </TABLE>
-![plot of chunk unnamed-chunk-25](figure/unnamed-chunk-254.png) 
-
-
-Different people 4 hr filters. 
-
-
-```r
-titles <- c("S1", "S2", "S3")
-s123 <- c("s1", "s2", "s3")
-for (i in 1:3) {
-    map <- occ4f.map[occ4f.map$person == s123[i], ]
-    hrj <- pb.hrj[row.names(map), ]
-    print(xtable(summary(lm(hrj$H1 ~ map$location))), type = "html", comment = FALSE)
-    boxplot(hrj$H1 ~ map$location, col = "gray", notch = TRUE, main = titles[i])
-}
-```
-
-<TABLE border=1>
-<TR> <TH>  </TH> <TH> Estimate </TH> <TH> Std. Error </TH> <TH> t value </TH> <TH> Pr(&gt |t|) </TH>  </TR>
-  <TR> <TD align="right"> (Intercept) </TD> <TD align="right"> 3.6197 </TD> <TD align="right"> 0.1707 </TD> <TD align="right"> 21.20 </TD> <TD align="right"> 0.0000 </TD> </TR>
-  <TR> <TD align="right"> map$locationunocc </TD> <TD align="right"> -0.1820 </TD> <TD align="right"> 0.2414 </TD> <TD align="right"> -0.75 </TD> <TD align="right"> 0.4590 </TD> </TR>
-   </TABLE>
-![plot of chunk unnamed-chunk-26](figure/unnamed-chunk-261.png) <TABLE border=1>
-<TR> <TH>  </TH> <TH> Estimate </TH> <TH> Std. Error </TH> <TH> t value </TH> <TH> Pr(&gt |t|) </TH>  </TR>
-  <TR> <TD align="right"> (Intercept) </TD> <TD align="right"> 3.2707 </TD> <TD align="right"> 0.2379 </TD> <TD align="right"> 13.75 </TD> <TD align="right"> 0.0000 </TD> </TR>
-  <TR> <TD align="right"> map$locationunocc </TD> <TD align="right"> 0.5056 </TD> <TD align="right"> 0.3440 </TD> <TD align="right"> 1.47 </TD> <TD align="right"> 0.1565 </TD> </TR>
-   </TABLE>
-![plot of chunk unnamed-chunk-26](figure/unnamed-chunk-262.png) <TABLE border=1>
-<TR> <TH>  </TH> <TH> Estimate </TH> <TH> Std. Error </TH> <TH> t value </TH> <TH> Pr(&gt |t|) </TH>  </TR>
-  <TR> <TD align="right"> (Intercept) </TD> <TD align="right"> 3.4584 </TD> <TD align="right"> 0.1703 </TD> <TD align="right"> 20.31 </TD> <TD align="right"> 0.0000 </TD> </TR>
-  <TR> <TD align="right"> map$locationunocc </TD> <TD align="right"> 0.4448 </TD> <TD align="right"> 0.2408 </TD> <TD align="right"> 1.85 </TD> <TD align="right"> 0.0783 </TD> </TR>
-   </TABLE>
-![plot of chunk unnamed-chunk-26](figure/unnamed-chunk-263.png) 
-
-
-
-
-
 
 
 
@@ -649,7 +570,7 @@ for (i in 1:3) {
 
 
 ```r
-# pdf('../../figures/ordination_cluster.pdf', width=10, height=6.5)
+pdf("~/Desktop/Figure1.pdf", width = 10, height = 6.5, useDingbats = FALSE)
 
 layout(matrix(c(1:3, 7, 7, 7, 4:6, 8, 8, 9), 3, 4), widths = c(1, 1.4, 1, 1.4), 
     heights = c(1.1, 1, 1))
@@ -989,13 +910,13 @@ mtext("Air\nFilters", side = 1, at = mean(mids[c(3, 4)]), cex = 0.8, line = 2.2,
     font = 2)
 mtext("Settling\nDishes", side = 1, at = mean(mids[c(5, 6)]), cex = 0.8, line = 2.2, 
     font = 2)
+
+dev.off()
 ```
 
-![plot of chunk unnamed-chunk-27](figure/unnamed-chunk-27.png) 
-
-```r
-
-# dev.off()
+```
+## pdf 
+##   2
 ```
 
 
@@ -1257,7 +1178,7 @@ mtext("Settling\nDishes", side = 1, at = mean(mids[c(5, 6)]), cex = 0.8, line = 
 mtext("Unoccupied", font = 2, line = 1)
 ```
 
-![plot of chunk unnamed-chunk-28](figure/unnamed-chunk-28.png) 
+![plot of chunk unnamed-chunk-26](figure/unnamed-chunk-26.png) 
 
 ```r
 
@@ -1492,7 +1413,7 @@ legend("right", legend = c("Subject 1", "Subject 2", "Subject 3"), bty = "n",
         s3.col), cex = 1, pt.cex = 2.3, y.intersp = 0.8)
 ```
 
-![plot of chunk unnamed-chunk-34](figure/unnamed-chunk-34.png) 
+![plot of chunk unnamed-chunk-32](figure/unnamed-chunk-32.png) 
 
 ```r
 
