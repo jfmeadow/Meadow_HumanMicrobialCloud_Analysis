@@ -165,7 +165,7 @@ print(xtable(all.occ.v.unocc$aov.tab), type = "html")
 ```
 
 <!-- html table generated in R 3.0.1 by xtable 1.7-1 package -->
-<!-- Fri Jan 17 14:10:52 2014 -->
+<!-- Fri Jan 17 17:45:21 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> Df </TH> <TH> SumsOfSqs </TH> <TH> MeanSqs </TH> <TH> F.Model </TH> <TH> R2 </TH> <TH> Pr(&gt F) </TH>  </TR>
   <TR> <TD> pb.map$location </TD> <TD align="right"> 1 </TD> <TD align="right"> 1.04 </TD> <TD align="right"> 1.04 </TD> <TD align="right"> 2.20 </TD> <TD align="right"> 0.01 </TD> <TD align="right"> 0.0010 </TD> </TR>
@@ -184,7 +184,7 @@ print(xtable(all.4.occ.v.unocc$aov.tab), type = "html")
 ```
 
 <!-- html table generated in R 3.0.1 by xtable 1.7-1 package -->
-<!-- Fri Jan 17 14:10:52 2014 -->
+<!-- Fri Jan 17 17:45:21 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> Df </TH> <TH> SumsOfSqs </TH> <TH> MeanSqs </TH> <TH> F.Model </TH> <TH> R2 </TH> <TH> Pr(&gt F) </TH>  </TR>
   <TR> <TD> pb.map$location[pb.map$duration == 4] </TD> <TD align="right"> 1 </TD> <TD align="right"> 0.88 </TD> <TD align="right"> 0.88 </TD> <TD align="right"> 1.88 </TD> <TD align="right"> 0.02 </TD> <TD align="right"> 0.0010 </TD> </TR>
@@ -203,7 +203,7 @@ print(xtable(all.2.occ.v.unocc$aov.tab), type = "html")
 ```
 
 <!-- html table generated in R 3.0.1 by xtable 1.7-1 package -->
-<!-- Fri Jan 17 14:10:53 2014 -->
+<!-- Fri Jan 17 17:45:22 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> Df </TH> <TH> SumsOfSqs </TH> <TH> MeanSqs </TH> <TH> F.Model </TH> <TH> R2 </TH> <TH> Pr(&gt F) </TH>  </TR>
   <TR> <TD> pb.map$location[pb.map$duration == 2] </TD> <TD align="right"> 1 </TD> <TD align="right"> 0.67 </TD> <TD align="right"> 0.67 </TD> <TD align="right"> 1.41 </TD> <TD align="right"> 0.01 </TD> <TD align="right"> 0.0010 </TD> </TR>
@@ -224,7 +224,7 @@ print(xtable(all.p.occ.v.unocc$aov.tab), type = "html")
 ```
 
 <!-- html table generated in R 3.0.1 by xtable 1.7-1 package -->
-<!-- Fri Jan 17 14:10:53 2014 -->
+<!-- Fri Jan 17 17:45:22 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> Df </TH> <TH> SumsOfSqs </TH> <TH> MeanSqs </TH> <TH> F.Model </TH> <TH> R2 </TH> <TH> Pr(&gt F) </TH>  </TR>
   <TR> <TD> pb.map$location[pb.map$sampleType == "petri.dish"] </TD> <TD align="right"> 1 </TD> <TD align="right"> 0.63 </TD> <TD align="right"> 0.63 </TD> <TD align="right"> 1.32 </TD> <TD align="right"> 0.02 </TD> <TD align="right"> 0.0010 </TD> </TR>
@@ -244,7 +244,7 @@ print(xtable(all.f.occ.v.unocc$aov.tab), type = "html")
 ```
 
 <!-- html table generated in R 3.0.1 by xtable 1.7-1 package -->
-<!-- Fri Jan 17 14:10:53 2014 -->
+<!-- Fri Jan 17 17:45:22 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> Df </TH> <TH> SumsOfSqs </TH> <TH> MeanSqs </TH> <TH> F.Model </TH> <TH> R2 </TH> <TH> Pr(&gt F) </TH>  </TR>
   <TR> <TD> pb.map$location[pb.map$sampleType != "petri.dish"] </TD> <TD align="right"> 1 </TD> <TD align="right"> 0.90 </TD> <TD align="right"> 0.90 </TD> <TD align="right"> 1.92 </TD> <TD align="right"> 0.01 </TD> <TD align="right"> 0.0010 </TD> </TR>
@@ -294,7 +294,7 @@ print(xtable(occ.v.unocc$aov.tab), type = "html")
 ```
 
 <!-- html table generated in R 3.0.1 by xtable 1.7-1 package -->
-<!-- Fri Jan 17 14:10:54 2014 -->
+<!-- Fri Jan 17 17:51:35 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> Df </TH> <TH> SumsOfSqs </TH> <TH> MeanSqs </TH> <TH> F.Model </TH> <TH> R2 </TH> <TH> Pr(&gt F) </TH>  </TR>
   <TR> <TD> occ4f.map$location </TD> <TD align="right"> 1 </TD> <TD align="right"> 0.79 </TD> <TD align="right"> 0.79 </TD> <TD align="right"> 1.69 </TD> <TD align="right"> 0.02 </TD> <TD align="right"> 0.0010 </TD> </TR>
@@ -311,7 +311,7 @@ print(xtable(person.v.unocc$aov.tab), type = "html")
 ```
 
 <!-- html table generated in R 3.0.1 by xtable 1.7-1 package -->
-<!-- Fri Jan 17 14:10:54 2014 -->
+<!-- Fri Jan 17 17:51:35 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> Df </TH> <TH> SumsOfSqs </TH> <TH> MeanSqs </TH> <TH> F.Model </TH> <TH> R2 </TH> <TH> Pr(&gt F) </TH>  </TR>
   <TR> <TD> occ4f.map$occ.person2 </TD> <TD align="right"> 3 </TD> <TD align="right"> 2.06 </TD> <TD align="right"> 0.69 </TD> <TD align="right"> 1.49 </TD> <TD align="right"> 0.06 </TD> <TD align="right"> 0.0010 </TD> </TR>
@@ -329,7 +329,7 @@ print(xtable(person.v.eachother$aov.tab), type = "html")
 ```
 
 <!-- html table generated in R 3.0.1 by xtable 1.7-1 package -->
-<!-- Fri Jan 17 14:10:54 2014 -->
+<!-- Fri Jan 17 17:51:35 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> Df </TH> <TH> SumsOfSqs </TH> <TH> MeanSqs </TH> <TH> F.Model </TH> <TH> R2 </TH> <TH> Pr(&gt F) </TH>  </TR>
   <TR> <TD> subset(occ4f.map, occ4f.map$location == "occ")$person </TD> <TD align="right"> 2 </TD> <TD align="right"> 1.28 </TD> <TD align="right"> 0.64 </TD> <TD align="right"> 1.43 </TD> <TD align="right"> 0.08 </TD> <TD align="right"> 0.0010 </TD> </TR>
@@ -348,7 +348,7 @@ print(xtable(only.unocc$aov.tab), type = "html")
 ```
 
 <!-- html table generated in R 3.0.1 by xtable 1.7-1 package -->
-<!-- Fri Jan 17 14:10:54 2014 -->
+<!-- Fri Jan 17 17:51:35 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> Df </TH> <TH> SumsOfSqs </TH> <TH> MeanSqs </TH> <TH> F.Model </TH> <TH> R2 </TH> <TH> Pr(&gt F) </TH>  </TR>
   <TR> <TD> subset(occ4f.map, occ4f.map$location == "unocc")$person </TD> <TD align="right"> 2 </TD> <TD align="right"> 0.96 </TD> <TD align="right"> 0.48 </TD> <TD align="right"> 1.02 </TD> <TD align="right"> 0.06 </TD> <TD align="right"> 0.1420 </TD> </TR>
@@ -388,7 +388,7 @@ print(xtable(adonis.df, digits = c(0, 0, 2, 3, 3)), type = "html")
 ```
 
 <!-- html table generated in R 3.0.1 by xtable 1.7-1 package -->
-<!-- Fri Jan 17 14:10:54 2014 -->
+<!-- Fri Jan 17 17:51:35 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> n </TH> <TH> F-statistic </TH> <TH> R2 </TH> <TH> P-value </TH>  </TR>
   <TR> <TD align="right"> AllSamplesOccVsUnocc </TD> <TD align="right"> 211 </TD> <TD align="right"> 2.20 </TD> <TD align="right"> 0.010 </TD> <TD align="right"> 0.001 </TD> </TR>
@@ -453,7 +453,7 @@ print(xtable(trial.adonis.table, digits = c(0, 0, 0, 0, 0, 2, 3, 3)), type = "ht
 ```
 
 <!-- html table generated in R 3.0.1 by xtable 1.7-1 package -->
-<!-- Fri Jan 17 14:10:55 2014 -->
+<!-- Fri Jan 17 17:45:24 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> person </TH> <TH> duration </TH> <TH> sampleType </TH> <TH> n </TH> <TH> F.statistic </TH> <TH> R2 </TH> <TH> P.value </TH>  </TR>
   <TR> <TD align="right"> s14f </TD> <TD> s1 </TD> <TD align="right"> 4 </TD> <TD> air filter </TD> <TD align="right"> 24 </TD> <TD align="right"> 1.48 </TD> <TD align="right"> 0.063 </TD> <TD align="right"> 0.001 </TD> </TR>
@@ -570,7 +570,7 @@ for (i in 1:4) {
 
 
 ```r
-pdf("~/Desktop/Figure1.pdf", width = 10, height = 6.5, useDingbats = FALSE)
+# pdf('~/Desktop/Figure1.pdf', width=10, height=6.5, useDingbats=FALSE)
 
 layout(matrix(c(1:3, 7, 7, 7, 4:6, 8, 8, 9), 3, 4), widths = c(1, 1.4, 1, 1.4), 
     heights = c(1.1, 1, 1))
@@ -890,16 +890,15 @@ ses <- data.frame(self = c(se(self), se(selff), se(selfp)), other = c(se(other),
 # barplot in the corner
 par(xpd = FALSE, las = 1, mar = c(4, 4, 0, 0.5), fg = "gray30", col.axis = "gray30", 
     col.lab = "gray30")
-mids <- barplot(t(means), beside = TRUE, col = "gray", border = "white", ylim = c(0.03, 
+mids <- barplot(t(means), beside = TRUE, col = "gray", border = "white", ylim = c(0, 
     0.06), xpd = FALSE, axes = FALSE, xaxt = "n")
-abline(h = seq(0.03, 0.06, 0.005), col = "white")
+abline(h = seq(0, 0.06, 0.01), col = "white")
 arrows(c(t(mids)), unlist(means - ses), c(t(mids)), unlist(means + ses), length = 0.03, 
     code = 3, angle = 90, col = "gray40", lwd = 2)
 par(las = 1)
-axis(2, at = c(0.03, 0.04, 0.05, 0.06), cex.axis = 1, tck = 0.02, hadj = 0.5, 
-    col = "gray30")
+axis(2, at = c(0, 0.02, 0.04, 0.06), cex.axis = 1, tck = 0.02, hadj = 0.5, col = "gray30")
 par(las = 0, lheight = 0.8, xpd = TRUE)
-segments(c(1, 4, 7), rep(0.03, 3), c(3, 6, 9), rep(0.03, 3), col = "gray40")
+segments(c(1, 4, 7), rep(0, 3), c(3, 6, 9), rep(0, 3), col = "gray40")
 mtext("Canberra Similarity", side = 2, line = 2.2, cex = 0.8)
 mtext(" self  other", side = 1, at = mean(mids[c(1, 2)]), cex = 0.7, line = -0)
 mtext(" self  other", side = 1, at = mean(mids[c(3, 4)]), cex = 0.7, line = -0)
@@ -910,13 +909,13 @@ mtext("Air\nFilters", side = 1, at = mean(mids[c(3, 4)]), cex = 0.8, line = 2.2,
     font = 2)
 mtext("Settling\nDishes", side = 1, at = mean(mids[c(5, 6)]), cex = 0.8, line = 2.2, 
     font = 2)
-
-dev.off()
 ```
 
-```
-## pdf 
-##   2
+![plot of chunk unnamed-chunk-25](figure/unnamed-chunk-25.png) 
+
+```r
+
+# dev.off()
 ```
 
 
@@ -927,7 +926,7 @@ This does the same thing as the corner barplot above, but does it for both sets.
 
 
 ```r
-# pdf('../../figures/similarity_barplots.pdf', width=7, height=4)
+# pdf('~/Desktop/FigureS1.pdf', width=7, height=4)
 
 pb.mat <- as.matrix(pb.can)
 pb.matl <- pb.mat
@@ -1032,16 +1031,16 @@ par(mfrow = c(1, 2))
 
 par(xpd = FALSE, las = 1, mar = c(3, 4, 3, 0.5), fg = "gray30", col.axis = "gray30", 
     col.lab = "gray30")
-mids <- barplot(t(means), beside = TRUE, col = "gray", border = "white", ylim = c(0.01, 
+mids <- barplot(t(means), beside = TRUE, col = "gray", border = "white", ylim = c(0, 
     0.06), xpd = FALSE, axes = FALSE, xaxt = "n")
-abline(h = seq(0.01, 0.06, 0.005), col = "white")
+abline(h = seq(0, 0.06, 0.01), col = "white")
 arrows(c(t(mids)), unlist(means - ses), c(t(mids)), unlist(means + ses), length = 0.03, 
     code = 3, angle = 90, col = "gray40", lwd = 2)
 par(las = 1)
-axis(2, at = c(0.01, 0.02, 0.03, 0.04, 0.05, 0.06), cex.axis = 1, tck = 0.02, 
+axis(2, at = c(0, 0.01, 0.02, 0.03, 0.04, 0.05, 0.06), cex.axis = 1, tck = 0.02, 
     hadj = 0.5, col = "gray30")
 par(las = 0, lheight = 0.8, xpd = TRUE)
-segments(c(1, 4, 7), rep(0.01, 3), c(3, 6, 9), rep(0.01, 3), col = "gray40")
+segments(c(1, 4, 7), rep(0, 3), c(3, 6, 9), rep(0, 3), col = "gray40")
 mtext("Canberra Similarity", side = 2, line = 2.2, cex = 0.8)
 mtext(" self  other", side = 1, at = mean(mids[c(1, 2)]), cex = 0.7, line = 0)
 mtext(" self  other", side = 1, at = mean(mids[c(3, 4)]), cex = 0.7, line = 0)
@@ -1155,16 +1154,16 @@ ses <- data.frame(self = c(se(self), se(selff), se(selfp)), other = c(se(other),
 # barplot
 par(xpd = FALSE, las = 1, mar = c(3, 4, 3, 0.5), fg = "gray30", col.axis = "gray30", 
     col.lab = "gray30")
-mids <- barplot(t(means), beside = TRUE, col = "gray", border = "white", ylim = c(0.01, 
+mids <- barplot(t(means), beside = TRUE, col = "gray", border = "white", ylim = c(0, 
     0.06), xpd = FALSE, axes = FALSE, xaxt = "n")
-abline(h = seq(0.01, 0.06, 0.005), col = "white")
+abline(h = seq(0, 0.06, 0.01), col = "white")
 arrows(c(t(mids)), unlist(means - ses), c(t(mids)), unlist(means + ses), length = 0.03, 
     code = 3, angle = 90, col = "gray40", lwd = 2)
 par(las = 1)
-axis(2, at = c(0.01, 0.02, 0.03, 0.04, 0.05, 0.06), cex.axis = 1, tck = 0.02, 
+axis(2, at = c(0, 0.01, 0.02, 0.03, 0.04, 0.05, 0.06), cex.axis = 1, tck = 0.02, 
     hadj = 0.5, col = "gray30")
 par(las = 0, lheight = 0.8, xpd = TRUE)
-segments(c(1, 4, 7), rep(0.01, 3), c(3, 6, 9), rep(0.01, 3), col = "gray40")
+segments(c(1, 4, 7), rep(0, 3), c(3, 6, 9), rep(0, 3), col = "gray40")
 # mtext('Canberra Similarity', side=2, line=2.2, cex=.8)
 mtext(" self  other", side = 1, at = mean(mids[c(1, 2)]), cex = 0.7, line = 0)
 mtext(" self  other", side = 1, at = mean(mids[c(3, 4)]), cex = 0.7, line = 0)

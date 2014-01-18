@@ -546,14 +546,14 @@ ses <- data.frame(self=c(se(self), se(selff), se(selfp)),
 # barplot in the corner
 par(xpd=FALSE, las=1, mar=c(4, 4, 0, .5), fg='gray30', col.axis='gray30', col.lab='gray30')
 mids <- barplot(t(means), beside=TRUE, col='gray', border='white', 
-	ylim=c(0.03, 0.06), xpd=FALSE, axes=FALSE, xaxt='n')
-abline(h=seq(0.03, 0.06, 0.005), col='white')
+	ylim=c(0.0, 0.06), xpd=FALSE, axes=FALSE, xaxt='n')
+abline(h=seq(0.0, 0.06, 0.01), col='white')
 arrows(c(t(mids)), unlist(means-ses), c(t(mids)), unlist(means+ses), 
 	length=0.03, code=3, angle=90, col='gray40', lwd=2)
 par(las=1)
-axis(2, at=c(.03, .04, .05, .06), cex.axis=1, tck=.02, hadj=.5, col='gray30')
+axis(2, at=c(0, 0.02, .04, .06), cex.axis=1, tck=.02, hadj=.5, col='gray30')
 par(las=0, lheight=.8, xpd=TRUE)
-segments(c(1, 4, 7), rep(0.03, 3), c(3, 6, 9), rep(0.03, 3), col='gray40') 
+segments(c(1, 4, 7), rep(0.0, 3), c(3, 6, 9), rep(0.0, 3), col='gray40') 
 mtext('Canberra Similarity', side=2, line=2.2, cex=.8)
 mtext(' self  other', side=1, at=mean(mids[c(1,2)]), cex=.7, line=-0)
 mtext(' self  other', side=1, at=mean(mids[c(3,4)]), cex=.7, line=-0)
@@ -571,7 +571,7 @@ mtext('Settling\nDishes', side=1, at=mean(mids[c(5,6)]), cex=.8, line=2.2, font=
 This does the same thing as the corner barplot above, but does it for both sets. 
 
 ```{r, cache=TRUE, fig.height=6, fig.width=12}
-# pdf('../../figures/similarity_barplots.pdf', width=7, height=4)
+# pdf('~/Desktop/FigureS1.pdf', width=7, height=4)
 
 pb.mat <- as.matrix(pb.can)
 pb.matl <- pb.mat 
@@ -631,14 +631,14 @@ par(mfrow=c(1,2))
 
 par(xpd=FALSE, las=1, mar=c(3, 4, 3, .5), fg='gray30', col.axis='gray30', col.lab='gray30')
 mids <- barplot(t(means), beside=TRUE, col='gray', border='white', 
-	ylim=c(0.01, 0.06), xpd=FALSE, axes=FALSE, xaxt='n')
-abline(h=seq(0.01, 0.06, 0.005), col='white')
+	ylim=c(0.0, 0.06), xpd=FALSE, axes=FALSE, xaxt='n')
+abline(h=seq(0.0, 0.06, 0.01), col='white')
 arrows(c(t(mids)), unlist(means-ses), c(t(mids)), unlist(means+ses), 
 	length=0.03, code=3, angle=90, col='gray40', lwd=2)
 par(las=1)
-axis(2, at=c(.01, .02, .03, .04, .05, .06), cex.axis=1, tck=.02, hadj=.5, col='gray30')
+axis(2, at=c(0, .01, .02, .03, .04, .05, .06), cex.axis=1, tck=.02, hadj=.5, col='gray30')
 par(las=0, lheight=.8, xpd=TRUE)
-segments(c(1, 4, 7), rep(0.01, 3), c(3, 6, 9), rep(0.01, 3), col='gray40') 
+segments(c(1, 4, 7), rep(0.0, 3), c(3, 6, 9), rep(0.0, 3), col='gray40') 
 mtext('Canberra Similarity', side=2, line=2.2, cex=.8)
 mtext(' self  other', side=1, at=mean(mids[c(1,2)]), cex=.7, line=0)
 mtext(' self  other', side=1, at=mean(mids[c(3,4)]), cex=.7, line=0)
@@ -704,14 +704,14 @@ ses <- data.frame(self=c(se(self), se(selff), se(selfp)),
 # barplot
 par(xpd=FALSE, las=1, mar=c(3, 4, 3, .5), fg='gray30', col.axis='gray30', col.lab='gray30')
 mids <- barplot(t(means), beside=TRUE, col='gray', border='white', 
-	ylim=c(0.01, 0.06), xpd=FALSE, axes=FALSE, xaxt='n')
-abline(h=seq(0.01, 0.06, 0.005), col='white')
+	ylim=c(0.0, 0.06), xpd=FALSE, axes=FALSE, xaxt='n')
+abline(h=seq(0.00, 0.06, 0.01), col='white')
 arrows(c(t(mids)), unlist(means-ses), c(t(mids)), unlist(means+ses), 
 	length=0.03, code=3, angle=90, col='gray40', lwd=2)
 par(las=1)
-axis(2, at=c(.01, .02, .03, .04, .05, .06), cex.axis=1, tck=.02, hadj=.5, col='gray30')
+axis(2, at=c(0, .01, .02, .03, .04, .05, .06), cex.axis=1, tck=.02, hadj=.5, col='gray30')
 par(las=0, lheight=.8, xpd=TRUE)
-segments(c(1, 4, 7), rep(0.01, 3), c(3, 6, 9), rep(0.01, 3), col='gray40') 
+segments(c(1, 4, 7), rep(0.0, 3), c(3, 6, 9), rep(0.0, 3), col='gray40') 
 #mtext('Canberra Similarity', side=2, line=2.2, cex=.8)
 mtext(' self  other', side=1, at=mean(mids[c(1,2)]), cex=.7, line=0)
 mtext(' self  other', side=1, at=mean(mids[c(3,4)]), cex=.7, line=0)
