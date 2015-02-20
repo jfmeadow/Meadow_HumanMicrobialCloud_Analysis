@@ -1,0 +1,185 @@
+---
+title: "PB2014_cleanup"
+output: html_document
+---
+
+
+# Second experiment of PickleBox2014
+
+## Import and clean OTU table
+
+_James F Meadow_ (`jfmeadow at gmail dot com`)
+
+### Getting started and importing data to R
+
+
+```{r setSeed}
+set.seed(1314)
+```
+
+Load `phyloseq` to handle QIIME output files, and `vegan` and `labdsv` for multivariate ecology stats. Also load `xtable` package to convert tables to latex or html. 
+
+```{r loadPackages, message=FALSE}
+require(knitr)
+require(phyloseq)
+require(wesanderson)
+```
+
+
+
+
+First use the `phyloseq` package to gracefully bring big QIIME/JSON-format dataset into R. This saves lots of code and testing, and also avoids having to change the file headers by hand. *Note: Warnings about GreenGenes taxonomy supressed.*
+
+```{r importPhyloseq, warning=FALSE}
+TablePhyloseq <- import_biom('otu_table.biom', 
+                          parseFunction=parse_taxonomy_greengenes)
+MapPhyloseq <- import_qiime_sample_data('map.txt')
+```
+
+Once `phyloseq` has done the heavy lifting to input data, we can extract the parts we want. First is the OTU table. One sample gets excluded here since it was an internal control that is not used in this script. Then print out a bit to make sure it looks as expected. 
+
+```{r extractOTUtable, results='asis'}
+table.tmp <- t(otu_table(TablePhyloseq))
+table.tmp <- as(table.tmp, 'matrix')
+kable(table.tmp[1:5, 1:5])
+```
+
+
+Extract the mapping file. This was in QIIME format, so the comment line needs to be removed to take out out of its `phyloseq` object. The output table is just the first three columns to make sure that the table looks ok. 
+
+```{r extractMap, results='asis'}
+# map.tmp <- read.delim('map.txt', head=TRUE, comment='%', sep='\t', row.names=1)
+map.tmp <- data.frame(MapPhyloseq)#[-1, ]
+map.tmp <- map.tmp[, c('SampleType', 'Treatment', 
+                       'Subject', 'Gender', 'Location', 
+                       'Replicate', 'Description')]
+kable(head(map.tmp[, c(1,2,3)]))
+```
+
+The taxonomic assignments are embedded in the OTU table. The output is a really convenient table with OTU numeric IDs as row names. There is one `for` loop to remove the factor baggage so that we can replace all NA's. The output table is shortened to see just a few taxonomic levels. 
+
+```{r extractTaxa, results='asis'}
+taxa.tmp <- data.frame(tax_table(TablePhyloseq))
+for (i in 1:ncol(taxa.tmp)) {
+  taxa.tmp[, i] <- as.character(taxa.tmp[, i])
+  taxa.tmp[, i][is.na(taxa.tmp[, i])] <- '-'
+  }
+kable(data.frame(head(taxa.tmp, 15)[, c(2, 5:7)]))
+```
+
+
+
+### Check to make sure things line up
+
+After extracting separate objects, a few quick tests to make sure everything looks as expected. R does not check to make sure row names match, so you always have to. 
+
+```{r testTaxa}
+identical(row.names(taxa.tmp), colnames(table.tmp))
+```
+
+So all OTUs are present in both the OTU table and the taxonomic info table. And they are in the same order. 
+
+```{r testSampleID}
+identical(sort(row.names(map.tmp)), sort(row.names(table.tmp)))
+```
+
+All of the row names in the mapping file also match with the row names of the OTU table. So all of the samples are there, but they are not in the same order - notice the `sort` commands used above. 
+
+
+```{r removeUnwanted, echo=TRUE, eval=TRUE}
+dim(taxa.tmp)
+taxa.tmp <- taxa.tmp[-c(grep('mitochondria', 
+                                   taxa.tmp$Family)), ]
+taxa.tmp <- taxa.tmp[-c(grep('Chloroplast', 
+                                   taxa.tmp$Class)), ]
+table.tmp <- table.tmp[, row.names(taxa.tmp)]
+identical(row.names(taxa.tmp), colnames(table.tmp))
+dim(taxa.tmp)
+```
+
+
+Sort by abundance. 
+
+```{r sortOTUs}
+table.tmp <- table.tmp[, names(sort(colSums(table.tmp), TRUE))]
+taxa.tmp <- taxa.tmp[colnames(table.tmp), ]
+```
+
+
+Isolate a table of only things that showed up in lab controls. This is a lot of OTUs, but most of them are very rare, and potentially just spillover, so shouldn't be removed. 
+
+
+```{r makeControlTable}
+controls <- which(map.tmp$Treatment == 'control')
+conTable <- table.tmp[controls, ]
+noconTable <- table.tmp[-controls, ]
+
+conTable <- conTable/rowSums(conTable)
+noconTable <- noconTable/rowSums(noconTable)
+
+relconVect <- colSums(conTable)/sum(conTable)
+relexpVect <- colSums(noconTable)/sum(noconTable)
+```
+
+
+Plot their abundance. 
+
+```{r plotContam, fig.height=14, fig.width=7}
+contaminants <- sort(relconVect, TRUE)[c(1:8, 10, 11)] # [c(1:8, 10:19, 21)]
+pal <- wes_palette(name = "Zissou", length(contaminants), type = "continuous")
+
+par(mfrow=c(2,1), las=1)
+plot(relconVect ~ relexpVect, pch=16, col=rgb(0,0,0,.4)) # one obvious outlier
+abline(h=contaminants, col=pal)
+abline(h=.035, col='black', lwd=2, lty=3)
+
+plot(relconVect ~ relexpVect, xlim=c(0, .035), ylim=c(0, .035), type='n')
+segments(0,0,1,1, col='gray50', lty=3)
+points(relconVect ~ relexpVect, pch=16, col=rgb(0,0,0,.4))
+abline(h=contaminants, col=pal)
+```
+
+
+Make new tables without the contaminants. 
+
+```{r outputData, eval=TRUE}
+tableNoCon <- table.tmp[-controls, -which(colnames(table.tmp) %in% names(contaminants))]
+taxaNoCon <- taxa.tmp[colnames(tableNoCon), ]
+mapNoCon <- map.tmp[-controls, ]
+```
+
+
+
+
+```{r plotRemaining, eval=TRUE}
+plot(sort(colSums(tableNoCon)/sum(tableNoCon), TRUE), 
+     pch=16, col=rgb(0,0,0,.4)) 
+```
+
+
+
+What are the top bugs that are left. 
+
+```{r seeWhatsLeft, results='asis', eval=TRUE}
+kable(head(taxaNoCon[order(sort(colSums(tableNoCon), FALSE)), c(2, 5:7)], 20))
+```
+
+
+Save and move on to the `pb2014.Rmd` script for further analysis. 
+
+```{r saveWorkSpace, eval=TRUE}
+save(tableNoCon, taxaNoCon, mapNoCon, file='dataCleanup.RData')
+```
+
+
+
+
+
+
+
+
+
+
+
+
+

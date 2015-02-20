@@ -1,0 +1,188 @@
+---
+output: html_document
+---
+
+
+```{r config}
+library(knitr)
+opts_chunk$set(background='gray80', tidy=FALSE, cache=FALSE)
+```
+
+
+
+
+# Quality checking for PickleBox2014 sequences. 
+
+_James F Meadow_ (`jfmeadow at gmail dot com`)
+
+This script looks at the number of sequences returned for each sample. 
+
+
+
+```{r loadPackages, message=FALSE}
+# setwd('~/Dropbox/Pickle2014/R/quality')
+set.seed(42)
+library(xtable)
+library(wesanderson)
+library(scales)
+```
+
+Read data
+
+```{r readData}
+qu1F <- read.delim('../../QIIMEsepRuns/splitLib1F/split_library_log.txt', 
+                   sep='\t', head=FALSE, row.names=1)
+qu1R <- read.delim('../../QIIMEsepRuns/splitLib1R/split_library_log.txt', 
+                   sep='\t', head=FALSE, row.names=1)
+qu2F <- read.delim('../../QIIMEsepRuns/splitLib2F/split_library_log.txt', 
+                   sep='\t', head=FALSE, row.names=1)
+qu2R <- read.delim('../../QIIMEsepRuns/splitLib2R/split_library_log.txt', 
+                   sep='\t', head=FALSE, row.names=1)
+```
+
+
+Assign colors
+
+```{r colors}
+pal <- wes.palette(name='Zissou', type='continuous')
+```
+
+
+-------
+
+### Forward read from First Run
+
+Setup plotting parameters. 
+
+```{r setupDataFrame}
+qu <- qu1F
+names(qu) <- 'seqs1F'
+qu$seqs1R <- qu1R[row.names(qu), 1]
+qu$seqs2F <- qu2F[row.names(qu), 1]
+qu$seqs2R <- qu2R[row.names(qu), 1]
+```
+
+
+```{r plot1FvR}
+par(xpd=TRUE, las=1)
+plot(qu$seqs1F ~ qu$seqs1R, pch=21, bg=alpha(pal(1), .5), col='gray40',
+     xlab='Reverse Read', ylab='Forward Read', xaxs='i', yaxs='i', 
+     main='First Run')
+curve(1*x, lty=3, lwd=2, col='tomato', add=TRUE)
+```
+
+```{r plot2FvR}
+par(xpd=TRUE, las=1)
+plot(qu$seqs2F ~ qu$seqs2R, pch=21, bg=alpha(pal(1), .5), col='gray40',
+     xlab='Reverse Read', ylab='Forward Read', xaxs='i', yaxs='i', 
+     main='Second Run')
+curve(1*x, lty=3, lwd=2, col='tomato', add=TRUE)
+```
+
+```{r plot1Fv2F}
+par(xpd=TRUE, las=1)
+plot(qu$seqs1F, qu$seqs2F, pch=21, bg=alpha(pal(1), .5), col='gray40',
+     xlab='1st Run Forward', ylab='2nd Run Forward', xaxs='i', yaxs='i')
+par(xpd=FALSE)
+curve(1*x, lty=3, lwd=2, col='tomato', add=TRUE)
+```
+
+
+
+
+```{r pairs, fig.width=10, fig.height=10}
+x.lim <- y.lim <- c(0, max(qu))
+
+diagFunk <- function(x){
+  par(new=TRUE)
+	hist(x, col='gray70', probability=TRUE, 
+	  axes=FALSE, main='', 
+    xlim=x.lim)
+	lines(density(x), col='tomato', lwd=3)
+	rug(x)
+  }
+
+upperFunk <- function(x, y) {
+  par(new=TRUE)
+  plot(x, y, xlim=x.lim, ylim=y.lim, 
+       pch=21, bg='tomato', axes=FALSE, main='')
+  }
+
+par(las=1, xaxt='n', yaxt='n')
+pairs(qu, gap=0, 
+      upper.panel=upperFunk, 
+      lower.panel=NULL, 
+      diag.panel=diagFunk)
+
+```
+
+
+So this seems pretty clear. Use the combined forward reads and discard reverse reads. The second run was much better, but the reverse second reads are just as depauperate as the first forward reads. 
+
+
+
+
+
+
+```{r combineForwards}
+qu$seqs <- qu$seqs1F + qu$seqs2F
+qu <- qu[rev(order(qu$seqs)), ]
+```
+
+
+
+
+
+
+```{r setupPlot}
+cutoffs <- c(100, 500, 1000, 2000, 5000)
+bottom <- c(0, 100, 500, 1000, 2000)
+nr <- nrow(qu)
+col5 <- rev(pal(5))
+xcut <- rep(0, 5)
+for(i in 1:5) {
+  xcut[i] <- length(which(qu$seqs < cutoffs[i]))
+  }
+```
+
+
+Make plots. 
+
+```{r plotSeqs, fig.height=12, fig.width=8, dpi=300}
+par(mfrow=c(2, 1))
+par(xpd=FALSE, las=1, mar=c(5, 5, 4, 1))
+plot(qu$seqs, las=1, type='n', bty='n', xaxs='i', yaxs='i', las=1, 
+     ann=FALSE, xaxt='n')
+for(i in 1:5) {
+  polygon(c(1, nr, nr, 1), c(bottom[i], bottom[i], cutoffs[i], cutoffs[i]), 
+          border='transparent', col=col5[i])
+  }
+segments(c(nr-xcut), cutoffs, c(nr-xcut), -100, 
+         lty=3, lwd=2, col='gray40')
+par(xpd=TRUE)
+points(1:nrow(qu), qu$seqs, pch=21, bg=rgb(0,0,0,.3), col=rgb(0,0,0,.7))
+text(c(0, nr-xcut), 0, c(nr, xcut), pos=1)
+mtext('Seqs per sample', side=2, line=3.5, las=0)
+mtext('How many samples lost?', side=1, line=2)
+text(1, max(qu$seqs), max(qu$seqs), pos=4)
+
+par(xpd=FALSE, las=1)
+plot(qu$seqs, las=1, type='n', bty='n', xaxs='i', yaxs='i', 
+     ylim=c(0, 5200), las=1, ann=FALSE, , yaxt='n',
+     ylab='Number of sequences per sample', xaxt='n')
+axis(side=2, at=c(cutoffs))
+abline(h=cutoffs, col=col5, las=1)
+for(i in 1:5) {
+  polygon(c(1, nr, nr, 1), c(bottom[i], bottom[i], cutoffs[i], cutoffs[i]), 
+          border='transparent', col=col5[i])
+  }
+par(xpd=TRUE)
+segments(c(nr-xcut), cutoffs, c(nr-xcut), -20, 
+         lty=3, lwd=2, col='gray40')
+points(1:nrow(qu), qu$seqs, pch=21, bg=rgb(0,0,0,.3), col=rgb(0,0,0,.7))
+text(c(0, nr-xcut), 0, c(nr, xcut), pos=1)
+mtext('Seqs per sample', side=2, line=3.5, las=0)
+mtext('How many samples lost?', side=1, line=2)
+```
+
+

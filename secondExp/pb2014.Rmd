@@ -1,0 +1,166 @@
+---
+title: "PB2014_prepNjive"
+output: html_document
+---
+
+
+
+```{r setSeed}
+set.seed(1314)
+```
+
+```{r loadPackages, message=FALSE}
+library(knitr)
+library(wesanderson)
+library(vegan)
+```
+
+
+
+```{r inputData}
+rm(list=ls())
+load('dataCleanup.RData')
+```
+
+
+
+### Rarefy to even sampling depth - This has been changed to 0 to subset in another script
+
+Add up observations in each sample. For analysis like this, we should rarefy to even sampling depth so some samples are not biased just by having more or fewer observations. 
+
+```{r checkSampleSum}
+# sort(rowSums(tableNoCon))
+```
+
+
+In the next script, the decision was made to not rarefy, but rather analyze separate subsets of the OTU table. 
+
+```{r rarefy}
+rrare <- 0
+table.tmp <- tableNoCon[which(rowSums(tableNoCon) > rrare), ]
+table.tmp <- table.tmp[intersect(row.names(mapNoCon), row.names(table.tmp)), ]
+# tab <- rrarefy(table.tmp, rrare)
+tab <- table.tmp
+```
+
+
+
+
+```{r jiveTaxa}
+# tab <- tab[, -which(colSums(tab) == 0)]  # already happened above. 
+taxa <- taxaNoCon[colnames(tab), ]
+dim(tab); dim(taxa)
+```
+
+
+
+
+```{r jiveMap}
+map <- mapNoCon[row.names(tab), ]
+dim(map)
+```
+
+
+```{r cleanupWorkspace}
+rm(mapNoCon, table.tmp, tableNoCon, taxaNoCon)
+```
+
+
+
+### Build plotting info into map
+
+
+```{r assignIndices}
+filters <- which(map$SampleType == 'filter')
+swabs <- which(map$SampleType == 'swab')
+
+high <- which(map$Treatment == 'high')
+low <- which(map$Treatment == 'low')
+
+males <- which(map$Gender == 'male')
+females <- which(map$Gender == 'females')
+
+inside <- which(map$Location == 'inside')
+supply <- which(map$Location == 'sup')
+exhaust <- which(map$Location == 'exh')
+
+s1 <- which(map$Subject == 's01')
+s2 <- which(map$Subject == 's02')
+s3 <- which(map$Subject == 's03')
+s4 <- which(map$Subject == 's04')
+s5 <- which(map$Subject == 's05')
+s6 <- which(map$Subject == 's06')
+s7 <- which(map$Subject == 's07')
+s8 <- which(map$Subject == 's08')
+subjects <- c(s1, s2, s3, s4, s5, s6, s7, s8)
+
+```
+
+
+
+```{r wesAndersonColors}
+wesCols <- c(wes_palette('Darjeeling', 5),
+             wes_palette('Darjeeling2', 5))
+wesCols <- wesCols[c(1, 3, 4, 8, 
+                    2, 5, 7, 9, 6, 10)]
+maleCols <- wesCols[5:8]
+femaleCols <- wesCols[1:4]
+unCol <- wesCols[9:10]
+```
+
+
+
+```{r assignColors}
+map$col <- ''
+subs <- sort(unique(map$Subject))
+maleSub <- subs[c(1, 5, 6, 8)]
+femaleSub <- subs[c(2, 3, 4, 7)]
+for(i in 1:4){
+  map$col[map$Subject == maleSub[i]] <- maleCols[i]
+  map$col[map$Subject == femaleSub[i]] <- femaleCols[i]
+  }
+map$col[supply] <- 'gray' # unCol[1]
+map$col[exhaust] <- unCol[1]
+map$col[swabs] <- 'purple'
+
+map$colOcc <- map$col
+map$colOcc[inside] <- maleCols[1]
+
+map$colGender <- map$col
+map$colGender[intersect(inside, males)] <- maleCols[1]
+map$colGender[intersect(inside, females)] <- femaleCols[1]
+
+map$pch <- 21
+map$pch[c(supply, exhaust)] <- 24
+map$subLoc <- paste0(map$Subject, map$Location)
+sort(table(map$subLoc))
+```
+
+
+```{r reassignFactors}
+map <- droplevels(map)
+map$Description <- as.character(map$Description)
+```
+
+
+
+
+
+
+
+Since the map is final, one last step to reconcile the OTU table to the new mapping table row order. The same command also strips out OTUs that didn't make the rarefaction cut. Then reconcile the taxonomy table to the new trimmed OTU table, and everything is ready for analysis. 
+
+```{r reconcileTable}
+tab <- tab[row.names(map), ]
+```
+
+```{r checkReconcileTable, results='asis'}
+kable(data.frame(head(taxa)[, c(2, 5:7)]))
+```
+
+
+```{r saveSloan}
+save.image(file='pb2014.RData')
+```
+
+

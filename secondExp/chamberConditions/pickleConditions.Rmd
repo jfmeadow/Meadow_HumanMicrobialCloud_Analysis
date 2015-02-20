@@ -1,0 +1,79 @@
+
+```{r config, echo=FALSE}
+library(knitr)
+opts_chunk$set(background='gray80', tidy=FALSE, cache=FALSE, keep_md=TRUE, fig.path='figure/')
+```
+
+
+
+
+Read data.
+
+```{r inputData}
+# setwd('~/Dropbox/Pickle2014/RFirstRun/slidify/')
+trh <- read.delim('pressure.txt', sep='\t', head=TRUE, row.names=1)
+subNames <- c('S1', 'S2', 'S3', 'S4', 'S5', 'S6', 'S7', 'S8')
+#head(trh)
+```
+
+
+Plot air flow rates over the experiment. 
+
+```{r plotACH, fig.width=12}
+# pdf('ach.pdf', width=12, height=7)
+plot(trh$ach, type='l', ylim=c(0, 4), las=1, col='gray30', lwd=1,
+     yaxt='n', xaxt='n', xlab='', ylab='', bty='n')
+axis(2, at=c(1,3), las=1)
+mtext('Air Changes per Hour', side=2, line=2, cex=2, col='gray30')
+abline(v=seq(0, 1456, 182), col='gray90', lwd=3)
+par(xpd=TRUE)
+text(seq(0, 1365, 91)+45, 0.2, rep(c('high', 'low'), 8), 
+     srt=60, cex=2, font=2, col=c('tomato', 'cornflowerblue'))
+text(seq(91, 1365, 182), 4, c('S1', 'S2', 'S3', 'S4', 'S5', 'S6', 'S7', 'S8'), 
+     cex=2, font=2, col='gray30')
+# dev.off()
+```
+
+
+
+Plot temperature and relative humidity for each person. 
+
+```{r plotTRH, echo=FALSE, fig.width=12}
+
+FtoC <- function(x) {(x-32) * (5/9)}
+
+tempMax <- FtoC(apply(trh[, c(6, 8, 10, 12)], 1, FUN='max'))
+tempMin <- FtoC(apply(trh[, c(6, 8, 10, 12)], 1, FUN='min'))
+tempMean <- FtoC(apply(trh[, c(6, 8, 10, 12)], 1, FUN='mean'))
+
+rhMax <- apply(trh[, c(7, 9, 11, 13)], 1, FUN='max')
+rhMin <- apply(trh[, c(7, 9, 11, 13)], 1, FUN='min')
+rhMean <- apply(trh[, c(7, 9, 11, 13)], 1, FUN='mean')
+
+# pdf('trh.pdf', width=12, height=7)
+par(mar=c(1, 5, 1, 5))
+plot(1,1, type='n', ylim=FtoC(c(60, 80)), xlim=c(0, 1456),
+     yaxt='n', xaxt='n', xlab='', ylab='', bty='n')
+polygon(c(1:1456, 1456:1), c(tempMax, rev(tempMin)), 
+        col='gray70', border='gray70')
+points(1:1456, tempMean, col='tomato', lwd=2, type='l')
+axis(2, las=1, at=seq(21, 26, 1))
+
+par(new=TRUE, mar=c(1, 5, 1, 5))
+plot(1,1, type='n', ylim=c(25, 60), xlim=c(0, 1456),
+     yaxt='n', xaxt='n', xlab='', ylab='', bty='n')
+polygon(c(1:1456, 1456:1), c(rhMax, rev(rhMin)), 
+        col='gray70', border='gray70')
+points(1:1456, rhMean, col='cornflowerblue', lwd=2, type='l')
+axis(4, las=1, at=seq(25, 45, 5))
+abline(v=seq(0, 1456, 182), col='gray90', lwd=3)
+text(1456, 37, 'Rel Humidity (%)', cex=2, col='cornflowerblue', pos=2)
+text(seq(91, 1365, 182), 60, subNames, 
+     cex=2, font=2, col='gray40')
+text(0, 55, 'Temp (C)', cex=2, col='tomato', pos=4)
+# dev.off()
+```
+
+
+
+Since all conditions were as we expected, this analysis goes no further. Yay! 

@@ -1,0 +1,33 @@
+Notes on bacterial identities reported in the manuscript. 
+
+James Meadow
+
+February 20, 2015
+
+------
+
+Several of the strongest indicator OTUs were used in the tree/barplot figure to exemplify the clustering by person. 
+These are the OTU IDs that were found in R, and those were cross referenced to the representative sequence file: 
+
+This comes from aciss, which has now been moved to long term storage: 
+/home4/jmeadow/pickleForward/labelOTUs/
+
+[1] "OTU_24"   "OTU_16"   "OTU_539"  "OTU_22"   "OTU_3524" "OTU_1668" "OTU_3668" "OTU_91"  
+
+24: 100% Lactobacillus crispatus NR_119274.1
+
+16: 100% Gardnerella vaginalis NR_074227.1
+
+539: 100% Corynebacterium massiliense NR_044182.1
+
+22: 100% Corynebacterium imitans NR_026369.1
+
+3524: 98% Corynebacterium epidermidicanis NR_108533.1
+
+1668: 97% Anaerococcus octavius NR_026360.1
+
+3668: 98% Corynebacterium sundsvallense NR_026375.1
+
+91: Propionibacterium acnes NR_074675.1
+
+

@@ -1,0 +1,470 @@
+---
+  output: html_document
+---
+  
+  
+```{r config}
+library(knitr)
+opts_chunk$set(background='gray80', tidy=FALSE, cache=FALSE)
+```
+
+
+cutoffs = 0.3, 0.5, 1, 2.5, 5, 10+ 
+
+
+```{r readData}
+calibrate <- read.delim('calibrate/combined.txt', sep='\t', head=TRUE)
+part <- read.delim('subjectCounts/particlesCombined.txt', head=TRUE, sep='\t')
+names(part)
+```
+
+
+
+
+
+# Calibrate particle loss ratio. 
+
+
+
+```{r checkDateTime}
+identical(calibrate$dataTimeSupply, calibrate$dataTimeInside)
+dateTime <- calibrate$dataTimeSupply
+ach <- calibrate$ACH
+```
+
+
+## Convert from .1ft3 to Liters per minute
+
+```{r convertToLiters}
+head(calibrate)
+calibrate <- calibrate[, c(2:7, 9:14)]/2.83
+calibrate$dateTime <- dateTime
+calibrate$ach <- ach
+```
+
+
+
+```{r subsetCalibrate}
+ach0 <- calibrate[calibrate$ach == 0, ]
+ach1 <- calibrate[calibrate$ach == 1, ]
+ach3 <- calibrate[calibrate$ach == 3, ]
+dim(ach0); dim(ach1); dim(ach3)
+```
+
+
+
+## 0 ACH
+
+The empty chamber gives the same 10+um particle counts from both counters. That means we can consider them representative and move on to calculate particle loss ratio in air change rate treatments. 
+
+```{r plotCalCorrelations}
+mean(ach0$Ch6DiffInside - ach0$Ch6DiffSupply)
+boxplot(ach0$Ch6DiffInside - ach0$Ch6DiffSupply)
+t.test(ach0$Ch6DiffInside - ach0$Ch6DiffSupply)
+```
+
+
+Somewhat different
+
+```{r plot510CalCorrelations}
+mean(ach0$Ch5DiffInside - ach0$Ch5DiffSupply)
+boxplot(ach0$Ch5DiffInside - ach0$Ch5DiffSupply)
+t.test(ach0$Ch5DiffInside - ach0$Ch5DiffSupply)
+```
+
+Way different. 
+
+```{r plot35CalCorrelations}
+mean(ach0$Ch4DiffInside - ach0$Ch4DiffSupply)
+boxplot(ach0$Ch4DiffInside - ach0$Ch4DiffSupply)
+t.test(ach0$Ch4DiffInside - ach0$Ch4DiffSupply)
+```
+
+
+Way way different. 
+
+```{r plot13CalCorrelations}
+mean(ach0$Ch3DiffInside - ach0$Ch3DiffSupply)
+boxplot(ach0$Ch3DiffInside - ach0$Ch3DiffSupply)
+t.test(ach0$Ch3DiffInside - ach0$Ch3DiffSupply)
+```
+
+
+
+
+
+## 1 ACH
+
+Check for time lag correlation. 
+
+3 minute is best but still weak. 
+
+```{r corTimeLag1ACHch6}
+cor.test(ach1$Ch6DiffInside, ach1$Ch6DiffSupply)
+cor.test(ach1$Ch6DiffInside[-1], ach1$Ch6DiffSupply[-91])
+cor.test(ach1$Ch6DiffInside[-c(1:2)], ach1$Ch6DiffSupply[-c(90:91)])
+cor.test(ach1$Ch6DiffInside[-c(1:3)], ach1$Ch6DiffSupply[-c(89:91)])  # best fit but weak.
+cor.test(ach1$Ch6DiffInside[-c(1:4)], ach1$Ch6DiffSupply[-c(88:91)])
+```
+
+
+Best fit is 4 minute lag. 
+
+```{r corTimeLag1ACHch5}
+cor.test(ach1$Ch5DiffInside, ach1$Ch5DiffSupply)
+cor.test(ach1$Ch5DiffInside[-1], ach1$Ch5DiffSupply[-91])
+cor.test(ach1$Ch5DiffInside[-c(1:2)], ach1$Ch5DiffSupply[-c(90:91)])
+cor.test(ach1$Ch5DiffInside[-c(1:3)], ach1$Ch5DiffSupply[-c(89:91)])  
+cor.test(ach1$Ch5DiffInside[-c(1:4)], ach1$Ch5DiffSupply[-c(88:91)])  # best fit
+cor.test(ach1$Ch5DiffInside[-c(1:5)], ach1$Ch5DiffSupply[-c(87:91)])
+```
+
+
+No good fit. 
+
+```{r corTimeLag1ACHch4}
+cor.test(ach1$Ch4DiffInside, ach1$Ch4DiffSupply)
+cor.test(ach1$Ch4DiffInside[-1], ach1$Ch4DiffSupply[-91])
+cor.test(ach1$Ch4DiffInside[-c(1:2)], ach1$Ch4DiffSupply[-c(90:91)])
+cor.test(ach1$Ch4DiffInside[-c(1:3)], ach1$Ch4DiffSupply[-c(89:91)])  
+cor.test(ach1$Ch4DiffInside[-c(1:4)], ach1$Ch4DiffSupply[-c(88:91)])  
+cor.test(ach1$Ch4DiffInside[-c(1:5)], ach1$Ch4DiffSupply[-c(87:91)])  
+```
+
+
+Decent fit with 4 minutes. 
+
+```{r corTimeLag1ACHch3}
+cor.test(ach1$Ch3DiffInside, ach1$Ch3DiffSupply)
+cor.test(ach1$Ch3DiffInside[-1], ach1$Ch3DiffSupply[-91])
+cor.test(ach1$Ch3DiffInside[-c(1:2)], ach1$Ch3DiffSupply[-c(90:91)])
+cor.test(ach1$Ch3DiffInside[-c(1:3)], ach1$Ch3DiffSupply[-c(89:91)])  
+cor.test(ach1$Ch3DiffInside[-c(1:4)], ach1$Ch3DiffSupply[-c(88:91)])  
+cor.test(ach1$Ch3DiffInside[-c(1:5)], ach1$Ch3DiffSupply[-c(87:91)])  
+```
+
+
+
+
+
+
+## Find loss rate ratio. 
+
+```{r}
+zeros <- which(ach1$Ch6DiffSupply == 0 | ach1$Ch6DiffInside == 0)
+ch6ach1LRR <- mean(ach1$Ch6DiffSupply[-zeros] / ach1$Ch6DiffInside[-zeros])
+boxplot(ach1$Ch6DiffInside - ach1$Ch6DiffSupply)
+boxplot(ach1$Ch6DiffInside - ach1$Ch6DiffSupply/ch6ach1LRR)
+t.test(ach1$Ch6DiffInside - ach1$Ch6DiffSupply)
+t.test(ach1$Ch6DiffInside - ach1$Ch6DiffSupply/ch6ach1LRR)
+```
+
+
+
+
+```{r}
+# zeros <- which(ach1$Ch5DiffSupply == 0 | ach1$Ch5DiffInside == 0)
+ch5ach1LRR <- mean(ach1$Ch5DiffSupply / ach1$Ch5DiffInside)
+boxplot(ach1$Ch5DiffInside - ach1$Ch5DiffSupply/ch5ach1LRR)
+boxplot(ach1$Ch5DiffInside - ach1$Ch5DiffSupply)
+t.test(ach1$Ch5DiffInside - ach1$Ch5DiffSupply)
+t.test(ach1$Ch5DiffInside - ach1$Ch5DiffSupply/ch5ach1LRR)
+```
+
+Check Channel 5 with 4 minute lag.  -  only a marginal difference. Maybe not worth considering. 
+
+```{r}
+mean(ach1$Ch5DiffInside[-c(1:4)] - ach1$Ch5DiffSupply[-c(88:91)])
+sd(ach1$Ch5DiffInside[-c(1:4)] - ach1$Ch5DiffSupply[-c(88:91)])
+boxplot(ach1$Ch5DiffInside[-c(1:4)] - ach1$Ch5DiffSupply[-c(88:91)])
+t.test(ach1$Ch5DiffInside[-c(1:4)] - ach1$Ch5DiffSupply[-c(88:91)])
+```
+
+
+
+
+
+Channel 4. 
+
+```{r}
+ch4ach1LRR <- mean(ach1$Ch4DiffSupply / ach1$Ch4DiffInside)
+boxplot(ach1$Ch4DiffInside - ach1$Ch4DiffSupply)
+boxplot(ach1$Ch4DiffInside - ach1$Ch4DiffSupply/ch4ach1LRR)
+t.test(ach1$Ch4DiffInside - ach1$Ch4DiffSupply)
+t.test(ach1$Ch4DiffInside - ach1$Ch4DiffSupply/ch4ach1LRR)
+```
+
+Channel 4 with time lag. No difference in variance - tried several times. 
+
+```{r}
+mean(ach1$Ch4DiffInside[-c(1:5)] - ach1$Ch4DiffSupply[-c(87:91)])
+sd(ach1$Ch4DiffInside[-c(1:5)] - ach1$Ch4DiffSupply[-c(87:91)])
+boxplot(ach1$Ch4DiffInside - ach1$Ch4DiffSupply)
+t.test(ach1$Ch4DiffInside - ach1$Ch4DiffSupply)
+```
+
+
+
+Channel 3. 
+
+```{r}
+ch3ach1LRR <- mean(ach1$Ch3DiffSupply / ach1$Ch3DiffInside)
+boxplot(ach1$Ch3DiffInside - ach1$Ch3DiffSupply)
+boxplot(ach1$Ch3DiffInside - ach1$Ch3DiffSupply/ch3ach1LRR)
+t.test(ach1$Ch3DiffInside - ach1$Ch3DiffSupply)
+t.test(ach1$Ch3DiffInside - ach1$Ch3DiffSupply/ch3ach1LRR)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Real particle counts
+
+
+
+```{r}
+part[, c(4:15, 17:28)] <- part[, c(4:15, 17:28)]/2.8
+part$subTreat <- factor(paste0(part$subject, part$treatment))
+part$diff10 <- part$Ch6DiffInside - part$Ch6DiffSupply/ch6ach1LRR
+part$diff510 <- part$Ch5DiffInside - part$Ch5DiffSupply/ch5ach1LRR
+part$diff35 <- part$Ch4DiffInside - part$Ch4DiffSupply/ch4ach1LRR
+part$diff13 <- part$Ch3DiffInside - part$Ch3DiffSupply/ch3ach1LRR
+```
+
+
+
+3 minute delay?
+
+```{r, eval=TRUE}
+plot(jitter(c(0, part$Ch6DiffInside)) ~ jitter(c(part$Ch6DiffSupply, 0)))
+segments(0,0,100,100)
+cor.test(c(0, part$Ch6DiffInside), c(part$Ch6DiffSupply, 0))
+
+
+test <- part[part$subTreat == 's8low', ]
+
+cor.test(test$Ch6DiffInside, test$Ch6DiffSupply)
+plot(jitter(test$Ch6DiffInside), jitter(test$Ch6DiffSupply))
+
+cor.test(test$Ch6DiffInside[2:90], test$Ch6DiffSupply[1:89])
+plot(jitter(test$Ch6DiffInside[2:90]), jitter(test$Ch6DiffSupply[1:89]))
+
+cor.test(test$Ch6DiffInside[3:90], test$Ch6DiffSupply[1:88])
+plot(jitter(test$Ch6DiffInside[3:90]), jitter(test$Ch6DiffSupply[1:88]))
+
+cor.test(test$Ch6DiffInside[4:90], test$Ch6DiffSupply[1:87])
+plot(jitter(test$Ch6DiffInside[4:90]), jitter(test$Ch6DiffSupply[1:87]))
+
+cor.test(test$Ch6DiffInside[5:90], test$Ch6DiffSupply[1:86])
+plot(jitter(test$Ch6DiffInside[5:90]), jitter(test$Ch6DiffSupply[1:86]))
+
+##
+plot(jitter(c(0, part$Ch5DiffInside)) ~ jitter(c(part$Ch5DiffSupply, 0)))
+segments(0,0,100,100)
+cor.test(c(0, part$Ch5DiffInside), c(part$Ch5DiffSupply, 0))
+
+cor.test(test$Ch5DiffInside, test$Ch5DiffSupply)
+plot(jitter(test$Ch5DiffInside), jitter(test$Ch5DiffSupply))
+
+cor.test(test$Ch5DiffInside[2:90], test$Ch5DiffSupply[1:89])
+plot(jitter(test$Ch5DiffInside[2:90]), jitter(test$Ch5DiffSupply[1:89]))
+
+cor.test(test$Ch5DiffInside[3:90], test$Ch5DiffSupply[1:88])
+plot(jitter(test$Ch5DiffInside[3:90]), jitter(test$Ch5DiffSupply[1:88]))
+
+cor.test(test$Ch5DiffInside[4:90], test$Ch5DiffSupply[1:87])
+plot(jitter(test$Ch5DiffInside[4:90]), jitter(test$Ch5DiffSupply[1:87]))
+
+cor.test(test$Ch5DiffInside[5:90], test$Ch5DiffSupply[1:86])
+plot(jitter(test$Ch5DiffInside[5:90]), jitter(test$Ch5DiffSupply[1:86]))
+
+```
+
+
+
+```{r, eval=TRUE}
+part <- part[, c('subTreat', 'diff10', 'diff510', 'diff35', 'diff13')]
+```
+
+
+
+
+```{r}
+dim(part)
+```
+
+
+
+
+```{r}
+cols <- rep('tomato', 10)
+cols[c(1, 5, 6, 8)] <- 'cornflowerblue'
+#males <- c(1, 5, 6, 8)
+#females <- c(2, 3, 4, 7)
+```
+
+
+
+```{r}
+for (i in 1:nlevels(part$subTreat)) {
+	lev <- levels(part$subTreat)[i]
+	assign(lev, part[part$subTreat == lev, ])
+	}
+	
+list.Low <- ls(pattern = 'low')
+list.High <- ls(pattern = 'high')
+
+```
+
+
+
+
+```{r}
+for (i in 1:length(list.Low)) {
+	print(dim(get(list.Low[i])))
+	}
+for (i in 1:length(list.High)) {
+	print(dim(get(list.High[i])))
+	}
+```
+
+
+```{r}
+plot(s1low$diff10, type='l')
+plot(s1high$diff10, type='l')
+```
+
+
+```{r}
+## Low
+Agg18 <- rep(letters[1:18], each = 5)
+for (i in 1:length(list.Low)) {
+	name <- paste("agg.", list.Low[i], sep = "")
+	assign(name, aggregate(get(list.Low[i])[, -1], by = list(Agg18), FUN = "sum"))
+}
+
+Agg.df <- data.frame(matrix(0, 0, 5))
+Aggs <- ls(pattern = "agg.")
+for (i in 1:length(Aggs)) {
+	Agg.tmp <- get(Aggs[i])
+	# print(get(Aggs[i]))
+	Agg.df <- data.frame(rbind(Agg.df, 
+		data.frame(rep(letters[i], nrow(Agg.tmp)), 
+			Agg.tmp[, 2:5])))
+
+}
+names(Agg.df)[1] <- 'group'
+# Agg.df
+
+rm(list=ls(pattern='agg.'))
+```
+
+
+```{r}
+
+
+## High
+Agg18 <- rep(letters[1:18], each = 5)
+for (i in 1:length(list.High)) {
+	name <- paste("agg.", list.High[i], sep = "")
+	assign(name, aggregate(get(list.High[i])[, -1], by = list(Agg18), FUN = "sum"))
+}
+
+Agg.df.High <- data.frame(matrix(0, 0, 5))
+Aggs <- ls(pattern = "agg.")
+for (i in 1:length(Aggs)) {
+	Agg.tmp <- get(Aggs[i])
+	# print(get(Aggs[i]))
+	Agg.df.High <- data.frame(rbind(Agg.df.High, 
+		data.frame(rep(letters[i], nrow(Agg.tmp)), 
+			Agg.tmp[, 2:5])))
+
+}
+names(Agg.df.High)[1] <- 'group'
+# Agg.df.High
+```
+
+
+```{r}
+boxplot(Agg.df$diff10 ~ Agg.df$group, cex=.6, col=cols, pch=16, 
+	las=1, xaxt='n', 
+	ylab='')
+mtext(expression(paste('Particles (>10', mu, 'm) L' ^{-1},  ' min' ^{-1})), 
+	side=2, line=2)
+abline(h=0, col='gray', lty=3, lwd=2)
+mtext('People', side=1)
+mtext(c('Men', 'Women'), side=1, at=c(3.5, 5.5), line=1.5, font=2, cex=1.4,
+	col=c('cornflowerblue', 'tomato'))
+```
+
+
+
+```{r}
+boxplot(Agg.df.High$diff10 ~ Agg.df.High$group, cex=.6, col=cols, pch=16, 
+	las=1, xaxt='n', 
+	ylab='')
+mtext(expression(paste('Particles (>10', mu, 'm) L' ^{-1},  ' min' ^{-1})), 
+	side=2, line=2)
+abline(h=0, col='gray', lty=3, lwd=2)
+mtext('People', side=1)
+mtext(c('Men', 'Women'), side=1, at=c(3.5, 5.5), line=1.5, font=2, cex=1.4,
+	col=c('cornflowerblue', 'tomato'))
+
+```
+
+
+```{r}
+
+
+boxplot(Agg.df$diff510 ~ Agg.df$group, cex=.6, col=cols, pch=16, 
+	las=1, xaxt='n', 
+	ylab='')
+mtext(expression(paste('Particles (>10', mu, 'm) L' ^{-1},  ' min' ^{-1})), 
+	side=2, line=2)
+abline(h=0, col='gray', lty=3, lwd=2)
+mtext('People', side=1)
+mtext(c('Men', 'Women'), side=1, at=c(3.5, 5.5), line=1.5, font=2, cex=1.4,
+	col=c('cornflowerblue', 'tomato'))
+```
+
+
+
+```{r}
+boxplot(Agg.df.High$diff510 ~ Agg.df.High$group, cex=.6, col=cols, pch=16, 
+	las=1, xaxt='n', 
+	ylab='')
+mtext(expression(paste('Particles (>10', mu, 'm) L' ^{-1},  ' min' ^{-1})), 
+	side=2, line=2)
+abline(h=0, col='gray', lty=3, lwd=2)
+mtext('People', side=1)
+mtext(c('Men', 'Women'), side=1, at=c(3.5, 5.5), line=1.5, font=2, cex=1.4,
+	col=c('cornflowerblue', 'tomato'))
+
+```
+
+
+
+
+
+```{r}
+save(Agg.df, file='particleCounts.RData')
+```
+

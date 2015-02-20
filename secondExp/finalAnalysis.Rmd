@@ -1,0 +1,1160 @@
+---
+output: html_document
+---
+
+
+```{r config}
+library(knitr)
+opts_chunk$set(background='gray80', tidy=FALSE, cache=FALSE)
+```
+
+# PickleBox2014
+
+
+## Analyze subsets
+
+
+
+_James F Meadow_ (`jfmeadow at gmail dot com`)
+
+
+```{r loadPackages, message=FALSE}
+library(vegan)
+library(labdsv)
+library(ape)
+library(scales)
+```
+
+
+Load particle count data and previous Rdata from `pb2014.Rmd` script. 
+
+```{r importData}
+rm(list=ls())
+load('pb2014.RData')
+load('particle/particleCounts.RData')
+```
+
+```{r setSeed}
+set.seed(1314)
+```
+
+```{r keepOriginals}
+tab.big <- tab
+map.big <- map
+taxa.big <- taxa
+```
+
+
+```{r getStats}
+dim(tab.big)
+row.names(tab.big)
+```
+
+
+Subset into individuals for exploration. 
+
+```{r checkRarefactionLevels, eval=TRUE}
+# sort(rowSums(tab.filtersHigh))
+# sort(rowSums(tab.filtersLow))
+
+s1high <- Reduce(intersect, list(filters, high, s1))
+s2high <- Reduce(intersect, list(filters, high, s2))
+s3high <- Reduce(intersect, list(filters, high, s3))
+s4high <- Reduce(intersect, list(filters, high, s4))
+s5high <- Reduce(intersect, list(filters, high, s5))
+s6high <- Reduce(intersect, list(filters, high, s6))
+s7high <- Reduce(intersect, list(filters, high, s7))
+s8high <- Reduce(intersect, list(filters, high, s8))
+
+s1low <- Reduce(intersect, list(filters, low, s1))
+s2low <- Reduce(intersect, list(filters, low, s2))
+s3low <- Reduce(intersect, list(filters, low, s3))
+s4low <- Reduce(intersect, list(filters, low, s4))
+s5low <- Reduce(intersect, list(filters, low, s5))
+s6low <- Reduce(intersect, list(filters, low, s6))
+s7low <- Reduce(intersect, list(filters, low, s7))
+s8low <- Reduce(intersect, list(filters, low, s8))
+
+allLow <- Reduce(intersect, list(filters, low, inside))
+allHigh <- Reduce(intersect, list(filters, high, inside))
+```
+
+```{r configNMDS}
+pbDist <- 'bray'
+# pbDist <- 'canberra'
+```
+
+
+
+Change subject numbers so it flows with previous experiment. 
+
+```{r newSubNames}
+map$Subject2[map$Subject == 's01'] <- 's04'
+map$Subject2[map$Subject == 's02'] <- 's05'
+map$Subject2[map$Subject == 's03'] <- 's06'
+map$Subject2[map$Subject == 's04'] <- 's07'
+map$Subject2[map$Subject == 's05'] <- 's08'
+map$Subject2[map$Subject == 's06'] <- 's09'
+map$Subject2[map$Subject == 's07'] <- 's10'
+map$Subject2[map$Subject == 's08'] <- 's11'
+map$Subject2 <- factor(map$Subject2, 
+                           levels=c('s11', 's09', 's08', 's05', 's07', 's04', 's10', 's06'))
+
+
+```
+
+
+
+
+Get sub dataset of occupied samples from low air flow. 
+
+
+```{r getTopTaxa}
+occLow <- which(map$Location == 'inside' & map$Treatment == 'low')
+occTab <- tab[occLow, ]
+occTab <- occTab[sort(row.names(occTab)), ]
+occTab <- occTab/rowSums(occTab)
+occMap <- map[row.names(occTab), ]
+```
+
+Create dataset of just targetted human-associated families. This list comes from the most influencial indicator taxa we found in the first experiment. 
+
+
+```{r justHumanAssociated}
+humAss <- sort(c(grep('Corynebacteriaceae', taxa$Family),
+                 grep('Staphylococcaceae', taxa$Family),
+                 grep('Streptococcaceae', taxa$Family),
+                 grep('Lactobacillaceae', taxa$Family),
+                 grep('Propionibacteriaceae', taxa$Family),
+                 grep('Peptostreptococcaceae', taxa$Family),
+                 grep('Bifidobacteriaceae', taxa$Family),
+                 grep('Micrococcaceae', taxa$Family),
+                 grep('Carnobacteriaceae', taxa$Family),
+                 grep('Dietziaceae', taxa$Family), 
+                 grep('Aerococcaceae', taxa$Family), 
+                 grep('Tissierellaceae', taxa$Family)))
+
+
+occTabHA <- occTab[, humAss]
+occTaxHA <- taxa[humAss, ]
+
+tabHA <- (tab/rowSums(tab))[, humAss]
+
+identical(colnames(occTabHA), row.names(occTaxHA))
+identical(row.names(occTabHA), row.names(occMap))
+```
+
+
+Check order of subjects and their colors. 
+
+```{r checkLevels}
+# occMap
+unique(occMap$col)
+levels(occMap$Subject)
+```
+
+
+Reorder subjects for plotting clarity. 
+
+```{r plotAllHATogether}
+occMap$SubOrder <- factor(occMap$Subject, levels=c('s08', 's06', 's05', 's02', 's04', 's01', 's07', 's03'))
+subOrder <- c(8,6,5,2,4,1,7,3)
+
+# Change names to make manuscript flow between 2 experiments. 
+occMap$SubOrder2[occMap$SubOrder == 's01'] <- 's04'
+occMap$SubOrder2[occMap$SubOrder == 's02'] <- 's05'
+occMap$SubOrder2[occMap$SubOrder == 's03'] <- 's06'
+occMap$SubOrder2[occMap$SubOrder == 's04'] <- 's07'
+occMap$SubOrder2[occMap$SubOrder == 's05'] <- 's08'
+occMap$SubOrder2[occMap$SubOrder == 's06'] <- 's09'
+occMap$SubOrder2[occMap$SubOrder == 's07'] <- 's10'
+occMap$SubOrder2[occMap$SubOrder == 's08'] <- 's11'
+occMap$SubOrder2 <- factor(occMap$SubOrder2, 
+                           levels=c('s11', 's09', 's08', 's05', 's07', 's04', 's10', 's06'))
+```
+
+
+
+Get a list of the subjects in order. 
+
+```{r, fig.height=12, fig.width=8, eval=TRUE}
+slows <- list(s1low, s2low, s3low, s4low, s5low, s6low, s7low, s8low)
+cols <- unique(occMap$col)
+```
+
+Create function to plot the tree with the targeted OTU bar plots. 
+
+```{r plotAllSubjectsTreeHABars} 
+clMeth <- 'ward'
+pbDist <- 'bray'
+# set <- occLow
+# rrare <- 0
+# ptOffset <- .4
+
+plotAllSubjectsTreeBars <- function(set, pbDist='bray', rrare=0, ptOffset=.4, 
+                                    bar0=47, barlen=20, cutLine=FALSE, x..lim=65, keep=FALSE) {
+  these <- set
+  dat <- tabHA[these, ]
+  dat <- dat[which(rowSums(dat) >= rrare), ]
+  bars <- rowSums(dat)
+  Dist <- vegdist(dat, pbDist)
+  dend <- hclust(Dist, method=clMeth)
+  phy <- as.phylo(dend)
+  
+  Map <- map[row.names(dat), ]
+  phy$tip.label <- as.character(Map$Subject2)
+  phy$order <- dend$order
+  
+  par(mar=c(4,0,1,1))
+  plot(phy, show.tip.label=TRUE, use.edge.length=FALSE, 
+    tip.color=Map$col, font=4, label.offset=1.5, cex=1.5, 
+    edge.width=2, edge.color='gray50', x.lim=x..lim)
+  tiplabels(pch=22, bg=Map$col, col='gray40', cex=2.4, adj=1.1)
+  
+  segments(rep(bar0, length(bars)), 1:length(bars), 
+           rep(bar0, length(bars)) + (barlen*bars[dend$order]), 
+           1:length(bars), 
+           lwd=5, lend='butt', col=Map$col[dend$order])
+  wlines <- c(bar0 + seq(.1, .6, .1)*barlen)
+  segments(wlines, rep(0, length(wlines)), 
+           wlines, rep(length(phy$tip.label)+1, length(wlines)), 
+           col='white')
+  axis(1, at=c(bar0, bar0+(barlen/2)), labels=c(0, .5))
+  if(cutLine != FALSE) {
+    cutt <- bar0 + (barlen*cutLine)
+    abline(v=cutt, lty=3, col='gray60', lwd=2)
+    axis(1, at=cutt, labels=cutLine)
+    }
+  if(keep == TRUE) {invisible(phy)}
+  }
+```
+
+
+
+
+The subject that classify best generally have higher percentages of human associated bugs. 
+Clearly, it works better for those who shed more during the experiment. 
+
+This was for debugging - not evaluated. 
+
+```{r bestSubjectsBoxplot, fig.width=5, fig.height=5, eval=FALSE}
+# boxplot(rowSums(tabHA[occLow, ]) ~ map[occLow, 'Subject'], col=cols)
+par(fg='gray30', col.axis='gray30')
+boxplot(rowSums(occTabHA) ~ occMap$SubOrder2, 
+        col=unique(occMap$col)[c(8,6,5,2,4,1,7,3)], 
+        las=1, cex=0, border='gray40')
+abline(h=.2, lty=3, col='gray60', lwd=2)
+points(rowSums(occTabHA) ~ jitter(as.numeric(occMap$SubOrder2), .4), 
+       pch=16, col=rgb(0,0,0,.5))
+mtext('Relative Proportion of\nTargeted Human-Associated OTUs', 
+      side=2, line=2.3)
+mtext('Human Cloud Subjects', side=1, line=2.2)
+```
+
+
+Make a list of subjects who clustered well for further analysis. 
+
+
+```{r makeBestSubs}
+bestSubs <- c(Reduce(intersect, list(occLow, c(s8, s6, s5, s4, s2))))
+```
+
+
+Function for plotting individual occupant trees with their exhaust and supply samples. 
+
+```{r plotEachSubjectTree} 
+plotEachSubjectTree <- function(lst, pbDist, rrare=0, ptOffset=.4, 
+                                bar0=rep(16, length(lst)), 
+                                barlen=rep(4, length(lst)), 
+                                cutLine=FALSE) {
+  for(i in 1:length(lst)) {
+    these <- lst[[i]]
+    dat <- tabHA[these, ]
+    dat <- dat[which(rowSums(dat) >= rrare), ]
+    bars <- rowSums(dat)
+    Dist <- vegdist(dat, pbDist)
+    dend <- hclust(Dist, method=clMeth)
+    phy <- as.phylo(dend)
+#     phy$tip.label <- gsub('^[[:alnum:]]{1}\\.[[:alnum:]]{1}\\.', '', phy$tip.label)
+#     phy$tip.label <- gsub('\\.[[:digit:]]{1}$', '', phy$tip.label)
+#     phy$tip.label <- gsub('s[[:digit:]]{2}\\.sup[[:digit:]]{1}$', 'sup', phy$tip.label)
+#     phy$tip.label <- gsub('s[[:digit:]]{2}\\.exh[[:digit:]]{1}$', 'exh', phy$tip.label)
+
+    bari <- bar0[i]
+    if (length(barlen) == 1) {barleni <- barlen}
+    if (length(barlen) !=1) {barleni <- barlen[i]}
+    Map <- map[row.names(dat), ]
+    phy$tip.label <- as.character(Map$Subject2)
+    
+    par(mar=c(2, 0, 1, 1))
+    plot(phy, show.tip.label=FALSE, use.edge.length=FALSE, 
+      #tip.color=Map$col, font=4, label.offset=1.5, 
+      edge.width=2, edge.color='gray50', x.lim=bari+(barleni*.6))
+    tiplabels(pch=22, bg=Map$col, col='gray40', cex=1.6, adj=1.1, lwd=.3)    
+
+    segments(rep(bari, length(bars)), 1:length(bars), 
+             rep(bari, length(bars)) + (barleni*bars[dend$order]), 
+             1:length(bars), 
+             lwd=5, lend='butt', col=Map$col[dend$order])
+    wlines <- c(bari + seq(.1, .6, .1)*barleni)
+    segments(wlines, rep(0, length(wlines)), 
+             wlines, rep(length(phy$tip.label)+1, length(wlines)), 
+             col='white')
+    axis(1, at=c(bari, bari+(barleni/2)), labels=c(0, .5), col='gray30')
+    axis(1, at=wlines[1:5], labels=FALSE, tck=-.02, col='gray30')
+    if(cutLine != FALSE) {
+      cutt <- bari + (barleni*cutLine)
+      abline(v=cutt, lty=3, col='gray60', lwd=2)
+      axis(1, at=cutt, labels=cutLine)
+      }      
+    }
+  }
+```
+
+```{r setupGroups}
+lowList <- list(s1low, s2low, s3low, s4low, s5low, s6low, s7low, s8low)
+highList <- list(s1high, s2high, s3high, s4high, s5high, s6high, s7high, s8high)
+```
+
+
+--------------
+
+
+# barplots
+
+
+Set up data frames to subset distance matrices into barplots. 
+
+```{r getLowSelfDistBarplot}
+se <- function(x) {sd(x)/sqrt(length(x))}
+distLowBarDF <- data.frame(matrix(0, nrow=8, ncol=6))
+distLowBarDFSE <- data.frame(matrix(0, nrow=8, ncol=6))
+names(distLowBarDF) <- c('self', 'selfExh', 'selfSup', 'other', 'otherExh', 'otherSup')
+names(distLowBarDFSE) <- c('self', 'selfExh', 'selfSup', 'other', 'otherExh', 'otherSup')
+pbDist <- 'jaccard'
+
+
+for(i in 1:8) {
+  these <- lowList[[i]]
+  dat <- tab[these, ]
+  dat <- dat[which(rowSums(dat) >=rrare), ]
+  dat <- dat[sort(row.names(dat)), ]
+  Dist <- 1-vegdist(dat, pbDist)
+  Map <- map[row.names(dat), ]
+  
+  self <- which(Map$Location == 'inside')
+  exh <- which(Map$Location == 'exh')
+  sup <- which(Map$Location == 'sup')
+  
+  DistSelf <- as.dist(as.matrix(Dist)[self, self])
+  DistExh <- as.matrix(Dist)[self, exh]
+  DistSup <- as.matrix(Dist)[self, sup]
+  
+  distLowBarDF$self[i] <- mean(DistSelf)
+  distLowBarDF$selfExh[i] <- mean(DistExh)
+  distLowBarDF$selfSup[i] <- mean(DistSup)
+  
+  distLowBarDFSE$self[i] <- se(DistSelf)
+  distLowBarDFSE$selfExh[i] <- se(DistExh)
+  distLowBarDFSE$selfSup[i] <- se(DistSup)
+  
+  }
+  
+```
+
+```{r getHighSelfDistBarplot}
+distHighBarDF <- data.frame(matrix(0, nrow=8, ncol=6))
+distHighBarDFSE <- data.frame(matrix(0, nrow=8, ncol=6))
+names(distHighBarDF) <- c('self', 'selfExh', 'selfSup', 'other', 'otherExh', 'otherSup')
+names(distHighBarDFSE) <- c('self', 'selfExh', 'selfSup', 'other', 'otherExh', 'otherSup')
+
+for(i in 1:8) {
+  these <- highList[[i]]
+  dat <- tab[these, ]
+  dat <- dat[which(rowSums(dat) >=rrare), ]
+  dat <- dat[sort(row.names(dat)), ]
+  Dist <- 1-vegdist(dat, pbDist)
+  Map <- map[row.names(dat), ]
+  
+  self <- which(Map$Location == 'inside')
+  exh <- which(Map$Location == 'exh')
+  sup <- which(Map$Location == 'sup')
+  
+  DistSelf <- as.dist(as.matrix(Dist)[self, self])
+  DistExh <- as.matrix(Dist)[self, exh]
+  DistSup <- as.matrix(Dist)[self, sup]
+  
+  distHighBarDF$self[i] <- mean(DistSelf)
+  distHighBarDF$selfExh[i] <- mean(DistExh)
+  distHighBarDF$selfSup[i] <- mean(DistSup)
+
+  distHighBarDFSE$self[i] <- se(DistSelf)
+  distHighBarDFSE$selfExh[i] <- se(DistExh)
+  distHighBarDFSE$selfSup[i] <- se(DistSup)
+  }
+  
+```
+
+```{r getLowOtherBarplot}
+distLowBarDF; distLowBarDFSE
+subs <- as.character(subs)
+dat <- tab[which(map$Treatment == 'low'), ]
+dat <- dat[which(rowSums(dat) >= rrare), ]
+Map <- map[row.names(dat), ]
+Dist <- as.matrix(1-vegdist(dat, pbDist))
+
+for(i in 1:8) {
+  distLowBarDF$other[i] <- 
+    mean(Dist[Map$Subject == subs[i] & Map$Location == 'inside', 
+              Map$Subject != subs[i] & Map$Location == 'inside'])  
+  distLowBarDF$otherExh[i] <- 
+    mean(Dist[Map$Subject == subs[i] & Map$Location == 'inside', 
+              Map$Subject != subs[i] & Map$Location == 'exh'])  
+  distLowBarDF$otherSup[i] <- 
+    mean(Dist[Map$Subject == subs[i] & Map$Location == 'inside', 
+              Map$Subject != subs[i] & Map$Location == 'sup'])  
+
+  distLowBarDFSE$other[i] <- 
+    se(Dist[Map$Subject == subs[i] & Map$Location == 'inside', 
+              Map$Subject != subs[i] & Map$Location == 'inside'])  
+  distLowBarDFSE$otherExh[i] <- 
+    se(Dist[Map$Subject == subs[i] & Map$Location == 'inside', 
+              Map$Subject != subs[i] & Map$Location == 'exh'])  
+  distLowBarDFSE$otherSup[i] <- 
+    se(Dist[Map$Subject == subs[i] & Map$Location == 'inside', 
+              Map$Subject != subs[i] & Map$Location == 'sup'])  
+
+  }
+```
+
+```{r getHighOtherBarplot}
+distHighBarDF$selfExh[which(distHighBarDF$selfExh == 'NaN')] <- NA
+distHighBarDFSE$selfExh[which(distHighBarDFSE$selfExh == 'NaN')] <- NA
+subs <- as.character(subs)
+dat <- tab[which(map$Treatment == 'high'), ]
+dat <- dat[which(rowSums(dat) >= rrare), ]
+Map <- map[row.names(dat), ]
+Dist <- as.matrix(1-vegdist(dat, pbDist))
+
+for(i in 1:8) {
+  distHighBarDF$other[i] <- 
+    mean(Dist[Map$Subject == subs[i] & Map$Location == 'inside', 
+              Map$Subject != subs[i] & Map$Location == 'inside'])  
+  distHighBarDF$otherExh[i] <- 
+    mean(Dist[Map$Subject == subs[i] & Map$Location == 'inside', 
+              Map$Subject != subs[i] & Map$Location == 'exh'])  
+  distHighBarDF$otherSup[i] <- 
+    mean(Dist[Map$Subject == subs[i] & Map$Location == 'inside', 
+              Map$Subject != subs[i] & Map$Location == 'sup'])  
+
+  distHighBarDFSE$other[i] <- 
+    se(Dist[Map$Subject == subs[i] & Map$Location == 'inside', 
+              Map$Subject != subs[i] & Map$Location == 'inside'])  
+  distHighBarDFSE$otherExh[i] <- 
+    se(Dist[Map$Subject == subs[i] & Map$Location == 'inside', 
+              Map$Subject != subs[i] & Map$Location == 'exh'])  
+  distHighBarDFSE$otherSup[i] <- 
+    se(Dist[Map$Subject == subs[i] & Map$Location == 'inside', 
+              Map$Subject != subs[i] & Map$Location == 'sup'])  
+  }
+```
+
+
+Put all of that into smaller plotting dataframes. 
+
+```{r plottingDataFrames}
+se. <- function(x) {
+  len <- length(x[which(!is.na(x))])
+  sd(x, na.rm=TRUE)/sqrt(len)
+  }
+
+plotLowDF <- data.frame(mean = apply(distLowBarDF, 2, mean), 
+                        se = apply(distLowBarDF, 2, se.))
+plotHighDF <- data.frame(mean = apply(distHighBarDF, 2, mean, na.rm=TRUE), 
+                        se = apply(distHighBarDF, 2, se.))
+plotLowDF <- plotLowDF[c(1, 4, 2, 5, 3, 6), ]
+plotHighDF <- plotHighDF[c(1, 4, 2, 5, 3, 6), ]
+```
+
+```{r setupBarPlot, eval=TRUE}
+space=rep(c(.4, .1), 3)
+cols <- c('gray', 'gray50')
+ylims <- c(0, .25)
+```
+
+```{r makeLowBarPlot, fig.height=8, fig.width=6, eval=TRUE}
+df <- plotLowDF
+len <- 0.03
+# pdf('sixLowBar.pdf', width=6, height=8)
+par(mar=c(5, 5, 4, 1), las=1)
+mids <- barplot(as.matrix(df$mean), beside=TRUE, 
+                col=cols, border='white', space=space, 
+                ylim=ylims, ylab='Canberra Similarity')
+abline(h=seq(0, .4, .05), col='white')
+arrows(mids, df$mean+df$se, mids, df$mean-df$se, 
+       code=3, length=len, angle=90, col='gray30', lwd=2)
+par(xpd=TRUE)
+segments(mids[c(1, 3, 5)]-.5, 0, mids[c(2, 4, 6)]+.5, 0, lwd=2, col='gray40')
+mtext(c('inside', 'exhaust', 'supply'), side=1, line=0.5, 
+      at=c(mean(mids[1:2]), mean(mids[3:4]), mean(mids[5:6])), 
+      font=2, cex=1.4, col='gray30')
+legend('topright', legend=c('self vs. self', 'self vs. other'), pt.cex=3, 
+       pch=15, col=c('gray', 'gray50'), bty='n', cex=1.4, text.col='gray30')           
+mtext('1 Air Change / Hour', col='gray30', line=1, font=2, cex=2)
+# dev.off()      
+```
+
+```{r makeHighBarPlot, fig.height=8, fig.width=6, eval=TRUE}
+df <- plotHighDF
+len <- 0.03
+# pdf('sixBarHigh.pdf', width=6, height=8)
+par(mar=c(5, 4, 4, 1), las=1)
+mids <- barplot(as.matrix(df$mean), beside=TRUE, 
+                col=cols, border='white', space=space, 
+                ylim=ylims)
+abline(h=seq(0, .4, .05), col='white')
+arrows(mids, df$mean+df$se, mids, df$mean-df$se, 
+       code=3, length=len, angle=90, col='gray30', lwd=2)
+par(xpd=TRUE)
+segments(mids[c(1, 3, 5)]-.5, 0, mids[c(2, 4, 6)]+.5, 0, lwd=2, col='gray40')
+mtext(c('inside', 'exhaust', 'supply'), side=1, line=0.5, 
+      at=c(mean(mids[1:2]), mean(mids[3:4]), mean(mids[5:6])), 
+      font=2, cex=1.4, col='gray30')
+legend('topright', legend=c('self vs. self', 'self vs. other'), pt.cex=3, 
+       pch=15, col=c('gray', 'gray50'), bty='n', cex=1.4, text.col='gray30')           
+mtext('3 Air Change / Hour', col='gray30', line=1, font=2, cex=2)
+# dev.off()      
+```
+
+
+Make supplementary barplot. 
+
+```{r makeLowHighBarPlot, fig.height=5, fig.width=7, eval=TRUE}
+df <- plotLowDF
+len <- 0.03
+space <- rep(c(.8, .02), 3)
+pdf('suppBarplots2.pdf', width=7, height=5)
+layout(matrix(c(1,2), 1, 2), widths=c(1, .9))
+par(mar=c(5, 5, 4, 1), las=1)
+mids <- barplot(as.matrix(df$mean), beside=TRUE, 
+                col='gray', border='white', space=space, 
+                ylim=ylims, ylab='Jaccard Similarity', yaxt='n')
+abline(h=seq(0, .4, .05), col='white')
+axis(2, tck=.02, labels=FALSE)
+axis(2, tick=FALSE, line=-.6)
+arrows(mids, df$mean+df$se, mids, df$mean-df$se, 
+       code=3, length=len, angle=90, col='gray30', lwd=2)
+par(xpd=TRUE)
+segments(mids[c(1, 3, 5)]-.5, 0, mids[c(2, 4, 6)]+.5, 0, lwd=2, col='gray40')
+mtext(c('self', 'other'), side=1, line=0, 
+      at=mids, font=1, cex=.8, col='gray30')
+mtext(c('Inside', 'Exhaust', 'Supply'), side=1, line=1, 
+      at=c(mean(mids[1:2]), mean(mids[3:4]), mean(mids[5:6])), 
+      font=2, cex=1, col='gray30')
+mtext('1 Air Change / Hour', col='gray30', line=1, font=2, cex=1)
+# legend('topright', legend=c('self vs. self', 'self vs. other'), pt.cex=3, 
+#        pch=15, col=c('gray', 'gray50'), bty='n', cex=1.4, text.col='gray30')           
+
+df <- plotHighDF
+par(mar=c(5, 3, 4, 1), las=1)
+mids <- barplot(as.matrix(df$mean), beside=TRUE, 
+                col='gray', border='white', space=space, 
+                ylim=ylims, yaxt='n')
+abline(h=seq(0, .4, .05), col='white')
+axis(2, tck=.02, labels=FALSE)
+axis(2, tick=FALSE, line=-.6)
+arrows(mids, df$mean+df$se, mids, df$mean-df$se, 
+       code=3, length=len, angle=90, col='gray30', lwd=2)
+par(xpd=TRUE)
+segments(mids[c(1, 3, 5)]-.5, 0, mids[c(2, 4, 6)]+.5, 0, lwd=2, col='gray40')
+mtext(c('self', 'other'), side=1, line=0, 
+      at=mids, font=1, cex=.8, col='gray30')
+mtext(c('Inside', 'Exhaust', 'Supply'), side=1, line=1, 
+      at=c(mean(mids[1:2]), mean(mids[3:4]), mean(mids[5:6])), 
+      font=2, cex=1, col='gray30')
+mtext('3 Air Changes / Hour', col='gray30', line=1, font=2, cex=1)
+dev.off()      
+
+```
+
+
+
+
+--------------------------------------
+
+## Particle count data
+
+```{r}
+boxplot(Agg.df$diff10 ~ Agg.df$group, cex=.6, col=unique(occMap$col), 
+        pch=16, las=1, xaxt='n', ylab='')
+mtext(expression(paste('Particles (>10', mu, 'm) L' ^{-1},  ' min' ^{-1})), 
+	side=2, line=2)
+abline(h=0, col='gray', lty=3, lwd=2)
+mtext('People', side=1)
+
+```
+
+
+```{r aggregateParticleData}
+partMean <- aggregate(Agg.df[, c('diff10', 'diff510', 'diff35', 'diff13')], by=list(Agg.df$group), FUN='mean')
+partSD <- aggregate(Agg.df[, c('diff10', 'diff510', 'diff35', 'diff13')], by=list(Agg.df$group), FUN='sd')
+partSE <- aggregate(Agg.df[, c('diff10', 'diff510', 'diff35', 'diff13')], by=list(Agg.df$group), FUN='se')
+```
+
+
+```{r aggregateHASums}
+haMean <- aggregate(rowSums(occTabHA), by=list(occMap$Subject), FUN='mean')
+names(haMean) <- c('group', 'mean')
+haMean$sd <- aggregate(rowSums(occTabHA), by=list(occMap$Subject), FUN='sd')$x
+haMean$se <- aggregate(rowSums(occTabHA), by=list(occMap$Subject), FUN='se')$x
+```
+
+
+
+Set up the plot, with three sizes of air particles on the same plot. 
+
+
+```{r plotHAandParticles10}
+# xmean <- partMean$diff10
+# ymean <- haMean$mean
+# xse <- partSE$diff10
+# yse <- haMean$se
+plotPartHA <- function(xmean=xmean, ymean=ymean, xse=xse, yse=yse, pch=21, New=FALSE) {
+  x.lim <- c(min(xmean - xse), 
+             max(xmean + xse))
+  y.lim <- c(min(ymean - yse), 
+             max(ymean + yse))  
+  if (New) {
+    par(new=TRUE)
+    plot(xmean, ymean, type='n', 
+         xlim=x.lim, ylim=y.lim, las=1, 
+         ann=FALSE, axes=FALSE, bty='n')
+    }
+  else {
+    par(new=FALSE)
+    plot(xmean, ymean, type='n', 
+         xlim=x.lim, ylim=y.lim, las=1, 
+         ann=FALSE, xaxt='n', bty='n')
+    }
+  arrows(xmean, ymean + yse, 
+         xmean, ymean - yse, 
+         code=3, angle=90, length=.02)
+  arrows(xmean + xse, ymean, 
+         xmean - xse, ymean, 
+         code=3, angle=90, length=.02)
+  points(xmean, ymean, 
+         bg=alpha(unique(occMap$col), alpha=.7), 
+         cex=3, pch=pch)
+}  
+
+
+plotPartHA(partMean$diff10, haMean$mean, partSE$diff10, haMean$se)
+plotPartHA(partMean$diff510, haMean$mean, partSE$diff510, haMean$se, New=TRUE, pch=22)
+plotPartHA(partMean$diff35, haMean$mean, partSE$diff35, haMean$se, New=TRUE, pch=24)
+plotPartHA(partMean$diff13, haMean$mean, partSE$diff13, haMean$se, New=TRUE, pch=23)
+
+plotPartHA(partMean$diff10, haMean$mean, partSE$diff10, haMean$se)
+plotPartHA(partMean$diff510, haMean$mean, partSE$diff510, haMean$se, New=TRUE, pch=22)
+plotPartHA(partMean$diff35, haMean$mean, partSE$diff35, haMean$se, New=TRUE, pch=24)
+# plotPartHA(partMean$diff13, haMean$mean, partSE$diff13, haMean$se, New=TRUE, pch=23)
+
+
+cor.test(partMean$diff10, haMean$mean)$estimate
+cor.test(partMean$diff510, haMean$mean)$estimate
+cor.test(partMean$diff35, haMean$mean)$estimate
+cor.test(partMean$diff13, haMean$mean)$estimate
+```
+
+
+
+A version of the tree plotting function that keeps the order of tips, so that data can be put on the tips in the right order.
+
+```{r plotAllSubjectsTreeHABars2} 
+clMeth <- 'ward'
+pbDist <- 'bray'
+
+plotAllSubjectsTreeBars2 <- function(set, pbDist='bray', rrare=0, ptOffset=2, 
+                                    bar0=47, barlen=20, cutLine=FALSE, x..lim=65, keep=FALSE) {
+  these <- set
+  dat <- tabHA[these, ]
+  dat <- dat[which(rowSums(dat) >= rrare), ]
+  bars <- rowSums(dat)
+  Dist <- vegdist(dat, pbDist)
+  dend <- hclust(Dist, method=clMeth)
+  phy <- as.phylo(dend)
+  
+  Map <- map[row.names(dat), ]
+  phy$tip.label <- as.character(Map$Subject2)
+  phy$order <- dend$order
+  
+  if (keep == FALSE) {
+    par(mar=c(5,0,1,1))
+    plot(phy, show.tip.label=FALSE, use.edge.length=FALSE, 
+      tip.color=Map$col, font=4, label.offset=1.5, cex=1.5, 
+      edge.width=2, edge.color='gray50', x.lim=x..lim)
+    tiplabels(pch=15, col=Map$col, cex=2, adj=ptOffset)
+    }
+  
+  if(keep == TRUE) {invisible(phy)}
+  }
+```
+
+
+
+----------------------------
+
+```{r changepbdist}
+pbDist <- 'bray'
+```
+
+
+
+## Check signif at splitting nodes. 
+
+In order to put statistics on clade separation, this was set up to get adonis test based on the current tree. After running these, statistics were put manually on the trees of the final version of the manuscript figures. 
+
+```{r}
+Phy <- plotAllSubjectsTreeBars2(set = bestSubs, pbDist = 'bray', rrare = 0, keep = TRUE)
+Phy$order
+Phy2 <- plotAllSubjectsTreeBars2(set=occLow, pbDist='bray', rrare=.2, keep=TRUE)
+# row.names(tabHA)[occLow]
+row.names(tabHA)[bestSubs][Phy$order]
+
+# testThese is the order on the tree being tested, from bottom to top. 
+checkSig <- function(these=bestSubs, order=Phy$order, testThese, pbDist='bray', clusters) {
+  TAB <- tabHA[these, ][order, ][testThese, ]
+  DIST <- vegdist(TAB, pbDist)
+  print(adonis(DIST ~ clusters))
+  }
+```
+
+
+Test clades in the bottom tree (bestSubs)
+
+```{r}
+# all in bottom tree, broken in at root. 
+checkSig(testThese=c(1:25), clusters=c(rep('a', 8), rep('b', 17)))
+
+# bottom two clades
+checkSig(testThese=c(1:8), clusters=c(rep('a', 3), rep('b', 5)))
+
+# top 3 clades, broken at 13/14
+checkSig(testThese=c(9:25), clusters=c(rep('a', 5), rep('b', 12)))
+
+# top 2 clades, red vs orange
+checkSig(testThese=c(14:25), clusters=c(rep('a', 4), rep('b', 8)))
+
+# Check top clade mess
+checkSig(testThese=c(18:25), clusters=c(rep('a', 3), rep('b', 5)))
+```
+
+
+Test clades in top tree (`rrare=.2`)
+
+```{r}
+check2 <- which(rowSums(tabHA)[occLow] > .2)
+row.names(tabHA)[occLow][check2][Phy2$order]
+these.2 <- occLow[check2]
+# bottom two clades
+checkSig(these=these.2, order=Phy2$order, testThese=c(1:9), clusters=c(rep('a', 5), rep('b', 4)))
+
+# s08 vs all other above
+checkSig(these=these.2, order=Phy2$order, testThese=c(6:22), clusters=c(rep('a', 4), rep('b', 13)))
+
+# s05 vs all above
+checkSig(these=occLow[check2], order=Phy2$order, testThese=c(10:22), clusters=c(rep('a', 4), rep('b', 9)))
+
+# s09 vs all above
+checkSig(these=occLow[check2], order=Phy2$order, testThese=c(14:22), clusters=c(rep('a', 4), rep('b', 5)))
+
+# s07 vs s04
+checkSig(these=occLow[check2], order=Phy2$order, testThese=c(18:22), clusters=c(rep('a', 3), rep('b', 2)))
+```
+
+
+
+---------------------------------------
+
+
+## Big figure
+
+This is the figure that ends up in the manuscript. 
+
+```{r plotBigFigure, fig.width=11, fig.height=7}
+pdf('secondExpPanels.pdf', width=11, height=7, useDingbats=FALSE)
+layout(matrix(c(1,1,2:5), 2, 3), widths=c(1, .7, .7), heights=c(.9, 1))
+
+plotAllSubjectsTreeBars(occLow, pbDist=pbDist, rrare=0, cutLine=.2, 
+                        x..lim=72, bar0=48, barlen=26)
+par(xpd=TRUE)
+text(52, -3, 'Targeted OTUs', col='gray20', cex=1.2) 
+par(xpd=FALSE)
+
+par(fg='gray30', col.axis='gray30', bty='l')
+boxplot(rowSums(occTabHA) ~ occMap$SubOrder2, 
+        col=unique(occMap$col)[c(8,6,5,2,4,1,7,3)], 
+        las=1, cex=0, border='gray40')
+abline(h=.2, lty=3, col='gray60', lwd=2)
+points(rowSums(occTabHA) ~ jitter(as.numeric(occMap$SubOrder2), .4), 
+       pch=16, col=rgb(0,0,0,.5))
+mtext('Relative Abundance of\nTargeted Human-Associated OTUs', 
+      side=2, line=2.3)
+mtext('Human Cloud Subjects', side=1, line=2.2)
+
+par(mar=c(8, 0, 1, 5))
+plotPartHA(partMean$diff10, haMean$mean, partSE$diff10, haMean$se)
+axis(side=1, line=0, tck=0.01, labels=FALSE)
+axis(side=1, line=-1, tck=0.0, lwd=0, lwd.ticks=0)
+plotPartHA(partMean$diff510, haMean$mean, partSE$diff510, haMean$se, New=TRUE, pch=22)
+axis(side=1, line=2, tck=0.01, labels=FALSE)
+axis(side=1, line=1, tck=0.0, lwd=0, lwd.ticks=0)
+plotPartHA(partMean$diff35, haMean$mean, partSE$diff35, haMean$se, New=TRUE, pch=24)
+axis(side=1, line=4, tck=0.01, labels=FALSE)
+axis(side=1, line=3, tck=0.0, lwd=0, lwd.ticks=0)
+# plotPartHA(partMean$diff13, haMean$mean, partSE$diff13, haMean$se, New=TRUE, pch=23)
+# axis(side=1, line=6, tck=0.01, labels=FALSE)
+# axis(side=1, line=5, tck=0.0, lwd=0, lwd.ticks=0)
+
+abline(h=.2, lty=3, col='gray60', lwd=2)
+par(xpd=TRUE)
+points(rep(146, 3), c(.05, 0, -.05), 
+       pch=c(21, 22, 24), cex=2, 
+       bg='gray40', col='gray40')
+text(rep(147, 3), c(.05, 0, -.05)-.005, 
+     c(expression(paste('>10', mu, 'm')), 
+       expression(paste('5-10', mu, 'm')), 
+       expression(paste('2.5-5', mu, 'm'))), pos=4)
+mtext(expression(paste('Airborne Particle Load L' ^{-1},  ' 10-min' ^{-1})), 
+      side=1, line=6)
+mtext('Relative Abundance of\nTargeted Human-Associated OTUs', 
+      side=2, line=2.3)
+
+
+par(xpd=FALSE)
+plotAllSubjectsTreeBars(occLow, pbDist=pbDist, rrare=.2, 
+                        bar0=28, barlen=25, x..lim=45)
+par(xpd=TRUE)
+text(34, -3, 'Targeted OTUs', col='gray20', cex=1.2) 
+par(xpd=FALSE)
+
+
+plotAllSubjectsTreeBars(bestSubs, pbDist=pbDist, rrare=0, 
+                        bar0=32, barlen=27, x..lim=50)
+par(xpd=TRUE)
+text(39, -3, 'Targeted OTUs', col='gray20', cex=1.2) 
+par(xpd=FALSE)
+
+
+par(mfrow=c(1,1), mar=c(0,0,0,0), new=TRUE)
+plot(1,1, xlim=c(0, 1), ylim=c(0, 1), xaxs='i', yaxs='i', 
+     axes=FALSE, ann=FALSE, type='n')
+
+
+
+
+text(c(.05, .67, .67, .75, .75), 
+     c(.95, .95, .47, .95, .47), 
+     c('(a)', '(b)', '(c)', '(d)', '(e)'),
+     col='gray20', font=2, cex=1.5)
+
+dev.off()
+```
+
+
+Manuscript figure that shows three example trees - each with occupied, exhaust, and supply samples. 
+
+```{r plot3trees}
+pdf('threeExampleTrees.pdf', width=2, height=4.5)
+# par(mfrow=c(3, 1))
+layout(matrix(c(1, 2, 3, 4), 4, 1), heights=c(1,1,1,.2))
+plotEachSubjectTree(lst=lowList[c(8,2,7)], pbDist=pbDist, 
+                    bar0=c(11.2, 10.2, 12.3), barlen=c(8.4, 7.6, 9.3))
+
+
+
+
+par(mfrow=c(1,1), mar=c(0,0,0,0), new=TRUE)
+plot(1,1, xlim=c(0, 1), ylim=c(0, 1), xaxs='i', yaxs='i', 
+     axes=FALSE, ann=FALSE, type='n')
+text(.75, .04, 'Relative Abundance\nof Targeted OTUs', 
+     col='gray20', cex=.6)
+text(c(rep(0, 3)), 
+     c(.96, .66, .34), 
+     c('(a)', '(b)', '(c)'),
+     col='gray20', font=2, cex=1, pos=4)
+
+legdf <- data.frame(x=c(.04, .04, .04, .1, .16), 
+                    y=c(.03, .06, .09, .09, .09), 
+                    col=c('#ECCBAE', # exhaust
+                          'gray', # supply
+                          '#ABDDDE', # s08
+                          '#FF0000', # s02
+                          '#D69C4E'  # s07
+                          ))  
+                          
+points(legdf$x, legdf$y, pch=22, col='gray30', 
+       bg=as.character(legdf$col), cex=1.3, lwd=.3)
+text(c(.16, .04, .04), c(.09, .06, .03), 
+     c('  Subjects', '.......... Supply Air', '.......... Exhaust Air'), 
+     pos=4, col='gray30', cex=.6)
+
+
+dev.off()
+
+
+# (lst, pbDist, rrare=0, ptOffset=.4, 
+# bar0=rep(16, length(lst)), barlen=4, cutLine=FALSE) 
+
+```
+
+
+
+
+
+These chunks of code are not 
+
+```{r setupBarPlotX}
+space=rep(c(.4, .1), 3)
+cols <- c('gray', 'gray50')
+```
+
+
+```{r setIndividualBarOffsetX}
+lowLim <- c(16, 14, 14, 15, 16, 14, 16, 15)
+highLim <- c(15, 14, 16, 15, 14, 16, 16, 16)
+```
+
+
+```{r bigPlotSmallTrees, fig.height=14, fig.width=6, eval=FALSE}
+pdf('bigPlotManyTrees.pdf', height=14, width=6)
+layout(matrix(c(1, 3:10, 1, 11:18, 2, 19:26, 2, 27:34), 9, 4), 
+       heights=c(3, rep(1, 8)))
+
+df <- plotLowDF
+len <- 0.03
+# pdf('sixBarBoth.pdf', width=10, height=8)
+# layout(matrix(c(1,2), 1, 2), widths=c(1, .8))
+par(mar=c(5, 5, 3, 1), las=1)
+mids <- barplot(as.matrix(df$mean), beside=TRUE, 
+                col=cols, border='white', space=space, 
+                ylim=c(0, .4), ylab='Canberra Similarity')
+abline(h=seq(0, .4, .05), col='white')
+arrows(mids, df$mean+df$se, mids, df$mean-df$se, 
+       code=3, length=len, angle=90, col='gray30', lwd=2)
+par(xpd=TRUE)
+segments(mids[c(1, 3, 5)]-.5, 0, mids[c(2, 4, 6)]+.5, 0, lwd=2, col='gray40')
+mtext(c('inside', 'exhaust', 'supply'), side=1, line=0.5, 
+      at=c(mean(mids[1:2]), mean(mids[3:4]), mean(mids[5:6])), 
+      font=2, cex=1, col='gray30')
+mtext('1 Air Change / Hour', col='gray30', line=.5, font=2, cex=1.2)
+
+df <- plotHighDF
+par(mar=c(5, 2, 3, 4), las=1)
+mids <- barplot(as.matrix(df$mean), beside=TRUE, 
+                col=cols, border='white', space=space, 
+                ylim=c(0, .4), yaxt='n')
+abline(h=seq(0, .4, .05), col='white')
+arrows(mids, df$mean+df$se, mids, df$mean-df$se, 
+       code=3, length=len, angle=90, col='gray30', lwd=2)
+par(xpd=TRUE)
+segments(mids[c(1, 3, 5)]-.5, 0, mids[c(2, 4, 6)]+.5, 0, lwd=2, col='gray40')
+mtext(c('inside', 'exhaust', 'supply'), side=1, line=0.5, 
+      at=c(mean(mids[1:2]), mean(mids[3:4]), mean(mids[5:6])), 
+      font=2, cex=1, col='gray30')
+legend('topright', legend=c('self vs. self', 'self vs. other'), pt.cex=3, 
+       pch=15, col=c('gray', 'gray50'), bty='n', cex=1.4, text.col='gray30')           
+mtext('3 ACH', col='gray30', line=.5, font=2, cex=1.2)
+
+
+plotEachSubjectTree(lowList[subOrder], pbDist, rrare=0, ptOffset=33, 
+                    bar0=lowLim[subOrder]-3, barlen=15)
+plotEachSubjectTree(highList[subOrder], pbDist, rrare=0, ptOffset=33, 
+                    bar0=highLim[subOrder]-3, barlen=15)
+
+
+par(mar=c(0.2,1,1,1))
+space=rep(c(.4, .1), 3)
+cols <- c('gray', 'gray50')
+
+df <- distLowBarDF[subOrder, c(1,4,2,5,3,6)]
+dfSE <- distLowBarDFSE[subOrder, c(1,4,2,5,3,6)]
+barcols <- unique(occMap$col)[subOrder]
+
+for(i in 1:8) {
+  mids <- barplot(as.matrix(df[i, ]), beside=TRUE, 
+                  col=c(barcols[i], cols[2]), border='white', 
+                  space=space, ylim=c(0, .5), ylab='', 
+                  axes=FALSE, names.arg=rep('', 6))
+  abline(h=seq(0, .5, .1), col='white')
+  arrHigh <- unlist(df[i,]+dfSE[i,])
+  arrLow <- unlist(df[i,]-dfSE[i,])
+  arrows(mids, arrHigh, mids, arrLow, 
+         code=3, length=len, angle=90, col='gray30', lwd=2)
+  par(xpd=TRUE)
+  segments(mids[c(1, 3, 5)]-.5, 0, mids[c(2, 4, 6)]+.5, 0, lwd=2, col='gray40')
+}
+
+df <- distHighBarDF[subOrder, c(1,4,2,5,3,6)]
+dfSE <- distHighBarDFSE[subOrder, c(1,4,2,5,3,6)]
+barcols <- unique(occMap$col)[subOrder]
+
+for(i in 1:8) {
+  mids <- barplot(as.matrix(df[i, ]), beside=TRUE, 
+                  col=c(barcols[i], cols[2]), border='white', 
+                  space=space, ylim=c(0, .5), ylab='', 
+                  axes=FALSE, names.arg=rep('', 6))
+  abline(h=seq(0, .5, .1), col='white')
+  arrHigh <- unlist(df[i,]+dfSE[i,])
+  arrLow <- unlist(df[i,]-dfSE[i,])
+  arrows(mids, arrHigh, mids, arrLow, 
+         code=3, length=len, angle=90, col='gray30', lwd=2)
+  par(xpd=TRUE)
+  segments(mids[c(1, 3, 5)]-.5, 0, mids[c(2, 4, 6)]+.5, 0, lwd=2, col='gray40')
+}
+dev.off()
+```
+
+
+
+
+
+
+
+
+
+
+
+
+----------
+
+This creates the figure with a tree, and indicator taxa for each clade. Several steps to set it up. 
+
+
+```{r treeAnalysis}
+# these <- c(1, 2, 4, 5, 7, 8, 10, 15, 19, 24, 28, 31, 46, 48)
+these2 <- c(1, 2, 5, 10, 7, 8, 15, 19, 24, 28, 31, 48)
+these3 <- c(7, 5, 11, 6, 9, 10, 8, 12)
+## get tip order from the tree plotting function
+Phy <- plotAllSubjectsTreeBars2(bestSubs, pbDist=pbDist, rrare=0, keep=TRUE)
+
+names(Phy)
+tipOrderNames <- Phy$tip.label[Phy$order]
+tipOrderRN <- row.names(tabHA)[bestSubs][Phy$order]
+
+treeBars <- tabHA[tipOrderRN, these2]
+treeCols <- map[tipOrderRN, 'col']
+treeTaxa <- taxa[colnames(treeBars), ]
+```
+
+
+```{r}
+checkRelAbu <- colnames(treeBars)[these3]
+mapTreeBars <- map[row.names(treeBars), ]
+subsTreeBars <- unique(mapTreeBars$Subject2)
+for(i in 1:length(subsTreeBars)) {
+  these <- which(mapTreeBars$Subject2 == subsTreeBars[i])
+  mapThese <- mapTreeBars[these, ]
+  newTab <- tabHA[row.names(mapThese), ]
+  newSums <- sort(colSums(newTab), decreasing=TRUE)
+  print(subsTreeBars[i])
+  print(names(newSums)[1:10])
+  }
+
+```
+
+
+```{r checkIndicators}
+# Some are selected as indicators for a single person. 
+# This is the same order as the following figure. 
+
+checkInd <- colnames(treeBars)[these3]
+indBars <- indval(treeBars[, checkInd], clustering=treeCols)
+indBars  # all are significant indicators for their respective occupant
+```
+
+
+
+
+Create function to add barplot to the base tree. 
+
+```{r barsFunction}
+addBars <- function(thisone=1, bar0=30, bar1=39, Lines=FALSE, labcol='gray30', 
+                    text1='', text2='') {
+  bars <- treeBars[, thisone]/max(treeBars[, thisone])
+  barlen <- bar1-bar0
+  lab <- which(bars == 1)
+  labMax <- treeBars[lab, thisone]
+  labTotal <- format(labMax, digits=2)
+  
+  if(Lines) {
+    checkLines <- seq(0, 150, 5)
+    abline(v=checkLines)
+    mtext(checkLines, at=checkLines, cex=.4, line=0)
+    }
+
+  segments(rep(bar0, length(bars)), 1:length(bars), 
+           rep(bar0, length(bars)) + (barlen*bars), 1:length(bars), 
+           lwd=13, lend='butt', col=treeCols)
+  abline(v=bar0, lwd=1, col='gray70')
+  text(bar0-1, lab-.05, labTotal, pos=4, font=2, col=labcol, cex=.7)
+  par(xpd=TRUE)
+#   text(bar0+5, -.5, treeTaxa[thisone, 'Genus'], 
+#        srt=30, pos=2, cex=.7, font=4)
+  text(bar0+5, -.5, text1, srt=35, pos=2, cex=.6, font=4)
+  text(bar0+6, -1.1, text2, srt=35, pos=2, cex=.5, font=1)
+  par(xpd=FALSE)
+  }
+```
+
+
+This makes the tree, and the addBars function puts the barplots on one by one. 
+
+```{r treeFigWithIndicBars}
+pdf('clusterTaxa.pdf', width=5, height=5, useDingbats=FALSE)
+plotAllSubjectsTreeBars2(bestSubs, pbDist=pbDist, rrare=0, ptOffset=3, 
+                        bar0=32, barlen=27, x..lim=110, keep=FALSE)
+
+addBars(thisone=7, bar0=30, bar1=39, 
+        text1='Lactobacillus crispatus', 
+        text2='NR_119274.1 (100% similar)')
+addBars(thisone=5, bar0=40, bar1=49, 
+        text1='Gardnerella vaginalis', 
+        text2='NR_074227.1 (100% similar)')
+addBars(thisone=11, bar0=50, bar1=59, 
+        text1='Corynebacterium massiliense', 
+        text2='NR_044182.1 (100% similar)')
+addBars(thisone=6, bar0=60, bar1=69, 
+        text1='Corynebacterium imitans', 
+        text2='NR_026369.1 (100% similar)')
+addBars(thisone=9, bar0=70, bar1=79, 
+        text1='Corynebacterium epidermidicanis', 
+        text2='NR_108533.1 (98% similar)')
+addBars(thisone=10, bar0=80, bar1=89, labcol='gray90', 
+        text1='Anaerococcus octavius', 
+        text2='NR_026360.1 (97% similar)')
+addBars(thisone=8, bar0=90, bar1=99, labcol='gray90', 
+        text1='Corynebacterium sundsvallense', 
+        text2='NR_026375.1 (98% similar)')
+addBars(thisone=12, bar0=100, bar1=109, labcol='gray90', 
+        text1='Propionibacterium acnes', 
+        text2='NR_074675.1 (96% similar)')
+
+# addBars(thisone=9, bar0=110, bar1=119)
+# addBars(thisone=10, bar0=120, bar1=129)
+# addBars(thisone=8, bar0=130, bar1=139)
+# addBars(thisone=12, bar0=140, bar1=149)
+
+
+# addBars(thisone=1, bar0=30, bar1=39, Lines=FALSE)
+# addBars(thisone=2, bar0=40, bar1=49)
+# addBars(thisone=3, bar0=50, bar1=59)
+# addBars(thisone=4, bar0=60, bar1=69)
+
+dev.off()
+
+
+
+```
+
+
+
